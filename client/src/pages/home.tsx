@@ -2,6 +2,7 @@ import { useState } from "react";
 import Sidebar from "@/components/sidebar";
 import ChatInterface from "@/components/chat-interface";
 import MobileTabBar from "@/components/mobile-tab-bar";
+import WeeklyDonationPopup from "@/components/weekly-donation-popup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -63,6 +64,7 @@ export default function Home() {
         <ChatInterface />
       </div>
 
+      <WeeklyDonationPopup />
       <MobileTabBar />
     </div>
   );
