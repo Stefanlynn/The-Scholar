@@ -135,11 +135,17 @@ export default function Bible() {
 
   const scholarMutation = useMutation({
     mutationFn: async (query: string) => {
-      return fetch('/api/chat/send', {
+      const response = await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: query })
-      }).then(res => res.json());
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response.json();
     },
     onSuccess: (data) => {
       toast({ 
