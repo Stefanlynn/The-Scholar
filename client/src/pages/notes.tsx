@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, FileText, Edit, Trash2, Sparkles, Share2, Download, Copy, Mail, BookOpen, Heart, Lightbulb, Zap, MessageSquare, GraduationCap, PenTool } from "lucide-react";
+import { Plus, Search, FileText, Edit, Trash2, PenTool } from "lucide-react";
 import type { Note } from "@shared/schema";
 
 export default function Notes() {
@@ -22,8 +22,6 @@ export default function Notes() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [activeTab, setActiveTab] = useState("notes");
-  const [aiEnhancing, setAiEnhancing] = useState(false);
-  const [enhancingNoteId, setEnhancingNoteId] = useState<number | null>(null);
   const { toast } = useToast();
 
   const { data: notes, isLoading } = useQuery<Note[]>({
@@ -72,38 +70,7 @@ export default function Notes() {
     },
   });
 
-  // AI Enhancement mutation
-  const aiEnhanceMutation = useMutation({
-    mutationFn: async ({ noteId, enhancementType, content }: { noteId: number; enhancementType: string; content: string }) => {
-      const response = await apiRequest("POST", "/api/chat/send", {
-        message: `${enhancementType}: ${content}`,
-        context: "note-enhancement"
-      });
-      return response;
-    },
-    onSuccess: (response: any, variables) => {
-      // Update the note with enhanced content
-      let enhancedContent = response.response || response.message?.response || response;
-      
-      // Ensure content is a string
-      if (typeof enhancedContent === 'object') {
-        enhancedContent = JSON.stringify(enhancedContent);
-      }
-      
-      updateMutation.mutate({ 
-        id: variables.noteId, 
-        data: { content: String(enhancedContent) } 
-      });
-      setAiEnhancing(false);
-      setEnhancingNoteId(null);
-      toast({ title: "Note enhanced successfully!" });
-    },
-    onError: () => {
-      setAiEnhancing(false);
-      setEnhancingNoteId(null);
-      toast({ title: "Failed to enhance note", variant: "destructive" });
-    },
-  });
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,56 +123,7 @@ export default function Notes() {
     )
   );
 
-  // AI Enhancement Functions
-  const handleAiEnhancement = (noteId: number, enhancementType: string, content: string) => {
-    setEnhancingNoteId(noteId);
-    setAiEnhancing(true);
-    
-    let prompt = "";
-    switch (enhancementType) {
-      case 'expand':
-        prompt = `Expand this note into a full paragraph with more detail and insight: "${content}"`;
-        break;
-      case 'scripture':
-        prompt = `Add a relevant Scripture verse that supports this thought: "${content}"`;
-        break;
-      case 'illustration':
-        prompt = `Suggest a clear illustration or example for this idea: "${content}"`;
-        break;
-      case 'summarize':
-        prompt = `Summarize this into a clear takeaway statement: "${content}"`;
-        break;
-      case 'clarify':
-        prompt = `Give me a clearer way to express this thought: "${content}"`;
-        break;
-      default:
-        prompt = content;
-    }
-    
-    aiEnhanceMutation.mutate({ noteId, enhancementType: prompt, content });
-  };
 
-  // Sharing Functions
-  const handleShare = (note: Note, shareType: string) => {
-    const noteContent = typeof note.content === 'string' ? note.content : JSON.stringify(note.content);
-    switch (shareType) {
-      case 'copy':
-        navigator.clipboard.writeText(`${note.title}\n\n${noteContent}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
-        toast({ title: "Note copied to clipboard" });
-        break;
-      case 'pdf':
-        // Implementation would require a PDF library
-        toast({ title: "PDF export feature coming soon" });
-        break;
-      case 'email':
-        const subject = encodeURIComponent(`Study Note: ${note.title}`);
-        const body = encodeURIComponent(`${noteContent}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
-        window.open(`mailto:?subject=${subject}&body=${body}`);
-        break;
-      default:
-        break;
-    }
-  };
 
   // Render Notes Section with AI Enhancement
   const renderNotesSection = (notesList: Note[] | undefined, title: string, emptyMessage: string) => {
@@ -272,73 +190,6 @@ export default function Notes() {
                   )}
                 </div>
                 <div className="flex space-x-1">
-                  {/* AI Enhancement Dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-[var(--scholar-gold)] hover:text-yellow-400"
-                        disabled={enhancingNoteId === note.id}
-                      >
-                        {enhancingNoteId === note.id ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--scholar-gold)]"></div>
-                        ) : (
-                          <GraduationCap className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700 text-white">
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'expand', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
-                        <Zap className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
-                        Expand into full paragraph
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'scripture', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
-                        <BookOpen className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
-                        Add supporting Scripture
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'illustration', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
-                        <Lightbulb className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
-                        Suggest illustration
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'summarize', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
-                        <MessageSquare className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
-                        Summarize takeaway
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'clarify', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
-                        <Edit className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
-                        Clarify expression
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Share Dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700">
-                      <DropdownMenuItem onClick={() => handleShare(note, 'copy')}>
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy to clipboard
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleShare(note, 'email')}>
-                        <Mail className="h-4 w-4 mr-2" />
-                        Email to self
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleShare(note, 'pdf')}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Export as PDF
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
                   <Button
                     size="sm"
                     variant="ghost"
@@ -383,7 +234,7 @@ export default function Notes() {
         <Card className="bg-[var(--scholar-dark)] border-gray-700">
           <CardHeader>
             <CardTitle className="text-[var(--scholar-gold)] flex items-center">
-              <Heart className="h-5 w-5 mr-2" />
+              <PenTool className="h-5 w-5 mr-2" />
               Today's Reflection
             </CardTitle>
           </CardHeader>

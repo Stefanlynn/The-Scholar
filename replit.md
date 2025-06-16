@@ -161,6 +161,11 @@ Changelog:
   * Enhanced study tools to connect every truth to royal identity as children of the King
   * Scholar now bridges truth with tremendous grace while building faith
   * Maintains Protestant theological framework with prophetic yet pastoral tone
+- June 16, 2025: Simplified Notes interface by removing AI and share buttons
+  * Removed AI enhancement features from note cards for cleaner interface
+  * Removed share buttons (copy, email, PDF) to focus on core note functionality
+  * Changed journal icon from heart to pen tool for better representation
+  * Streamlined note management with edit and delete actions only
 ```
 
 ## User Preferences
