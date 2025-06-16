@@ -368,7 +368,7 @@ export default function Bible() {
                 </PopoverTrigger>
                 <PopoverContent className="w-80 bg-[var(--scholar-darker)] border-gray-600">
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-300 font-medium">Select highlight color:</p>
+                    <p className="text-sm text-gray-300 font-medium">Tap verse text to highlight:</p>
                     <div className="grid grid-cols-2 gap-2">
                       {highlightColors.map((color) => (
                         <Button
