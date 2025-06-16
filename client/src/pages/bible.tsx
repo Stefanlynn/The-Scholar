@@ -354,32 +354,7 @@ export default function Bible() {
                 </Select>
               </div>
 
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full border-gray-600 text-white hover:bg-gray-700">
-                    <Palette className="h-4 w-4 mr-2" />
-                    Highlight Color: {highlightColors.find(c => c.value === highlightColor)?.label}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 bg-[var(--scholar-darker)] border-gray-600">
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-300 font-medium">Tap verse text to highlight:</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {highlightColors.map((color) => (
-                        <Button
-                          key={color.value}
-                          variant={highlightColor === color.value ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setHighlightColor(color.value)}
-                          className={`justify-start ${color.color}`}
-                        >
-                          {color.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
+
             </div>
 
             {/* Desktop Bible Reader */}
