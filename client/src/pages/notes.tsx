@@ -513,7 +513,7 @@ export default function Notes() {
 
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-[var(--scholar-darker)]">
+            <TabsList className="grid w-full grid-cols-2 bg-[var(--scholar-darker)]">
               <TabsTrigger value="notes" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
                 <FileText className="h-4 w-4 mr-2" />
                 Study Notes
@@ -521,10 +521,6 @@ export default function Notes() {
               <TabsTrigger value="journal" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
                 <Heart className="h-4 w-4 mr-2" />
                 Daily Journal
-              </TabsTrigger>
-              <TabsTrigger value="scholar" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Scholar Insights
               </TabsTrigger>
             </TabsList>
 
@@ -536,11 +532,6 @@ export default function Notes() {
             {/* Daily Journal Tab */}
             <TabsContent value="journal" className="mt-6">
               {renderJournalSection()}
-            </TabsContent>
-
-            {/* Scholar Insights Tab */}
-            <TabsContent value="scholar" className="mt-6">
-              {renderNotesSection(studyToolNotes, "Saved from Study Tools", "Use study tools in the Bible section to create AI-enhanced notes")}
             </TabsContent>
           </Tabs>
         </div>
