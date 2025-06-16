@@ -373,53 +373,74 @@ export default function Profile() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                className="w-full border-gray-600 text-white hover:bg-gray-700"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-              
-              <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full border-red-600 text-red-400 hover:bg-red-900/20"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Account
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white">
-                  <DialogHeader>
-                    <DialogTitle className="text-red-400">Delete Account</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <p className="text-gray-300">
-                      This action cannot be undone. This will permanently delete your account 
-                      and remove all your data including notes, sermons, and bookmarks.
-                    </p>
-                    <div className="flex space-x-3">
-                      <Button
-                        onClick={() => setShowDeleteDialog(false)}
-                        variant="outline"
-                        className="flex-1 border-gray-600 text-white"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => deleteAccountMutation.mutate()}
-                        className="flex-1 bg-red-600 text-white hover:bg-red-700"
-                        disabled={deleteAccountMutation.isPending}
-                      >
-                        Delete Forever
-                      </Button>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-4 bg-[var(--scholar-darker)] border border-gray-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <LogOut className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <div className="text-white font-medium">Sign Out</div>
+                      <div className="text-gray-400 text-sm">End your current session</div>
                     </div>
                   </div>
-                </DialogContent>
-              </Dialog>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-[var(--scholar-darker)] border border-red-900/30 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <Trash2 className="h-5 w-5 text-red-400" />
+                    <div>
+                      <div className="text-white font-medium">Delete Account</div>
+                      <div className="text-gray-400 text-sm">Permanently remove your account and all data</div>
+                    </div>
+                  </div>
+                  <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-600 text-red-400 hover:bg-red-900/20"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-red-400">Delete Account</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <p className="text-gray-300">
+                          This action cannot be undone. This will permanently delete your account 
+                          and remove all your data including notes, sermons, and bookmarks.
+                        </p>
+                        <div className="flex space-x-3">
+                          <Button
+                            onClick={() => setShowDeleteDialog(false)}
+                            variant="outline"
+                            className="flex-1 border-gray-600 text-white"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => deleteAccountMutation.mutate()}
+                            className="flex-1 bg-red-600 text-white hover:bg-red-700"
+                            disabled={deleteAccountMutation.isPending}
+                          >
+                            Delete Forever
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
