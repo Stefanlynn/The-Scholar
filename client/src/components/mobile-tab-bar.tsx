@@ -30,8 +30,16 @@ export default function MobileTabBar() {
                   <img 
                     src={scholarLogo} 
                     alt="The Scholar" 
-                    className={`w-5 h-5 object-contain ${isActive ? 'filter brightness-0 saturate-100' : 'opacity-60'}`}
-                    style={isActive ? { filter: 'invert(84%) sepia(68%) saturate(647%) hue-rotate(346deg) brightness(102%) contrast(92%)' } : {}}
+                    className={`w-5 h-5 object-contain transition-all duration-200 ${
+                      isActive 
+                        ? 'brightness-0 invert' 
+                        : 'brightness-0 invert opacity-60'
+                    }`}
+                    style={isActive ? { 
+                      filter: 'brightness(0) invert(1) sepia(1) saturate(1000%) hue-rotate(30deg)' 
+                    } : {
+                      filter: 'brightness(0) invert(1)'
+                    }}
                   />
                 ) : (
                   <item.icon className="text-lg" />
