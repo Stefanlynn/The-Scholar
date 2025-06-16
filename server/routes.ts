@@ -235,14 +235,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", async (req, res) => {
+  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
       const messageData = insertChatMessageSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       
-      // Simulate AI response
+      // Generate AI response
       const aiResponse = await generateAIResponse(messageData.message);
       messageData.response = aiResponse;
       
