@@ -222,43 +222,44 @@ export default function ChatInterface() {
       </div>
       
       {/* Chat Input */}
-      <div className="border-t border-gray-800 p-4">
-        <form onSubmit={handleSubmit} className="flex items-end space-x-4">
+      <div className="border-t border-gray-800 p-3 md:p-4">
+        <form onSubmit={handleSubmit} className="flex items-end space-x-2 md:space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
                 ref={textareaRef}
-                placeholder="Ask The Scholar about Scripture, theology, or sermon preparation..."
+                placeholder="Ask The Scholar about Scripture..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border-gray-700 text-white px-4 py-3 pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] max-h-32"
+                className="w-full bg-[var(--scholar-darker)] border-gray-700 text-white px-3 md:px-4 py-2 md:py-3 pr-10 md:pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[2.5rem] md:min-h-[3rem] max-h-32 text-sm md:text-base"
                 rows={1}
               />
               <Button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
-                className="absolute bottom-3 right-3 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-2 h-8 w-8"
+                className="absolute bottom-2 md:bottom-3 right-2 md:right-3 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-1.5 md:p-2 h-6 w-6 md:h-8 md:w-8"
               >
-                <Send className="h-3 w-3" />
+                <Send className="h-2.5 w-2.5 md:h-3 md:w-3" />
               </Button>
             </div>
             <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center space-x-4 text-sm text-gray-400">
-                <button type="button" className="hover:text-white transition-colors">
+              <div className="flex items-center space-x-2 md:space-x-4 text-xs md:text-sm text-gray-400">
+                <button type="button" className="hover:text-white transition-colors flex items-center">
                   <Paperclip className="mr-1 h-3 w-3" />
-                  Attach
+                  <span className="hidden sm:inline">Attach</span>
                 </button>
-                <button type="button" className="hover:text-white transition-colors">
+                <button type="button" className="hover:text-white transition-colors flex items-center">
                   <Mic className="mr-1 h-3 w-3" />
-                  Voice
+                  <span className="hidden sm:inline">Voice</span>
                 </button>
-                <button type="button" className="hover:text-white transition-colors">
+                <button type="button" className="hover:text-white transition-colors flex items-center">
                   <Book className="mr-1 h-3 w-3" />
-                  Quote Scripture
+                  <span className="hidden md:inline">Quote Scripture</span>
+                  <span className="md:hidden sm:inline">Quote</span>
                 </button>
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 hidden sm:block">
                 Press Ctrl+Enter to send
               </div>
             </div>
