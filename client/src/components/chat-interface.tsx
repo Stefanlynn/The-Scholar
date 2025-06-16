@@ -15,6 +15,7 @@ export default function ChatInterface() {
   const [conversation, setConversation] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
@@ -30,8 +31,21 @@ export default function ChatInterface() {
   useEffect(() => {
     if (serverMessages) {
       setConversation(serverMessages);
+      // Hide welcome message if there are existing messages
+      if (serverMessages.length > 0) {
+        setShowWelcomeMessage(false);
+      }
     }
   }, [serverMessages]);
+
+  // Hide welcome message after 5 minutes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowWelcomeMessage(false);
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
@@ -122,45 +136,48 @@ export default function ChatInterface() {
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {isLoading ? (
           <div className="text-center text-gray-400">Loading conversation...</div>
-        ) : conversation.length === 0 ? (
-          <div className="space-y-6">
-            {/* The Scholar's Welcome Message */}
-            <div className="flex justify-start">
-              <div className="flex items-start space-x-3 max-w-xs md:max-w-2xl">
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
-                </div>
-                <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-4 md:p-6">
-                  <div className="text-gray-200 leading-relaxed text-sm md:text-base">
-                    <p className="mb-4">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth. I can assist you with:</p>
-                    
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
-                        <span>Scripture interpretation and exegesis</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
-                        <span>Sermon preparation and teaching outlines</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
-                        <span>Historical and theological context</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
-                        <span>Cross-references and biblical themes</span>
+        ) : (
+          <>
+            {/* The Scholar's Welcome Message - shows for 5 minutes or until manually dismissed */}
+            {showWelcomeMessage && (
+              <div className="space-y-6">
+                <div className="flex justify-start">
+                  <div className="flex items-start space-x-3 max-w-xs md:max-w-2xl">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-4 md:p-6">
+                      <div className="text-gray-200 leading-relaxed text-sm md:text-base">
+                        <p className="mb-4">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth. I can assist you with:</p>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                            <span>Scripture interpretation and exegesis</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                            <span>Sermon preparation and teaching outlines</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                            <span>Historical and theological context</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                            <span>Cross-references and biblical themes</span>
+                          </div>
+                        </div>
+                        
+                        <p>What passage or topic is the Lord leading you to explore today?</p>
                       </div>
                     </div>
-                    
-                    <p>What passage or topic is the Lord leading you to explore today?</p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        ) : (
-          <>
+            )}
+
+            {/* Conversation Messages */}
             {conversation.map((msg) => (
               <div key={msg.id} className="space-y-4">
                 {/* User Message */}
