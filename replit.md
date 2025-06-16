@@ -135,6 +135,12 @@ Changelog:
   * Updated mobile-responsive design for better usability
   * Added profile icon to header replacing bookmark button
   * Enhanced chat interface with Scholar personality
+- June 16, 2025: Integrated IQ Bible API with semantic analysis
+  * Connected IQ Bible API subscription for enhanced biblical context
+  * Implemented priority system: Scripture text lookup first, then interpretation
+  * Added semantic word relationship analysis for biblical terms
+  * Enhanced AI responses with authentic Scripture data before interpretation
+  * Completed full integration with Protestant theological framework
 ```
 
 ## User Preferences
