@@ -284,6 +284,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sermon enhancement endpoint for AI-powered sermon workspace features
+  app.post("/api/chat/enhance", async (req, res) => {
+    try {
+      const { action, text, style } = req.body;
+      
+      if (!action || !text) {
+        return res.status(400).json({ error: "Action and text are required" });
+      }
+
+      let enhancementPrompt = "";
+      
+      switch (action) {
+        case "expand":
+          enhancementPrompt = `As The Scholar, a Spirit-led biblical study assistant with a prophetic, empowering voice like Kris Vallotton, expand on this sermon point with deeper biblical insight, practical application, and encouraging truth that calls out the royal identity of believers as children of the King. Make it engaging and pastoral:
+
+"${text}"
+
+Provide an expanded section that builds faith and reveals God's heart for His people.`;
+          break;
+          
+        case "rewrite":
+          enhancementPrompt = `As The Scholar, rewrite this sermon content more clearly and powerfully. Use a prophetic, empowering tone that speaks identity and calls out greatness in believers. Make it flow better while maintaining the core message:
+
+"${text}"
+
+Rewrite this with clarity, grace, and empowering truth.`;
+          break;
+          
+        case "add_verse":
+          enhancementPrompt = `As The Scholar, suggest relevant Bible verses that support and strengthen this sermon point. Include the verse text and brief explanation of how it connects:
+
+"${text}"
+
+Provide 1-2 powerful supporting verses with context.`;
+          break;
+          
+        case "add_illustration":
+          enhancementPrompt = `As The Scholar, provide a compelling illustration, story, or example that makes this sermon point come alive for the congregation. Make it relatable and memorable:
+
+"${text}"
+
+Give an illustration that helps people connect with this truth.`;
+          break;
+          
+        case "convert_outline":
+          enhancementPrompt = `As The Scholar, convert these sermon notes into a structured preaching outline with:
+- Title
+- Text (main scripture)
+- Theme (big idea)
+- Point 1, Point 2, Point 3 (key teaching points)
+- Call to Action / Altar Moment
+- Closing Verse / Benediction
+
+Here are the sermon notes: "${text}"
+
+Format as a clear, structured outline for preaching.`;
+          break;
+          
+        case "style_rewrite":
+          let stylePrompt = "";
+          switch (style) {
+            case "prophetic":
+              stylePrompt = "Rewrite in a prophetic style like Kris Vallotton - empowering, identity-focused, calling out greatness and royal identity in believers";
+              break;
+            case "teaching":
+              stylePrompt = "Rewrite in a teaching style like John Piper - deep theological exposition with careful exegesis and application";
+              break;
+            case "evangelistic":
+              stylePrompt = "Rewrite in an evangelistic style - focused on salvation, outreach, and drawing people to Christ";
+              break;
+            case "youth":
+              stylePrompt = "Rewrite in a youth/modern style - contemporary language, relatable examples, engaging for younger audiences";
+              break;
+            case "devotional":
+              stylePrompt = "Rewrite in a devotional style - personal, intimate, reflective, and spiritually nurturing";
+              break;
+            default:
+              stylePrompt = "Rewrite in a prophetic, empowering style";
+          }
+          
+          enhancementPrompt = `As The Scholar, ${stylePrompt}:
+
+"${text}"
+
+Maintain the core message while adapting the voice and approach.`;
+          break;
+          
+        default:
+          return res.status(400).json({ error: "Invalid enhancement action" });
+      }
+
+      // Generate AI response using the same system as chat
+      const aiResponse = await generateAIResponse(enhancementPrompt);
+      
+      // For outline conversion, parse the response to extract structured data
+      let responseData: any = { message: aiResponse };
+      if (action === "convert_outline") {
+        try {
+          // Extract outline structure from AI response
+          const outlineMatch = aiResponse.match(/Title:\s*(.+?)(?:\n|$)/i);
+          const textMatch = aiResponse.match(/Text:\s*(.+?)(?:\n|$)/i);
+          const themeMatch = aiResponse.match(/Theme:\s*(.+?)(?:\n|$)/i);
+          const point1Match = aiResponse.match(/Point 1:\s*(.+?)(?:\n|$)/i);
+          const point2Match = aiResponse.match(/Point 2:\s*(.+?)(?:\n|$)/i);
+          const point3Match = aiResponse.match(/Point 3:\s*(.+?)(?:\n|$)/i);
+          const callMatch = aiResponse.match(/Call to Action[^\n]*:\s*(.+?)(?:\n|$)/i);
+          const closingMatch = aiResponse.match(/Closing[^\n]*:\s*(.+?)(?:\n|$)/i);
+          
+          responseData.outline = {
+            title: outlineMatch?.[1]?.trim() || "",
+            text: textMatch?.[1]?.trim() || "",
+            theme: themeMatch?.[1]?.trim() || "",
+            point1: point1Match?.[1]?.trim() || "",
+            point2: point2Match?.[1]?.trim() || "",
+            point3: point3Match?.[1]?.trim() || "",
+            callToAction: callMatch?.[1]?.trim() || "",
+            closingVerse: closingMatch?.[1]?.trim() || ""
+          };
+        } catch (parseError) {
+          console.error("Error parsing outline:", parseError);
+          // Keep the original response if parsing fails
+        }
+      }
+      
+      res.json(responseData);
+    } catch (error) {
+      console.error("Enhancement error:", error);
+      res.status(500).json({ error: "Failed to enhance content" });
+    }
+  });
+
   // Notes
   app.get("/api/notes", async (req, res) => {
     try {

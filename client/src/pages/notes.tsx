@@ -93,7 +93,7 @@ export default function Notes() {
     mutationFn: async ({ action, text, style }: { action: string; text: string; style?: string }) => {
       return apiRequest("/api/chat/enhance", "POST", { action, text, style });
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (response: any, variables) => {
       const { action } = variables;
       if (action === "expand") {
         setSermonBody(prev => prev + "\n\n" + response.message);
