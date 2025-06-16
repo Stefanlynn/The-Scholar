@@ -297,35 +297,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       switch (action) {
         case "expand":
-          enhancementPrompt = `As The Scholar, a Spirit-led biblical study assistant with a prophetic, empowering voice like Kris Vallotton, expand on this sermon point with deeper biblical insight, practical application, and encouraging truth that calls out the royal identity of believers as children of the King. Make it engaging and pastoral:
+          enhancementPrompt = `As The Scholar, a Spirit-led biblical study assistant, expand on this sermon point with deeper biblical insight, practical application, and encouraging truth that calls out the royal identity of believers as children of the King. Use your access to biblical knowledge and cross-references to provide rich, authentic content:
 
 "${text}"
 
-Provide an expanded section that builds faith and reveals God's heart for His people.`;
+Provide an expanded section that:
+- Builds faith and reveals God's heart for His people
+- Includes relevant cross-references and biblical context
+- Applies the truth practically to believers' lives
+- Maintains a prophetic, empowering tone that speaks identity`;
           break;
           
         case "rewrite":
-          enhancementPrompt = `As The Scholar, rewrite this sermon content more clearly and powerfully. Use a prophetic, empowering tone that speaks identity and calls out greatness in believers. Make it flow better while maintaining the core message:
+          enhancementPrompt = `As The Scholar, rewrite this sermon content more clearly and powerfully. Use a prophetic, empowering tone that speaks identity and calls out greatness in believers. Access biblical knowledge to enhance the message:
 
 "${text}"
 
-Rewrite this with clarity, grace, and empowering truth.`;
+Rewrite this with:
+- Clarity, grace, and empowering truth
+- Better flow while maintaining the core message
+- Biblical backing and authentic scriptural insight
+- Language that builds faith and reveals believers' royal identity`;
           break;
           
         case "add_verse":
-          enhancementPrompt = `As The Scholar, suggest relevant Bible verses that support and strengthen this sermon point. Include the verse text and brief explanation of how it connects:
+          enhancementPrompt = `As The Scholar, use your biblical knowledge and cross-reference capabilities to find relevant Bible verses that support and strengthen this sermon point. Include the actual verse text and brief explanation of how it connects:
 
 "${text}"
 
-Provide 1-2 powerful supporting verses with context.`;
+Provide 1-2 powerful supporting verses with:
+- Complete verse text from appropriate translations
+- Clear explanation of how each verse connects to the sermon point
+- Biblical context that enhances understanding
+- Application that strengthens the message`;
           break;
           
         case "add_illustration":
-          enhancementPrompt = `As The Scholar, provide a compelling illustration, story, or example that makes this sermon point come alive for the congregation. Make it relatable and memorable:
+          enhancementPrompt = `As The Scholar, provide a compelling illustration, story, or example that makes this sermon point come alive for the congregation. Draw from biblical stories, historical examples, or relatable modern analogies:
 
 "${text}"
 
-Give an illustration that helps people connect with this truth.`;
+Give an illustration that:
+- Helps people connect with this truth emotionally
+- Is relatable and memorable for the audience
+- Reinforces the biblical principle being taught
+- Builds faith and understanding of God's character`;
           break;
           
         case "convert_outline":
