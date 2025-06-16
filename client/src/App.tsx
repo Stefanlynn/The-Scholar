@@ -36,8 +36,12 @@ function Router() {
   const { user, loading } = useAuth();
   const [location] = useLocation();
 
-  // Show loading while checking auth status
-  if (loading) {
+  // Check if user wants to skip auth for development
+  const urlParams = new URLSearchParams(window.location.search);
+  const skipAuth = urlParams.get('skip') === 'true';
+
+  // Show loading while checking auth status (unless skipping)
+  if (loading && !skipAuth) {
     return (
       <div className="min-h-screen bg-[var(--scholar-black)] flex items-center justify-center">
         <div className="text-white text-lg">Loading...</div>
@@ -45,19 +49,19 @@ function Router() {
     );
   }
 
-  // If user is not authenticated, show auth pages
-  if (!user) {
-    return (
-      <Switch>
-        <Route path="/signup" component={Signup} />
-        <Route path="/login" component={Login} />
-        <Route component={Login} /> {/* Default to login */}
-      </Switch>
-    );
+  // If skipping auth or user is authenticated, show the main app
+  if (skipAuth || user) {
+    return <AuthenticatedApp />;
   }
 
-  // User is authenticated, show the main app
-  return <AuthenticatedApp />;
+  // If user is not authenticated, show auth pages
+  return (
+    <Switch>
+      <Route path="/signup" component={Signup} />
+      <Route path="/login" component={Login} />
+      <Route component={Login} /> {/* Default to login */}
+    </Switch>
+  );
 }
 
 function App() {
