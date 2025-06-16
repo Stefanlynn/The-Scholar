@@ -30,10 +30,12 @@ The Scholar is a comprehensive biblical study assistant application built with m
 ## Key Components
 
 ### 1. AI Chat Interface (`/`)
-- Real-time chat with AI assistant for biblical questions
-- Suggested questions for common study topics
+- Real-time chat with The Scholar AI powered by Google's Gemini
+- Protestant theological framework with pastoral sensitivity
+- Spirit-led responses combining multiple theological perspectives
+- Suggested questions for sermon prep and biblical study
 - Message history persistence
-- Contextual responses focused on biblical scholarship
+- Contextual responses rooted in biblical scholarship
 
 ### 2. Bible Reader (`/bible`)
 - Complete Bible text access
@@ -97,8 +99,8 @@ The Scholar is a comprehensive biblical study assistant application built with m
 
 ### External Services
 - **Neon Database**: Serverless PostgreSQL hosting
-- **Bible API**: Integration planned for biblical text retrieval
-- **AI Service**: Backend integration for chat responses
+- **Google AI (Gemini)**: Powers The Scholar AI with Protestant theological framework
+- **Bible API**: Integration planned for biblical text retrieval via RapidAPI
 
 ## Deployment Strategy
 
@@ -126,7 +128,13 @@ The Scholar is a comprehensive biblical study assistant application built with m
 
 ```
 Changelog:
-- June 16, 2025. Initial setup
+- June 16, 2025: Initial setup
+- June 16, 2025: Integrated The Scholar AI with Google Gemini API
+  * Added Protestant theological framework system prompt
+  * Implemented Spirit-led biblical study responses
+  * Updated mobile-responsive design for better usability
+  * Added profile icon to header replacing bookmark button
+  * Enhanced chat interface with Scholar personality
 ```
 
 ## User Preferences

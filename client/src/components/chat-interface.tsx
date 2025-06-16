@@ -10,10 +10,10 @@ import { Send, Paperclip, Mic, Book, GraduationCap, User, Save, Plus, Check } fr
 import type { ChatMessage } from "@shared/schema";
 
 const suggestedQuestions = [
-  "What are the historical farming practices in Jesus' time?",
-  "How can I apply this to modern congregation?",
-  "Show me cross-references to similar parables",
-  "Create a sermon outline for this passage"
+  "Help me understand the Parable of the Sower for sermon prep",
+  "What does 'salvation by grace through faith' mean practically?",
+  "Show me cross-references for Romans 8:28",
+  "How do I teach about spiritual warfare biblically?"
 ];
 
 export default function ChatInterface() {
@@ -99,14 +99,14 @@ export default function ChatInterface() {
               <GraduationCap className="text-black text-sm md:text-base" />
             </div>
             <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4 max-w-xs md:max-w-2xl">
-              <p className="text-gray-200 leading-relaxed text-sm md:text-base">Welcome to The Scholar! I'm your AI-powered biblical study assistant. I can help you with:</p>
+              <p className="text-gray-200 leading-relaxed text-sm md:text-base">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth. I can assist you with:</p>
               <ul className="mt-3 space-y-2 text-xs md:text-sm text-gray-300">
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Biblical interpretation and exegesis</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Historical and cultural context</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Sermon preparation and outline creation</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Cross-references and thematic studies</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Scripture interpretation and exegesis</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Sermon preparation and teaching outlines</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Historical and theological context</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Cross-references and biblical themes</li>
               </ul>
-              <p className="mt-3 text-gray-400 text-xs md:text-sm">What would you like to study today?</p>
+              <p className="mt-3 text-gray-400 text-xs md:text-sm">What passage or topic is the Lord leading you to explore today?</p>
             </div>
           </div>
         </div>

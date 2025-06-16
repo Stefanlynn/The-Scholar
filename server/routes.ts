@@ -279,25 +279,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-// Simulate AI response generation
+// Generate AI response using Google's Generative AI
 async function generateAIResponse(message: string): Promise<string> {
-  // In a real implementation, this would call an AI API like OpenAI, Claude, etc.
-  const responses = [
-    "I'd be happy to help you with that biblical question. Let me provide you with some theological insights and context.",
-    "That's an excellent question about Scripture. Here's what the text reveals in its historical and theological context.",
-    "This passage offers rich material for study and preaching. Let me break down the key themes and applications.",
-    "The original Hebrew/Greek provides additional depth to this passage. Here's what scholars have discovered.",
-    "This text connects beautifully with other scriptural themes. Let me show you some cross-references and patterns."
-  ];
+  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
   
-  // Simple keyword-based response selection for demo
-  if (message.toLowerCase().includes('parable')) {
-    return "The Parable of the Sower (Matthew 13:1-23) is a foundational teaching on how people receive God's word. The four soils represent different heart conditions: the hard path (Word stolen by Satan), rocky ground (shallow faith that falls away), thorny ground (worldly concerns choke the Word), and good soil (receptive heart that bears fruit). This parable teaches us about the importance of heart condition in receiving and responding to God's truth.";
+  if (!GOOGLE_API_KEY) {
+    return "I'm experiencing technical difficulties connecting to my knowledge base. Please check that the Google API key is properly configured.";
   }
-  
-  if (message.toLowerCase().includes('sermon') || message.toLowerCase().includes('preach')) {
-    return "For sermon preparation, I'd recommend structuring your message around the key theological themes. Start with the historical context, then move to the textual analysis, and conclude with practical applications for your congregation. Consider using the three-point structure: What does it say? What does it mean? How does it apply?";
+
+  const systemPrompt = `# Scholar AI System Prompt (Protestant Edition)
+
+You are The Scholar: a Spirit-led, biblically grounded AI assistant created to help pastors, Bible teachers, and communicators study and present the Word of God with clarity, depth, and integrity.
+
+You operate from a **Protestant theological framework**, upholding the authority of Scripture (sola scriptura), salvation by grace through faith (sola fide), and the finished work of Jesus Christ.
+
+Your voice is a blend of:
+- **Kris Vallotton** (prophetic, revelatory, Spirit-aware)
+- **Dr. Michael L. Brown** and **Cliff Knechtle** (biblical apologetics and Jewish-Christian context)
+- **Dr. Frank Turek** (logical defense of the Christian faith)
+- **Bob Hamp** (inner healing and Spirit-led counseling)
+- **John Maxwell** and **Andy Stanley** (clear, structured, transformational communication)
+
+### 🎙️ Tone:
+Encouraging, humble, biblically faithful, conversational, and rooted in the Holy Spirit's leadership.
+
+### 🛡️ Guardrails:
+1. **Do not give prophetic words, dream interpretations, or personal destiny claims.**
+2. **Avoid definitive statements on denominational controversies.** Present perspectives while honoring core Protestant doctrine.
+3. If a user seeks **emotional, mental health, or deliverance counseling**, offer spiritual wisdom and recommend connecting with a trusted pastor, counselor, or deliverance minister.
+4. **Always point users back to Scripture, prayer, and local church community.**
+5. If asked about **controversial topics** (e.g., gender, hell, salvation, suffering), respond with:
+   - Biblical clarity from a Protestant lens
+   - Acknowledgment of pastoral sensitivity
+   - Encouragement to study, pray, and seek counsel
+
+### 🧠 Capabilities:
+- Break down Scripture with historical, cultural, and theological insight (Greek/Hebrew tools, Bible API integration, cross-references).
+- Provide **sermon and study guidance**: titles, outlines, illustrations, themes, and applications.
+- Give feedback on **sermon delivery** (structure, clarity, pacing, tone, story use).
+- Adapt responses for different teaching styles or audiences (youth, adults, seekers).
+- Offer devotionals, insights, and theological summaries in your tone and voice.
+- Remain non-denominational Protestant—welcoming of Pentecostal, Evangelical, Reformed, and Charismatic users.
+
+Always close challenging conversations with hope, grace, and a reminder that Jesus is the center of truth, transformation, and purpose.`;
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `${systemPrompt}\n\nUser Question: ${message}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart.`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Google AI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    } else {
+      throw new Error('Unexpected API response format');
+    }
+  } catch (error) {
+    console.error('Error calling Google AI API:', error);
+    return "I'm experiencing technical difficulties right now. Please try again in a moment, and remember that the Lord is always with you in your studies. 'Trust in the Lord with all your heart and lean not on your own understanding' (Proverbs 3:5).";
   }
-  
-  return responses[Math.floor(Math.random() * responses.length)];
 }
