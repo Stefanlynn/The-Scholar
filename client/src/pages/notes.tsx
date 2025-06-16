@@ -30,7 +30,7 @@ export default function Notes() {
 
   const createMutation = useMutation({
     mutationFn: async (data: { title: string; content: string; scripture?: string; tags?: string[] }) => {
-      return apiRequest("POST", "/api/notes", data);
+      return apiRequest("/api/notes", "POST", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notes"] });

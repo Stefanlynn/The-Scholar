@@ -23,15 +23,17 @@ function AuthenticatedApp() {
   // const needsOnboarding = user && !user.user_metadata?.completed_onboarding;
 
   return (
-    <Switch>
-      <Route path="/welcome" component={Welcome} />
-      <Route path="/" component={Home} />
-      <Route path="/bible" component={Bible} />
-      <Route path="/library" component={Library} />
-      <Route path="/notes" component={Notes} />
-      <Route path="/sermon-prep" component={SermonPrep} />
-      <Route path="/profile" component={Profile} />
-    </Switch>
+    <UserPreferencesProvider>
+      <Switch>
+        <Route path="/welcome" component={Welcome} />
+        <Route path="/" component={Home} />
+        <Route path="/bible" component={Bible} />
+        <Route path="/library" component={Library} />
+        <Route path="/notes" component={Notes} />
+        <Route path="/sermon-prep" component={SermonPrep} />
+        <Route path="/profile" component={Profile} />
+      </Switch>
+    </UserPreferencesProvider>
   );
 }
 

@@ -51,7 +51,14 @@ export default function Profile() {
       return apiRequest("PUT", "/api/profile", data);
     },
     onSuccess: () => {
+      // Invalidate all user-related queries to refresh data across the entire app
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sermons"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bookmarks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/library"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
       toast({ title: "Profile updated successfully" });
       setIsEditing(false);
     },

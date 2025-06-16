@@ -45,12 +45,12 @@ export function UserPreferencesProvider({ children }: { children: React.ReactNod
 
   // Update preferences when user profile data changes
   useEffect(() => {
-    if (userProfile) {
+    if (userProfile && typeof userProfile === 'object') {
       setPreferences({
-        defaultBibleTranslation: userProfile.defaultBibleTranslation || 'kjv',
-        darkMode: userProfile.darkMode || false,
-        notifications: userProfile.notifications !== false,
-        ministryRole: userProfile.ministryRole,
+        defaultBibleTranslation: (userProfile as any).defaultBibleTranslation || 'kjv',
+        darkMode: (userProfile as any).darkMode || false,
+        notifications: (userProfile as any).notifications !== false,
+        ministryRole: (userProfile as any).ministryRole,
       });
     }
   }, [userProfile]);
