@@ -216,6 +216,9 @@ Changelog:
   * Built undo/revert functionality to restore previous content before enhancement
   * Enhanced error handling and user feedback for better workflow experience
   * Buttons now require highlighted text and provide specific responses per action type
+  * Added loading indicators with dynamic text for all AI enhancement buttons
+  * Fixed mobile layout for header buttons to prevent overflow and improve usability
+  * Updated "Add Verse" to return only scripture references and text without commentary
 ```
 
 ## User Preferences

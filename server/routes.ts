@@ -321,15 +321,18 @@ Rewrite this with:
           break;
           
         case "add_verse":
-          enhancementPrompt = `As The Scholar, use your biblical knowledge and cross-reference capabilities to find relevant Bible verses that support and strengthen this sermon point. Include the actual verse text and brief explanation of how it connects:
+          enhancementPrompt = `As The Scholar, find 2-3 relevant Bible verses that directly relate to this sermon point. Return ONLY the scripture references and verse text, no explanations or commentary:
 
 "${text}"
 
-Provide 1-2 powerful supporting verses with:
-- Complete verse text from appropriate translations
-- Clear explanation of how each verse connects to the sermon point
-- Biblical context that enhances understanding
-- Application that strengthens the message`;
+Format your response as:
+[Bible Reference] - [Complete verse text]
+[Bible Reference] - [Complete verse text]
+[Bible Reference] - [Complete verse text]
+
+Example format:
+John 3:16 - "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."
+Romans 8:28 - "And we know that in all things God works for the good of those who love him, who have been called according to his purpose."`;
           break;
           
         case "add_illustration":
