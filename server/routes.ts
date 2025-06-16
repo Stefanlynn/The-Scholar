@@ -845,11 +845,10 @@ Convert this into bullet format with:
     try {
       const { book, chapter } = req.params;
       const translation = req.query.translation || 'kjv';
-      const NIV_BIBLE_API_KEY = process.env.NIV_BIBLE_API_KEY;
-      const BIBLE_SEARCH_API_KEY = process.env.BIBLE_SEARCH_API_KEY;
+      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 
       // Try NIV Bible API for NIV translation
-      if (translation === 'niv' && NIV_BIBLE_API_KEY) {
+      if (translation === 'niv' && RAPIDAPI_KEY) {
         try {
           // Get all verses for the chapter using NIV Bible API
           const verses = [];
@@ -861,7 +860,7 @@ Convert this into bullet format with:
               const response = await fetch(`https://niv-bible.p.rapidapi.com/row?Book=${encodeURIComponent(book)}&Chapter=${chapter}&Verse=${verseNum}`, {
                 method: 'GET',
                 headers: {
-                  'X-RapidAPI-Key': NIV_BIBLE_API_KEY,
+                  'X-RapidAPI-Key': RAPIDAPI_KEY,
                   'X-RapidAPI-Host': 'niv-bible.p.rapidapi.com'
                 }
               });
@@ -898,12 +897,12 @@ Convert this into bullet format with:
       }
 
       // Try Bible Search API for other translations
-      if (BIBLE_SEARCH_API_KEY) {
+      if (RAPIDAPI_KEY) {
         try {
           const response = await fetch(`https://bible-search.p.rapidapi.com/books-by-name?bookName=${encodeURIComponent(book)}`, {
             method: 'GET',
             headers: {
-              'X-RapidAPI-Key': BIBLE_SEARCH_API_KEY,
+              'X-RapidAPI-Key': RAPIDAPI_KEY,
               'X-RapidAPI-Host': 'bible-search.p.rapidapi.com'
             }
           });
@@ -987,17 +986,17 @@ Convert this into bullet format with:
   app.get("/api/strongs/:strongsNumber", async (req, res) => {
     try {
       const { strongsNumber } = req.params;
-      const COMPLETE_STUDY_BIBLE_API_KEY = process.env.COMPLETE_STUDY_BIBLE_API_KEY;
+      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 
-      if (!COMPLETE_STUDY_BIBLE_API_KEY) {
-        return res.status(500).json({ message: "Complete Study Bible API key not configured" });
+      if (!RAPIDAPI_KEY) {
+        return res.status(500).json({ message: "RapidAPI key not configured" });
       }
 
       // Call Complete Study Bible API for Strong's lookup
       const response = await fetch(`https://complete-study-bible.p.rapidapi.com/search-strongs/${strongsNumber}/true/`, {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': COMPLETE_STUDY_BIBLE_API_KEY,
+          'X-RapidAPI-Key': RAPIDAPI_KEY,
           'X-RapidAPI-Host': 'complete-study-bible.p.rapidapi.com'
         }
       });
