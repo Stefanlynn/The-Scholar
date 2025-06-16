@@ -222,9 +222,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat Messages
-  app.get("/api/chat/messages", async (req, res) => {
+  app.get("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
-      const messages = await storage.getChatMessages(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const messages = await storage.getChatMessages(user.id);
       res.json(messages);
     } catch (error) {
       res.status(500).json({ message: "Failed to get chat messages" });
