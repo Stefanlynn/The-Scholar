@@ -790,233 +790,217 @@ export default function Bible() {
 
         {/* Scholar Study Tools Dialog */}
         <Dialog open={!!selectedVerse} onOpenChange={() => setSelectedVerse(null)}>
-          <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-[var(--scholar-gold)] flex items-center">
-                <GraduationCap className="h-5 w-5 mr-2" />
+          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl max-h-[95vh] overflow-y-auto">
+            <DialogHeader className="border-b border-[var(--scholar-gold)]/20 pb-4">
+              <DialogTitle className="text-[var(--scholar-gold)] flex items-center text-xl">
+                <GraduationCap className="h-6 w-6 mr-3" />
                 The Scholar Study Tools
-                {selectedVerse && ` - ${selectedBook} ${selectedChapter}:${selectedVerse.verse}`}
+                {selectedVerse && (
+                  <span className="text-gray-300 text-base ml-2 font-normal">
+                    {selectedBook} {selectedChapter}:{selectedVerse.verse}
+                  </span>
+                )}
               </DialogTitle>
             </DialogHeader>
             
             {selectedVerse && (
-              <div className="space-y-6">
+              <div className="space-y-6 pt-4">
                 {/* Selected Verse Display */}
-                <div className="p-4 bg-[var(--scholar-darker)] rounded-lg border-l-4 border-[var(--scholar-gold)]">
-                  <p className="text-gray-200 bible-text leading-relaxed text-lg">
+                <div className="relative p-6 bg-gradient-to-r from-[var(--scholar-gold)]/5 to-transparent rounded-xl border border-[var(--scholar-gold)]/20">
+                  <div className="absolute top-4 right-4 text-[var(--scholar-gold)]/30">
+                    <MessageCircle className="h-8 w-8" />
+                  </div>
+                  <blockquote className="text-gray-100 bible-text leading-relaxed text-lg italic">
                     "{selectedVerse.text}"
-                  </p>
-                  <p className="text-[var(--scholar-gold)] text-sm mt-2">
-                    {selectedBook} {selectedChapter}:{selectedVerse.verse}
-                  </p>
+                  </blockquote>
+                  <cite className="text-[var(--scholar-gold)] text-sm mt-3 block not-italic font-medium">
+                    — {selectedBook} {selectedChapter}:{selectedVerse.verse}
+                  </cite>
                 </div>
 
                 {/* Study Tools Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  
-                  {/* 1. Greek/Hebrew Breakdown */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('greek-hebrew')}
-                  >
-                    <Languages className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Greek/Hebrew</h4>
-                      <p className="text-gray-400 text-sm">Original words, Strong's numbers, meanings</p>
-                    </div>
-                  </Button>
-
-                  {/* 2. Cross-References */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('cross-references')}
-                  >
-                    <BookOpen className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Cross-References</h4>
-                      <p className="text-gray-400 text-sm">Related verses by theme and keywords</p>
-                    </div>
-                  </Button>
-
-                  {/* 3. Commentary Insights */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('commentary')}
-                  >
-                    <MessageCircle className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Scholar's Take</h4>
-                      <p className="text-gray-400 text-sm">Theological & practical insights</p>
-                    </div>
-                  </Button>
-
-                  {/* 4. Cultural Context */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('cultural-context')}
-                  >
-                    <Clock className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Cultural Context</h4>
-                      <p className="text-gray-400 text-sm">Historical background & setting</p>
-                    </div>
-                  </Button>
-
-                  {/* 5. Topical Tags */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('topical-tags')}
-                  >
-                    <Target className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Topical Tags</h4>
-                      <p className="text-gray-400 text-sm">Identify & explore major themes</p>
-                    </div>
-                  </Button>
-
-                  {/* 6. Sermon Tools */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('sermon-tools')}
-                  >
-                    <FileText className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Sermon Tools</h4>
-                      <p className="text-gray-400 text-sm">Outlines, illustrations, applications</p>
-                    </div>
-                  </Button>
-
-                  {/* 7. Personal Notes */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('notes')}
-                  >
-                    <PenTool className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Notes & Journal</h4>
-                      <p className="text-gray-400 text-sm">Add personal reflections</p>
-                    </div>
-                  </Button>
-
-                  {/* 8. Structural Patterns */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('structural-patterns')}
-                  >
-                    <Grid3X3 className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Literary Structure</h4>
-                      <p className="text-gray-400 text-sm">Patterns, devices, biblical structure</p>
-                    </div>
-                  </Button>
-
-                  {/* 9. Devotional Builder */}
-                  <Button
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-start text-left border-gray-600 hover:border-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
-                    onClick={() => handleStudyTool('devotional')}
-                  >
-                    <Heart className="h-5 w-5 text-[var(--scholar-gold)] mb-2" />
-                    <div>
-                      <h4 className="font-semibold text-white">Devotional Builder</h4>
-                      <p className="text-gray-400 text-sm">Create personal devotions</p>
-                    </div>
-                  </Button>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="border-t border-gray-600 pt-4">
-                  <h4 className="font-medium text-white mb-3">Quick Actions</h4>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleQuickAction('bookmark')}
-                      className="border-gray-600 hover:border-[var(--scholar-gold)]"
+                <div>
+                  <h3 className="text-[var(--scholar-gold)] font-semibold mb-4 flex items-center">
+                    <Target className="h-5 w-5 mr-2" />
+                    Choose Your Study Focus
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    
+                    {/* 1. Greek/Hebrew Breakdown */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-amber-500/10 to-amber-600/5 rounded-xl border border-amber-500/20 hover:border-amber-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/10"
+                      onClick={() => handleStudyTool('greek-hebrew')}
                     >
-                      <BookmarkPlus className="h-4 w-4 mr-1" />
-                      Bookmark
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleQuickAction('add-to-sermon')}
-                      className="border-gray-600 hover:border-[var(--scholar-gold)]"
+                      <Languages className="h-7 w-7 text-amber-400 mb-3 group-hover:text-amber-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Greek/Hebrew</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Original words, Strong's numbers, meanings</p>
+                    </div>
+
+                    {/* 2. Cross-References */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-xl border border-blue-500/20 hover:border-blue-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10"
+                      onClick={() => handleStudyTool('cross-references')}
                     >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add to Sermon
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleQuickAction('copy')}
-                      className="border-gray-600 hover:border-[var(--scholar-gold)]"
+                      <BookOpen className="h-7 w-7 text-blue-400 mb-3 group-hover:text-blue-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Cross-References</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Related verses by theme and keywords</p>
+                    </div>
+
+                    {/* 3. Commentary Insights */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-xl border border-purple-500/20 hover:border-purple-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
+                      onClick={() => handleStudyTool('commentary')}
                     >
-                      <Copy className="h-4 w-4 mr-1" />
-                      Copy Verse
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleQuickAction('share')}
-                      className="border-gray-600 hover:border-[var(--scholar-gold)]"
+                      <MessageCircle className="h-7 w-7 text-purple-400 mb-3 group-hover:text-purple-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Scholar's Take</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Theological & practical insights</p>
+                    </div>
+
+                    {/* 4. Cultural Context */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl border border-green-500/20 hover:border-green-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/10"
+                      onClick={() => handleStudyTool('cultural-context')}
                     >
-                      <Share className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
+                      <Clock className="h-7 w-7 text-green-400 mb-3 group-hover:text-green-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Cultural Context</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Historical background & setting</p>
+                    </div>
+
+                    {/* 5. Topical Tags */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-pink-500/10 to-pink-600/5 rounded-xl border border-pink-500/20 hover:border-pink-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-pink-500/10"
+                      onClick={() => handleStudyTool('topical-tags')}
+                    >
+                      <Target className="h-7 w-7 text-pink-400 mb-3 group-hover:text-pink-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Topical Tags</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Identify & explore major themes</p>
+                    </div>
+
+                    {/* 6. Sermon Tools */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-xl border border-indigo-500/20 hover:border-indigo-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/10"
+                      onClick={() => handleStudyTool('sermon-tools')}
+                    >
+                      <FileText className="h-7 w-7 text-indigo-400 mb-3 group-hover:text-indigo-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Sermon Tools</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Outlines, illustrations, applications</p>
+                    </div>
+
+                    {/* 7. Personal Notes */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-xl border border-orange-500/20 hover:border-orange-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
+                      onClick={() => handleStudyTool('notes')}
+                    >
+                      <PenTool className="h-7 w-7 text-orange-400 mb-3 group-hover:text-orange-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Notes & Journal</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Add personal reflections</p>
+                    </div>
+
+                    {/* 8. Structural Patterns */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-teal-500/10 to-teal-600/5 rounded-xl border border-teal-500/20 hover:border-teal-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-teal-500/10"
+                      onClick={() => handleStudyTool('structural-patterns')}
+                    >
+                      <Grid3X3 className="h-7 w-7 text-teal-400 mb-3 group-hover:text-teal-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Literary Structure</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Patterns, devices, biblical structure</p>
+                    </div>
+
+                    {/* 9. Devotional Builder */}
+                    <div
+                      className="group p-5 bg-gradient-to-br from-rose-500/10 to-rose-600/5 rounded-xl border border-rose-500/20 hover:border-rose-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-rose-500/10"
+                      onClick={() => handleStudyTool('devotional')}
+                    >
+                      <Heart className="h-7 w-7 text-rose-400 mb-3 group-hover:text-rose-300 transition-colors" />
+                      <h4 className="font-semibold text-gray-100 mb-1">Devotional Builder</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">Create personal devotions</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Add Note Section */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-white flex items-center">
-                    <StickyNote className="h-4 w-4 mr-2" />
-                    Quick Note
+                {/* Quick Actions */}
+                <div className="border-t border-[var(--scholar-gold)]/20 pt-6">
+                  <h4 className="text-[var(--scholar-gold)] font-semibold mb-4 flex items-center">
+                    <Plus className="h-5 w-5 mr-2" />
+                    Quick Actions
                   </h4>
-                  <Textarea
-                    placeholder="Write your note about this verse..."
-                    value={verseNote}
-                    onChange={(e) => setVerseNote(e.target.value)}
-                    className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    rows={3}
-                  />
-                  <Button 
-                    onClick={handleAddNote}
-                    disabled={!verseNote.trim() || noteMutation.isPending}
-                    className="w-full bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90"
-                  >
-                    {noteMutation.isPending ? 'Saving...' : 'Save Note'}
-                  </Button>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      onClick={() => handleQuickAction('bookmark')}
+                      className="flex items-center px-4 py-2 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/30 rounded-lg text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/20 transition-colors"
+                    >
+                      <BookmarkPlus className="h-4 w-4 mr-2" />
+                      Bookmark
+                    </button>
+                    <button
+                      onClick={() => handleQuickAction('add-to-sermon')}
+                      className="flex items-center px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/20 transition-colors"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add to Sermon
+                    </button>
+                    <button
+                      onClick={() => handleQuickAction('copy')}
+                      className="flex items-center px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 hover:bg-green-500/20 transition-colors"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy Verse
+                    </button>
+                    <button
+                      onClick={() => handleQuickAction('share')}
+                      className="flex items-center px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-400 hover:bg-purple-500/20 transition-colors"
+                    >
+                      <Share className="h-4 w-4 mr-2" />
+                      Share
+                    </button>
+                  </div>
                 </div>
 
-                {/* Ask The Scholar */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-white flex items-center">
-                    <GraduationCap className="h-4 w-4 mr-2" />
-                    Ask The Scholar
-                  </h4>
-                  <Textarea
-                    placeholder="What would you like to know about this verse?"
-                    value={scholarQuery}
-                    onChange={(e) => setScholarQuery(e.target.value)}
-                    className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    rows={3}
-                  />
-                  <Button 
-                    onClick={handleScholarQuestion}
-                    disabled={!scholarQuery.trim() || scholarMutation.isPending}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    {scholarMutation.isPending ? 'Asking...' : 'Ask The Scholar'}
-                  </Button>
+                {/* Note & Scholar Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-[var(--scholar-gold)]/20 pt-6">
+                  {/* Add Note Section */}
+                  <div className="space-y-4">
+                    <h4 className="text-[var(--scholar-gold)] font-semibold flex items-center">
+                      <StickyNote className="h-5 w-5 mr-2" />
+                      Quick Note
+                    </h4>
+                    <Textarea
+                      placeholder="Write your personal thoughts about this verse..."
+                      value={verseNote}
+                      onChange={(e) => setVerseNote(e.target.value)}
+                      className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/20 text-gray-100 focus:border-[var(--scholar-gold)]/40 resize-none"
+                      rows={4}
+                    />
+                    <Button 
+                      onClick={handleAddNote}
+                      disabled={!verseNote.trim() || noteMutation.isPending}
+                      className="w-full bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 font-medium"
+                    >
+                      {noteMutation.isPending ? 'Saving...' : 'Save Note'}
+                    </Button>
+                  </div>
+
+                  {/* Ask The Scholar */}
+                  <div className="space-y-4">
+                    <h4 className="text-[var(--scholar-gold)] font-semibold flex items-center">
+                      <GraduationCap className="h-5 w-5 mr-2" />
+                      Ask The Scholar
+                    </h4>
+                    <Textarea
+                      placeholder="What would you like to know about this verse?"
+                      value={scholarQuery}
+                      onChange={(e) => setScholarQuery(e.target.value)}
+                      className="bg-[var(--scholar-dark)] border-blue-500/20 text-gray-100 focus:border-blue-500/40 resize-none"
+                      rows={4}
+                    />
+                    <Button 
+                      onClick={handleScholarQuestion}
+                      disabled={!scholarQuery.trim() || scholarMutation.isPending}
+                      className="w-full bg-blue-600 hover:bg-blue-700 font-medium"
+                    >
+                      {scholarMutation.isPending ? 'Asking...' : 'Ask The Scholar'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
