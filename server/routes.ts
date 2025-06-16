@@ -292,17 +292,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         const queryLower = query.toString().toLowerCase();
-        console.log('Searching for keyword in:', queryLower); // Debug log
         
         for (const [keyword, verses] of Object.entries(keywordVerses)) {
           if (queryLower.includes(keyword)) {
-            console.log(`Found keyword: ${keyword}, fetching: ${verses[0]}`); // Debug log
             const verseRef = verses[0];
             try {
               const verseResponse = await fetch(`https://bible-api.com/${encodeURIComponent(verseRef)}`);
               if (verseResponse.ok) {
                 const verseData = await verseResponse.json();
-                console.log('Bible API response:', verseData); // Debug log
                 if (verseData.verses && verseData.verses.length > 0) {
                   searchResults.results = verseData.verses.map((verse: any) => ({
                     book: verse.book_name || 'Unknown',
@@ -310,7 +307,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     verse: verse.verse || 1,
                     text: verse.text?.trim() || ''
                   }));
-                  console.log('Mapped results:', searchResults.results); // Debug log
                 }
               }
             } catch (error) {
