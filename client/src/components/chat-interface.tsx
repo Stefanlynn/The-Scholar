@@ -90,7 +90,7 @@ export default function ChatInterface() {
   }, [message]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 pb-20 md:pb-6">
         {/* Welcome Message */}
         <div className="scholar-chat-bubble">
@@ -222,7 +222,7 @@ export default function ChatInterface() {
       </div>
       
       {/* Chat Input */}
-      <div className="border-t border-gray-800 p-3 md:p-4">
+      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-3 md:p-4 flex-shrink-0">
         <form onSubmit={handleSubmit} className="flex items-end space-x-2 md:space-x-4">
           <div className="flex-1">
             <div className="relative">
@@ -232,7 +232,7 @@ export default function ChatInterface() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border-gray-700 text-white px-3 md:px-4 py-2 md:py-3 pr-10 md:pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[2.5rem] md:min-h-[3rem] max-h-32 text-sm md:text-base"
+                className="w-full bg-[var(--scholar-darker)] border border-gray-700 text-white px-3 md:px-4 py-2 md:py-3 pr-10 md:pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[2.5rem] md:min-h-[3rem] max-h-32 text-sm md:text-base"
                 rows={1}
               />
               <Button
