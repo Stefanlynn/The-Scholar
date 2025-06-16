@@ -311,23 +311,18 @@ export default function Bible() {
                   {selectedBook} {selectedChapter}
                 </h3>
                 <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePreviousChapter}
-                    disabled={selectedChapter <= 1}
-                    className="border-gray-600 text-white hover:bg-gray-700 p-2"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <ChevronLeft 
+                    className={`h-6 w-6 cursor-pointer ${
+                      selectedChapter <= 1 
+                        ? 'text-gray-600 cursor-not-allowed' 
+                        : 'text-[var(--scholar-gold)] hover:text-yellow-300'
+                    }`}
+                    onClick={selectedChapter > 1 ? handlePreviousChapter : undefined}
+                  />
+                  <ChevronRight 
+                    className="h-6 w-6 text-[var(--scholar-gold)] hover:text-yellow-300 cursor-pointer"
                     onClick={handleNextChapter}
-                    className="border-gray-600 text-white hover:bg-gray-700 p-2"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  />
                 </div>
               </div>
               
@@ -422,23 +417,18 @@ export default function Bible() {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handlePreviousChapter}
-                      disabled={selectedChapter <= 1}
-                      className="border-gray-600 text-white hover:bg-gray-700 p-2"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <ChevronLeft 
+                      className={`h-6 w-6 cursor-pointer ${
+                        selectedChapter <= 1 
+                          ? 'text-gray-600 cursor-not-allowed' 
+                          : 'text-[var(--scholar-gold)] hover:text-yellow-300'
+                      }`}
+                      onClick={selectedChapter > 1 ? handlePreviousChapter : undefined}
+                    />
+                    <ChevronRight 
+                      className="h-6 w-6 text-[var(--scholar-gold)] hover:text-yellow-300 cursor-pointer"
                       onClick={handleNextChapter}
-                      className="border-gray-600 text-white hover:bg-gray-700 p-2"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    />
                   </div>
                 </div>
               </CardHeader>
