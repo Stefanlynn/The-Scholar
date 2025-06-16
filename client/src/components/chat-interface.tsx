@@ -17,26 +17,50 @@ import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const { data: messages, isLoading } = useQuery<ChatMessage[]>({
+  const { data: serverMessages, isLoading } = useQuery<ChatMessage[]>({
     queryKey: ["/api/chat/messages"],
     enabled: !!user,
   });
 
+  // Combine server messages with local messages
+  const messages = [...(serverMessages || []), ...localMessages];
+
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
-      return apiRequest("POST", "/api/chat/messages", { message: messageText });
+      // Add user message immediately to local state
+      const userMessage: ChatMessage = {
+        id: Date.now(), // temporary ID
+        message: messageText,
+        userId: user?.id || "demo-user",
+        response: null,
+        timestamp: new Date().toISOString() as any
+      };
+      setLocalMessages(prev => [...prev, userMessage]);
+      setIsThinking(true);
+      
+      // Send to API
+      const response = await apiRequest("POST", "/api/chat/messages", { message: messageText });
+      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Remove the temporary user message and thinking state
+      setLocalMessages([]);
+      setIsThinking(false);
+      // Refresh server messages to get the complete conversation
       queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
       setMessage("");
       adjustTextareaHeight();
     },
     onError: () => {
+      setLocalMessages([]);
+      setIsThinking(false);
       toast({ title: "Failed to send message", variant: "destructive" });
     },
   });
@@ -47,6 +71,15 @@ export default function ChatInterface() {
       textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
     }
   };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll when messages change or thinking state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isThinking]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,8 +172,8 @@ export default function ChatInterface() {
               {msg.response && (
                 <div className="scholar-chat-bubble">
                   <div className="flex items-start space-x-3 md:space-x-4">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-[var(--scholar-gold)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <GraduationCap className="text-black text-sm md:text-base" />
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
                     </div>
                     <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4 max-w-xs md:max-w-2xl">
                       <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm md:text-base">{msg.response}</p>
@@ -193,7 +226,26 @@ export default function ChatInterface() {
           ))
         )}
 
-
+        {/* Thinking indicator when The Scholar is responding */}
+        {isThinking && (
+          <div className="scholar-chat-bubble">
+            <div className="flex items-start space-x-3 md:space-x-4">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
+              </div>
+              <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                  <span className="text-gray-400 text-sm">The Scholar is thinking...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div ref={messagesEndRef} />
       </div>
