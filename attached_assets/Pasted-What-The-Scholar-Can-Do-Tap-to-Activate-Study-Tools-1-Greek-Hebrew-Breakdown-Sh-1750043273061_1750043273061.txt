@@ -1,0 +1,74 @@
+What The Scholar Can Do (Tap-to-Activate Study Tools)
+
+⸻
+
+📌 1. Greek / Hebrew Breakdown
+    •    Show original word(s), Strong’s number, and root meaning
+    •    Include pronunciation and other places it’s used in Scripture
+    •    “Where else does this word appear?”
+
+⸻
+
+📚 2. Cross-References
+    •    Related verses by:
+    •    Theme
+    •    Key word
+    •    Fulfillment (Old → New Testament)
+    •    Option to view them inline, in a popup, or add to notes
+
+Example (Genesis 1:1):
+
+    •    John 1:1 – “In the beginning was the Word…”
+    •    Colossians 1:16 – “All things were created through Him…”
+    •    Hebrews 11:3 – “The universe was formed at God’s command…”
+
+⸻
+
+📖 3. Commentary Insights (Summarized)
+    •    Short insight from trusted Protestant sources (not full commentary dumps)
+    •    “Scholar’s Take”: combine theological and practical reflection
+
+⸻
+
+🕰 4. Cultural & Historical Context
+    •    Time period
+    •    Author background
+    •    Audience and purpose
+    •    Ancient worldview differences vs. biblical worldview
+
+⸻
+
+🎯 5. Topical Tags
+    •    Automatically detect major themes: Creation, Authority, Order, Light/Darkness
+    •    Let users click to explore more verses or topics with that tag
+
+⸻
+
+🗂 6. Sermon Integration Tools
+    •    “Add this verse to current sermon”
+    •    “Generate outline using this passage”
+    •    “Give me 3 illustrations connected to this theme”
+    •    “What’s a modern headline that reflects this truth?”
+
+⸻
+
+✍️ 7. Personal Notes + Journal
+    •    Attach notes to the verse
+    •    Toggle between public (for printing/sharing) or private
+    •    Option to generate a reflection or prayer based on verse
+
+⸻
+
+🧱 8. Structural Patterns
+    •    Identify literary devices: chiasms, repetition, poetic symmetry
+    •    Show where a passage fits in the broader biblical structure (e.g., Torah, Prophets, Epistles)
+
+⸻
+
+📓 9. Devotional Builder
+    •    Let users turn the verse + insights into a 1-page devotional
+    •    Auto-generate structure:
+    •    Verse
+    •    Reflection
+    •    Application
+    •    Prayer

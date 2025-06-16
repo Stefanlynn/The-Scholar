@@ -155,6 +155,12 @@ Changelog:
   * Added verse-level interactive icons (highlight, notes, Scholar AI)
   * Updated navigation buttons to icon-only design
   * Created touch-friendly verse cards with visual feedback
+- June 16, 2025: Updated Scholar AI to Kris Vallotton teaching style
+  * Reformed Scholar's teaching DNA to be prophetic, empowering, and identity-focused
+  * Updated system prompt to speak identity and call out greatness in believers
+  * Enhanced study tools to connect every truth to royal identity as children of the King
+  * Scholar now bridges truth with tremendous grace while building faith
+  * Maintains Protestant theological framework with prophetic yet pastoral tone
 ```
 
 ## User Preferences
