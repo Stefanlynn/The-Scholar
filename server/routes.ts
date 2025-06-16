@@ -73,6 +73,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Temporary user ID for demo (in real app would come from authentication)
   const DEMO_USER_ID = 1;
 
+  // Users
+  app.get("/api/users/current", async (req, res) => {
+    try {
+      const user = await storage.getUser(DEMO_USER_ID);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({ id: user.id, username: user.username, hasCompletedOnboarding: user.hasCompletedOnboarding });
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
+    }
+  });
+
+  app.post("/api/users/complete-onboarding", async (req, res) => {
+    try {
+      const updatedUser = await storage.updateUser(DEMO_USER_ID, { hasCompletedOnboarding: true });
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+      res.status(500).json({ error: "Failed to complete onboarding" });
+    }
+  });
+
   // Chat Messages
   app.get("/api/chat/messages", async (req, res) => {
     try {

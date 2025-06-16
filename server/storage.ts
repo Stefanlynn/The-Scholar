@@ -24,6 +24,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
   
   // Chat Messages
   getChatMessages(userId: number): Promise<ChatMessage[]>;
@@ -96,7 +97,7 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { ...insertUser, id, hasCompletedOnboarding: false };
     this.users.set(id, user);
     return user;
   }
@@ -144,6 +145,15 @@ export class MemStorage implements IStorage {
     const updatedNote = { ...note, ...updateData };
     this.notes.set(id, updatedNote);
     return updatedNote;
+  }
+
+  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, ...updateData };
+    this.users.set(id, updatedUser);
+    return updatedUser;
   }
 
   async deleteNote(id: number): Promise<boolean> {

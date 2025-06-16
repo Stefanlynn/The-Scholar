@@ -6,6 +6,7 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  hasCompletedOnboarding: boolean("has_completed_onboarding").default(false).notNull(),
 });
 
 export const chatMessages = pgTable("chat_messages", {
