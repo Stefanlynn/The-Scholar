@@ -148,6 +148,13 @@ Changelog:
   * Added original Greek/Hebrew words, transliterations, definitions, and KJV translations
   * Combined with IQ Bible API for comprehensive biblical word analysis
   * Added development authentication bypass for easier testing
+- June 16, 2025: Enhanced Bible reader with NIV Bible API and Bible Search API
+  * Integrated NIV Bible API for authentic NIV translation text
+  * Added Bible Search API for additional translation support
+  * Redesigned mobile Bible page with improved layout and spacing
+  * Added verse-level interactive icons (highlight, notes, Scholar AI)
+  * Updated navigation buttons to icon-only design
+  * Created touch-friendly verse cards with visual feedback
 ```
 
 ## User Preferences

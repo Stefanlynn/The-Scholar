@@ -625,9 +625,62 @@ export default function Bible() {
                           {verse.verse}
                         </span>
                         <div className="flex-1">
-                          <p className="text-gray-200 leading-relaxed text-base">
-                            {verse.text}
-                          </p>
+                          <div className="flex items-start justify-between">
+                            <p className="text-gray-200 leading-relaxed text-base flex-1 pr-3">
+                              {verse.text}
+                            </p>
+                            
+                            {/* Verse Action Icons */}
+                            <div className="flex items-start space-x-2 flex-shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                                }}
+                                className={`p-1.5 rounded-lg ${
+                                  isHighlighted 
+                                    ? 'bg-yellow-500/20 text-yellow-400' 
+                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
+                                }`}
+                                title="Highlight verse"
+                              >
+                                <Highlighter className="h-3.5 w-3.5" />
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleVerseClick(verse);
+                                }}
+                                className={`p-1.5 rounded-lg ${
+                                  hasNote 
+                                    ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
+                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
+                                }`}
+                                title="Add note"
+                              >
+                                <StickyNote className="h-3.5 w-3.5" />
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleVerseClick(verse);
+                                }}
+                                className="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30"
+                                title="Ask The Scholar"
+                              >
+                                <Bot className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                          
                           {hasNote && (
                             <div className="mt-3 p-3 bg-[var(--scholar-darker)] rounded-lg">
                               <div className="flex items-start space-x-2">
@@ -637,68 +690,14 @@ export default function Bible() {
                             </div>
                           )}
                           
-                          {/* Mobile Action Buttons */}
-                          <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-700">
-                            <div className="flex items-center space-x-3">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
-                                }}
-                                className={`p-2 rounded-lg ${
-                                  isHighlighted 
-                                    ? 'bg-yellow-500/20 text-yellow-400' 
-                                    : 'bg-gray-700/50 text-gray-400'
-                                }`}
-                              >
-                                <Highlighter className="h-4 w-4" />
-                              </Button>
-                              
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleBookmark(verseKey);
-                                }}
-                                className={`p-2 rounded-lg ${
-                                  isBookmarked 
-                                    ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
-                                    : 'bg-gray-700/50 text-gray-400'
-                                }`}
-                              >
-                                <BookmarkPlus className="h-4 w-4" />
-                              </Button>
+                          {isBookmarked && (
+                            <div className="mt-2">
+                              <Badge variant="outline" className="text-[var(--scholar-gold)] border-[var(--scholar-gold)]/30 bg-[var(--scholar-gold)]/10">
+                                <BookmarkPlus className="h-3 w-3 mr-1" />
+                                Bookmarked
+                              </Badge>
                             </div>
-                            
-                            <div className="flex items-center space-x-3">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleVerseClick(verse);
-                                }}
-                                className="p-2 bg-gray-700/50 text-gray-400 rounded-lg"
-                              >
-                                <MessageCircle className="h-4 w-4" />
-                              </Button>
-                              
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleVerseClick(verse);
-                                }}
-                                className="p-2 bg-blue-600/20 text-blue-400 rounded-lg"
-                              >
-                                <Bot className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>
