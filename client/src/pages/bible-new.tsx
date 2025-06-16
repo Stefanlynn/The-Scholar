@@ -469,7 +469,7 @@ export default function Bible() {
                   </h2>
                   
                   <div className="prose prose-invert max-w-none">
-                    <div className="text-gray-200 leading-relaxed text-lg space-y-1">
+                    <div className="text-gray-200 leading-relaxed text-lg">
                       {chapterData.verses.map((verse: any, index: number) => {
                         const verseKey = `${selectedBook}:${selectedChapter}:${verse.verse}`;
                         const isHighlighted = highlights[verseKey];
@@ -477,10 +477,9 @@ export default function Bible() {
                         const isBookmarked = bookmarks.has(verseKey);
                         
                         return (
-                          <div key={verse.verse} className="inline-block">
-                            {/* Verse number and text inline */}
+                          <span key={verse.verse}>
                             <span 
-                              className={`group relative inline hover:bg-gray-800/50 rounded px-1 py-0.5 transition-all duration-200 cursor-pointer ${
+                              className={`group relative hover:bg-gray-800/50 rounded px-1 py-0.5 transition-all duration-200 cursor-pointer ${
                                 isHighlighted ? getHighlightClass(verseKey) : ''
                               }`}
                               onClick={() => handleVerseClick(verse)}
@@ -492,7 +491,6 @@ export default function Bible() {
                                 {verse.text}
                               </span>
                               
-                              {/* Inline action buttons - appear on hover */}
                               <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-0 z-10 flex items-center space-x-1 bg-[var(--scholar-darker)] border border-gray-600 rounded-lg p-1 shadow-lg transition-opacity duration-200">
                                 <Tooltip>
                                   <TooltipTrigger asChild>
@@ -603,7 +601,6 @@ export default function Bible() {
                               </div>
                             </span>
                             
-                            {/* Visual indicators for notes and bookmarks */}
                             {(hasNote || isBookmarked) && (
                               <span className="inline-flex items-center ml-1 space-x-1">
                                 {hasNote && (
@@ -616,7 +613,7 @@ export default function Bible() {
                             )}
                             
                             {index < chapterData.verses.length - 1 && ' '}
-                          </div>
+                          </span>
                         );
                       })}
                     </div>
