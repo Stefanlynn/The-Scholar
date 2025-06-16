@@ -123,10 +123,40 @@ export default function ChatInterface() {
         {isLoading ? (
           <div className="text-center text-gray-400">Loading conversation...</div>
         ) : conversation.length === 0 ? (
-          <div className="text-center text-gray-400 py-12">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-xl font-medium text-white mb-2">Start a conversation with The Scholar</h3>
-              <p>Ask questions about Scripture, seek biblical insights, or explore theological topics.</p>
+          <div className="space-y-6">
+            {/* The Scholar's Welcome Message */}
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-3 max-w-xs md:max-w-2xl">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-4 md:p-6">
+                  <div className="text-gray-200 leading-relaxed text-sm md:text-base">
+                    <p className="mb-4">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth. I can assist you with:</p>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                        <span>Scripture interpretation and exegesis</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                        <span>Sermon preparation and teaching outlines</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                        <span>Historical and theological context</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full"></div>
+                        <span>Cross-references and biblical themes</span>
+                      </div>
+                    </div>
+                    
+                    <p>What passage or topic is the Lord leading you to explore today?</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : (

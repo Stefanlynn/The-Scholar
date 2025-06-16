@@ -244,6 +244,13 @@ Changelog:
   * Fixed TypeScript errors in query client authentication header handling
   * Verified complete chat functionality with proper message sending and AI responses
   * Chat now properly saves messages to user's personal conversation history
+- June 16, 2025: Rebuilt chat interface with ChatGPT-style conversation flow
+  * Completely redesigned chat to work like ChatGPT/Messenger with persistent conversations
+  * Messages appear immediately when sent and remain visible throughout the conversation
+  * Added real-time thinking indicator with animated dots when The Scholar is responding
+  * Implemented proper conversation state management to prevent message disappearing
+  * Added The Scholar's welcome message with capabilities overview for new conversations
+  * Chat now provides seamless back-and-forth conversation experience with full message history
 ```
 
 ## User Preferences
