@@ -2,13 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
-import { makeAuthenticatedRequest } from "@/lib/authUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Paperclip, Mic, Book, GraduationCap, User, Save, Plus, Check } from "lucide-react";
+import { Send, User, Save, Plus, Check } from "lucide-react";
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 
@@ -17,7 +15,7 @@ import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
-  const [optimisticMessage, setOptimisticMessage] = useState<ChatMessage | null>(null);
+  const [pendingMessage, setPendingMessage] = useState<string>("");
   const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,23 +27,9 @@ export default function ChatInterface() {
     enabled: !!user,
   });
 
-  // Show server messages plus any optimistic message
-  const messages = [
-    ...(serverMessages || []),
-    ...(optimisticMessage ? [optimisticMessage] : [])
-  ];
-
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
-      // Show user message immediately
-      const userMessage: ChatMessage = {
-        id: Date.now(), // temporary ID
-        message: messageText,
-        userId: user?.id || "demo-user",
-        response: null,
-        timestamp: new Date().toISOString() as any
-      };
-      setOptimisticMessage(userMessage);
+      setPendingMessage(messageText);
       setIsThinking(true);
       
       // Send to API
@@ -53,15 +37,14 @@ export default function ChatInterface() {
       return response.json();
     },
     onSuccess: (data) => {
-      // Clear optimistic state and refresh to get complete conversation
-      setOptimisticMessage(null);
+      setPendingMessage("");
       setIsThinking(false);
       setMessage("");
       adjustTextareaHeight();
       queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
     },
     onError: () => {
-      setOptimisticMessage(null);
+      setPendingMessage("");
       setIsThinking(false);
       toast({ title: "Failed to send message", variant: "destructive" });
     },
@@ -81,7 +64,7 @@ export default function ChatInterface() {
   // Auto-scroll when messages change or thinking state changes
   useEffect(() => {
     scrollToBottom();
-  }, [serverMessages, optimisticMessage, isThinking]);
+  }, [serverMessages, pendingMessage, isThinking]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,7 +139,7 @@ export default function ChatInterface() {
             ))}
           </div>
         ) : (
-          messages?.map((msg) => (
+          serverMessages?.map((msg) => (
             <div key={msg.id} className="space-y-4">
               {/* User Message */}
               <div className="scholar-chat-bubble">
