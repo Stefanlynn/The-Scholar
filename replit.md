@@ -251,6 +251,14 @@ Changelog:
   * Implemented proper conversation state management to prevent message disappearing
   * Added The Scholar's welcome message with capabilities overview for new conversations
   * Chat now provides seamless back-and-forth conversation experience with full message history
+- June 16, 2025: Added Study Mode and Devotional Mode with persistent welcome message
+  * Created toggle buttons for Study Mode (academic analysis) and Devotional Mode (heart-level encouragement)
+  * Study Mode provides Greek/Hebrew analysis, cross-references, theological depth, and sermon tools
+  * Devotional Mode offers warm encouragement, personal application, and spiritual reflection
+  * The Scholar adapts response style completely based on selected mode
+  * Welcome message now appears whenever conversation is empty and returns after clearing chat
+  * Added "New Conversation" button to clear current chat and restore welcome message
+  * Mode selection persists throughout the conversation for consistent Scholar personality
 ```
 
 ## User Preferences

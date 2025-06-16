@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Send, User, Save, Plus, Check } from "lucide-react";
+import { Send, User, Save, Plus, Check, RotateCcw } from "lucide-react";
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 
@@ -32,21 +32,15 @@ export default function ChatInterface() {
   useEffect(() => {
     if (serverMessages) {
       setConversation(serverMessages);
-      // Hide welcome message if there are existing messages
-      if (serverMessages.length > 0) {
-        setShowWelcomeMessage(false);
-      }
+      // Show welcome message when there are no messages, hide when there are messages
+      setShowWelcomeMessage(serverMessages.length === 0);
     }
   }, [serverMessages]);
 
-  // Hide welcome message after 5 minutes
+  // Also update welcome message visibility when conversation changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcomeMessage(false);
-    }, 5 * 60 * 1000); // 5 minutes
-
-    return () => clearTimeout(timer);
-  }, []);
+    setShowWelcomeMessage(conversation.length === 0);
+  }, [conversation.length]);
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
@@ -134,8 +128,33 @@ export default function ChatInterface() {
     }, 2000);
   };
 
+  const clearConversation = () => {
+    setConversation([]);
+    setShowWelcomeMessage(true);
+    // Optionally invalidate the chat messages query to refresh from server
+    queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
+  };
+
   return (
     <div className="flex flex-col h-full">
+      {/* Header with New Conversation Button */}
+      {conversation.length > 0 && (
+        <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-4 py-3">
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm font-medium text-gray-300">Conversation with The Scholar</h2>
+            <Button
+              onClick={clearConversation}
+              variant="outline"
+              size="sm"
+              className="text-xs"
+            >
+              <RotateCcw className="w-3 h-3 mr-1" />
+              New Conversation
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {isLoading ? (
