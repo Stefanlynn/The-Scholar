@@ -346,29 +346,110 @@ Format as a clear, structured outline for preaching.`;
           let stylePrompt = "";
           switch (style) {
             case "prophetic":
-              stylePrompt = "Rewrite in a prophetic style like Kris Vallotton - empowering, identity-focused, calling out greatness and royal identity in believers";
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using PROPHETIC STYLE (Inspired by Kris Vallotton):
+
+- Language: Bold, Spirit-led, revelatory, identity-focused
+- Emphasizes: Destiny, breakthrough, and what God is saying now
+- Structure: Narrative, fluid, and emotionally charged
+- Often includes declarations or "I sense the Lord saying..."
+- Goal: Awaken hearts, shift atmosphere, and activate calling
+
+Expand into a full-length sermon including:
+- Title
+- Introduction (engaging hook or story)
+- Main Scripture(s) and theme
+- Main Points with explanation
+- Supporting verses
+- Application for the audience
+- Conclusion or altar call
+- Optional: Illustration, prayer, or call to reflection`;
               break;
             case "teaching":
-              stylePrompt = "Rewrite in a teaching style like John Piper - deep theological exposition with careful exegesis and application";
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using TEACHING STYLE (Inspired by John Piper):
+
+- Language: Exegetical, theological, and Scripture-saturated
+- Structure: Logical, rooted in the biblical text, with Greek/Hebrew if needed
+- Uses subpoints, transitions, and builds line by line
+- Often has one controlling idea expanded with doctrinal clarity
+- Goal: Build theological depth, glorify God's Word, and feed the spiritually mature
+
+Expand into a full-length sermon including:
+- Title
+- Introduction (engaging hook or story)
+- Main Scripture(s) and theme
+- Main Points with explanation
+- Supporting verses
+- Application for the audience
+- Conclusion or altar call
+- Optional: Illustration, prayer, or call to reflection`;
               break;
             case "evangelistic":
-              stylePrompt = "Rewrite in an evangelistic style - focused on salvation, outreach, and drawing people to Christ";
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using EVANGELISTIC STYLE (Inspired by global crusade preaching):
+
+- Language: Passionate, invitational, simple and urgent
+- Structure: Highlights sin, redemption, and grace
+- Includes stories of transformation, personal appeal, and gospel clarity
+- Always ends with a clear call to salvation or repentance
+- Goal: Lead people to make a decision for Christ
+
+Expand into a full-length sermon including:
+- Title
+- Introduction (engaging hook or story)
+- Main Scripture(s) and theme
+- Main Points with explanation
+- Supporting verses
+- Application for the audience
+- Conclusion or altar call
+- Optional: Illustration, prayer, or call to reflection`;
               break;
             case "youth":
-              stylePrompt = "Rewrite in a youth/modern style - contemporary language, relatable examples, engaging for younger audiences";
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using YOUTH/MODERN STYLE (Designed for Gen Z & young adult communication):
+
+- Language: Casual, visual, honest, relevant, and story-driven
+- Shorter sentences, social-media friendly metaphors, humor if appropriate
+- Themes: Identity, purpose, mental health, culture, and real life
+- Scripture is applied in real-world terms
+- Goal: Engage young hearts and minds with the Gospel in a way they can feel and live
+
+Expand into a full-length sermon including:
+- Title
+- Introduction (engaging hook or story)
+- Main Scripture(s) and theme
+- Main Points with explanation
+- Supporting verses
+- Application for the audience
+- Conclusion or altar call
+- Optional: Illustration, prayer, or call to reflection`;
               break;
             case "devotional":
-              stylePrompt = "Rewrite in a devotional style - personal, intimate, reflective, and spiritually nurturing";
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using DEVOTIONAL STYLE (Intimate, reflective, heart-to-heart tone):
+
+- Language: Personal, warm, emotionally present
+- Structure: Centers around 1 key verse, a story, and 1 takeaway
+- Encourages quiet reflection, faith-building, and closeness with God
+- Ends with a prayer or question to meditate on
+- Goal: Nurture daily spiritual growth and personal connection with God
+
+Expand into a full-length sermon including:
+- Title
+- Introduction (engaging hook or story)
+- Main Scripture(s) and theme
+- Main Points with explanation
+- Supporting verses
+- Application for the audience
+- Conclusion or altar call
+- Optional: Illustration, prayer, or call to reflection`;
               break;
             default:
               stylePrompt = "Rewrite in a prophetic, empowering style";
           }
           
-          enhancementPrompt = `As The Scholar, ${stylePrompt}:
+          enhancementPrompt = `As The Scholar, ${stylePrompt}
 
+Here are the sermon notes to rewrite:
 "${text}"
 
-Maintain the core message while adapting the voice and approach.`;
+Pull Scripture text from Bible knowledge if specific verses are mentioned. Do not shorten the message - expand it into a full-length sermon using the selected style above.`;
           break;
           
         default:
