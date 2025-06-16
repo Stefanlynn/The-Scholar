@@ -616,113 +616,136 @@ export default function Bible() {
                       ))}
                     </div>
                   ) : (chapterData as any)?.verses ? (
-                    <div className="space-y-4">
-                      {(chapterData as any).verses.map((verse: any) => {
-                        const verseKey = getVerseKey(verse);
-                        const isHighlighted = highlights[verseKey];
-                        const isBookmarked = bookmarks.has(verseKey);
-                        const hasNote = verseNotes[verseKey];
-                        
-                        return (
-                          <div 
-                            key={verse.verse} 
-                            className={`group flex items-start space-x-4 p-3 rounded-lg transition-all hover:bg-[var(--scholar-darker)] cursor-pointer ${
-                              isHighlighted ? getHighlightClass(verseKey) : ''
-                            }`}
-                            onClick={() => handleVerseClick(verse)}
-                          >
-                            <span className="text-[var(--scholar-gold)] font-bold min-w-[2rem] mt-1">
-                              {verse.verse}
-                            </span>
-                            <div className="flex-1">
-                              <span className="text-gray-200 bible-text leading-relaxed">
-                                {verse.text}
-                              </span>
-                              {hasNote && (
-                                <div className="mt-2 p-2 bg-[var(--scholar-darker)] rounded text-sm text-gray-300">
-                                  <StickyNote className="h-3 w-3 inline mr-1" />
-                                  {hasNote}
+                    <div className="prose prose-invert max-w-none">
+                      <div className="text-gray-200 leading-relaxed text-lg">
+                        {(chapterData as any).verses.map((verse: any, index: number) => {
+                          const verseKey = getVerseKey(verse);
+                          const isHighlighted = highlights[verseKey];
+                          const isBookmarked = bookmarks.has(verseKey);
+                          const hasNote = verseNotes[verseKey];
+                          
+                          return (
+                            <span key={verse.verse}>
+                              <span 
+                                className={`group relative hover:bg-gray-800/50 rounded px-1 py-0.5 transition-all duration-200 cursor-pointer ${
+                                  isHighlighted ? getHighlightClass(verseKey) : ''
+                                }`}
+                                onClick={() => handleVerseClick(verse)}
+                              >
+                                <sup className="text-[var(--scholar-gold)] font-bold text-sm mr-1 select-none">
+                                  {verse.verse}
+                                </sup>
+                                <span className="select-text">
+                                  {verse.text}
+                                </span>
+                                
+                                <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-0 z-10 flex items-center space-x-1 bg-[var(--scholar-darker)] border border-gray-600 rounded-lg p-1 shadow-lg transition-opacity duration-200">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                                        }}
+                                        className={`p-1 h-6 w-6 ${
+                                          isHighlighted 
+                                            ? 'bg-yellow-500/20 text-yellow-400' 
+                                            : 'text-gray-400 hover:text-yellow-300'
+                                        }`}
+                                      >
+                                        <Highlighter className="h-3 w-3" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>{isHighlighted ? 'Remove highlight' : 'Highlight verse'}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleVerseClick(verse);
+                                        }}
+                                        className={`p-1 h-6 w-6 ${
+                                          hasNote 
+                                            ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
+                                            : 'text-gray-400 hover:text-[var(--scholar-gold)]'
+                                        }`}
+                                      >
+                                        <MessageCircle className="h-3 w-3" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Add note</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleVerseClick(verse);
+                                        }}
+                                        className="p-1 h-6 w-6 text-gray-400 hover:text-blue-400"
+                                      >
+                                        <GraduationCap className="h-3 w-3" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Ask The Scholar</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleBookmark(verseKey);
+                                        }}
+                                        className={`p-1 h-6 w-6 ${
+                                          isBookmarked 
+                                            ? 'bg-red-500/20 text-red-400' 
+                                            : 'text-gray-400 hover:text-red-400'
+                                        }`}
+                                      >
+                                        <BookmarkPlus className="h-3 w-3" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>{isBookmarked ? 'Remove bookmark' : 'Bookmark verse'}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 </div>
+                              </span>
+                              
+                              {(hasNote || isBookmarked) && (
+                                <span className="inline-flex items-center ml-1 space-x-1">
+                                  {hasNote && (
+                                    <span className="inline-block w-1.5 h-1.5 bg-[var(--scholar-gold)] rounded-full opacity-60" title="Has note" />
+                                  )}
+                                  {isBookmarked && (
+                                    <span className="inline-block w-1.5 h-1.5 bg-red-400 rounded-full opacity-60" title="Bookmarked" />
+                                  )}
+                                </span>
                               )}
-                            </div>
-                            
-                            {/* Verse Tools */}
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-1">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
-                                    }}
-                                    className={`h-8 w-8 p-0 hover:bg-gray-600 ${isHighlighted ? 'text-yellow-500' : 'text-gray-400'}`}
-                                  >
-                                    <Highlighter className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  {isHighlighted ? 'Remove highlight' : 'Highlight verse'}
-                                </TooltipContent>
-                              </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleBookmark(verseKey);
-                                    }}
-                                    className={`h-8 w-8 p-0 hover:bg-gray-600 ${isBookmarked ? 'text-[var(--scholar-gold)]' : 'text-gray-400'}`}
-                                  >
-                                    <BookmarkPlus className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  {isBookmarked ? 'Remove bookmark' : 'Bookmark verse'}
-                                </TooltipContent>
-                              </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleVerseClick(verse);
-                                    }}
-                                    className="h-8 w-8 p-0 hover:bg-gray-600 text-gray-400"
-                                  >
-                                    <MessageCircle className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Add note</TooltipContent>
-                              </Tooltip>
-
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleVerseClick(verse);
-                                    }}
-                                    className="h-8 w-8 p-0 hover:bg-gray-600 text-gray-400"
-                                  >
-                                    <GraduationCap className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Ask The Scholar</TooltipContent>
-                              </Tooltip>
-                            </div>
-                          </div>
-                        );
-                      })}
+                              
+                              {index < (chapterData as any).verses.length - 1 && ' '}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
                     <p className="text-gray-400 bible-text">
@@ -734,123 +757,147 @@ export default function Bible() {
             </Card>
 
             {/* Mobile Verse Display */}
-            <div className="md:hidden space-y-3">
+            <div className="md:hidden bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-4">
               {isLoading ? (
                 <div className="space-y-3">
                   {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-4">
-                      <Skeleton className="h-4 w-full bg-gray-700" />
-                    </div>
+                    <Skeleton key={i} className="h-4 w-full bg-gray-700" />
                   ))}
                 </div>
               ) : (chapterData as any)?.verses ? (
-                (chapterData as any).verses.map((verse: any) => {
-                  const verseKey = getVerseKey(verse);
-                  const isHighlighted = highlights[verseKey];
-                  const isBookmarked = bookmarks.has(verseKey);
-                  const hasNote = verseNotes[verseKey];
-                  
-                  return (
-                    <div 
-                      key={verse.verse}
-                      className={`bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-4 transition-all active:scale-[0.98] ${
-                        isHighlighted ? getHighlightClass(verseKey) : ''
-                      }`}
-                      onClick={() => handleVerseClick(verse)}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <span className="text-[var(--scholar-gold)] font-bold text-lg min-w-[2rem] mt-1">
-                          {verse.verse}
-                        </span>
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
-                            <p 
-                              className={`text-gray-200 leading-relaxed text-base flex-1 pr-3 rounded px-2 py-1 ${
-                                isHighlighted ? getHighlightClass(verseKey) : ''
-                              }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
-                              }}
-                            >
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-gray-200 leading-relaxed text-base">
+                    {(chapterData as any).verses.map((verse: any, index: number) => {
+                      const verseKey = getVerseKey(verse);
+                      const isHighlighted = highlights[verseKey];
+                      const isBookmarked = bookmarks.has(verseKey);
+                      const hasNote = verseNotes[verseKey];
+                      
+                      return (
+                        <span key={verse.verse}>
+                          <span 
+                            className={`group relative hover:bg-gray-800/50 rounded px-1 py-0.5 transition-all duration-200 cursor-pointer ${
+                              isHighlighted ? getHighlightClass(verseKey) : ''
+                            }`}
+                            onClick={() => handleVerseClick(verse)}
+                          >
+                            <sup className="text-[var(--scholar-gold)] font-bold text-sm mr-1 select-none">
+                              {verse.verse}
+                            </sup>
+                            <span className="select-text">
                               {verse.text}
-                            </p>
+                            </span>
                             
-                            {/* Verse Action Icons */}
-                            <div className="flex items-start space-x-2 flex-shrink-0">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
-                                }}
-                                className={`p-1.5 rounded-lg ${
-                                  isHighlighted 
-                                    ? 'bg-yellow-500/20 text-yellow-400' 
-                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
-                                }`}
-                                title="Highlight verse"
-                              >
-                                <Highlighter className="h-3.5 w-3.5" />
-                              </Button>
+                            <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-0 z-10 flex items-center space-x-1 bg-[var(--scholar-darker)] border border-gray-600 rounded-lg p-1 shadow-lg transition-opacity duration-200">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                                    }}
+                                    className={`p-1 h-6 w-6 ${
+                                      isHighlighted 
+                                        ? 'bg-yellow-500/20 text-yellow-400' 
+                                        : 'text-gray-400 hover:text-yellow-300'
+                                    }`}
+                                  >
+                                    <Highlighter className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{isHighlighted ? 'Remove highlight' : 'Highlight verse'}</p>
+                                </TooltipContent>
+                              </Tooltip>
                               
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleVerseClick(verse);
-                                }}
-                                className={`p-1.5 rounded-lg ${
-                                  hasNote 
-                                    ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
-                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
-                                }`}
-                                title="Add note"
-                              >
-                                <StickyNote className="h-3.5 w-3.5" />
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleVerseClick(verse);
+                                    }}
+                                    className={`p-1 h-6 w-6 ${
+                                      hasNote 
+                                        ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
+                                        : 'text-gray-400 hover:text-[var(--scholar-gold)]'
+                                    }`}
+                                  >
+                                    <MessageCircle className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Add note</p>
+                                </TooltipContent>
+                              </Tooltip>
                               
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleVerseClick(verse);
-                                }}
-                                className="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30"
-                                title="Ask The Scholar"
-                              >
-                                <GraduationCap className="h-3.5 w-3.5" />
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleVerseClick(verse);
+                                    }}
+                                    className="p-1 h-6 w-6 text-gray-400 hover:text-blue-400"
+                                  >
+                                    <GraduationCap className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Ask The Scholar</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleBookmark(verseKey);
+                                    }}
+                                    className={`p-1 h-6 w-6 ${
+                                      isBookmarked 
+                                        ? 'bg-red-500/20 text-red-400' 
+                                        : 'text-gray-400 hover:text-red-400'
+                                    }`}
+                                  >
+                                    <BookmarkPlus className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{isBookmarked ? 'Remove bookmark' : 'Bookmark verse'}</p>
+                                </TooltipContent>
+                              </Tooltip>
                             </div>
-                          </div>
+                          </span>
                           
-                          {hasNote && (
-                            <div className="mt-3 p-3 bg-[var(--scholar-darker)] rounded-lg">
-                              <div className="flex items-start space-x-2">
-                                <StickyNote className="h-4 w-4 text-[var(--scholar-gold)] mt-0.5 flex-shrink-0" />
-                                <p className="text-gray-300 text-sm">{hasNote}</p>
-                              </div>
-                            </div>
+                          {(hasNote || isBookmarked) && (
+                            <span className="inline-flex items-center ml-1 space-x-1">
+                              {hasNote && (
+                                <span className="inline-block w-1.5 h-1.5 bg-[var(--scholar-gold)] rounded-full opacity-60" title="Has note" />
+                              )}
+                              {isBookmarked && (
+                                <span className="inline-block w-1.5 h-1.5 bg-red-400 rounded-full opacity-60" title="Bookmarked" />
+                              )}
+                            </span>
                           )}
                           
-                          {isBookmarked && (
-                            <div className="mt-2">
-                              <Badge variant="outline" className="text-[var(--scholar-gold)] border-[var(--scholar-gold)]/30 bg-[var(--scholar-gold)]/10">
-                                <BookmarkPlus className="h-3 w-3 mr-1" />
-                                Bookmarked
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
+                          {index < (chapterData as any).verses.length - 1 && ' '}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
               ) : (
-                <div className="bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-6 text-center">
+                <div className="text-center">
                   <p className="text-gray-400">
                     Chapter content will appear here when connected to a Bible API.
                   </p>
