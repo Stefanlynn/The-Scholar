@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   darkMode: boolean("dark_mode").default(true),
   notifications: boolean("notifications").default(true),
   hasCompletedOnboarding: boolean("has_completed_onboarding").default(false).notNull(),
+  isPremiumMember: boolean("is_premium_member").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
