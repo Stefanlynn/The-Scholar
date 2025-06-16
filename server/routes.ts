@@ -470,6 +470,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Strong's concordance lookup using Complete Study Bible API
+  app.get("/api/strongs/:strongsNumber", async (req, res) => {
+    try {
+      const { strongsNumber } = req.params;
+      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+
+      if (!RAPIDAPI_KEY) {
+        return res.status(500).json({ message: "RapidAPI key not configured" });
+      }
+
+      // Call Complete Study Bible API for Strong's lookup
+      const response = await fetch(`https://complete-study-bible.p.rapidapi.com/search-strongs/${strongsNumber}/true/`, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Host': 'complete-study-bible.p.rapidapi.com'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Complete Study Bible API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Transform the API response to match our interface
+      const strongsResult = {
+        strongsNumber: strongsNumber,
+        originalWord: data.originalWord || '',
+        transliteration: data.transliteration || '',
+        pronunciation: data.pronunciation || '',
+        definition: data.definition || '',
+        kjvTranslations: data.kjvTranslations || [],
+        occurrences: data.occurrences || []
+      };
+
+      res.json(strongsResult);
+    } catch (error) {
+      console.error('Strong\'s concordance error:', error);
+      res.status(500).json({ message: "Failed to search Strong's concordance" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -491,6 +534,16 @@ async function generateAIResponse(message: string): Promise<string> {
   // Extract potential scripture references from the message
   const scripturePattern = /(\d?\s?[A-Za-z]+\s+\d+:\d+(-\d+)?)|([A-Za-z]+\s+\d+)/g;
   const potentialRefs = message.match(scripturePattern);
+  
+  // Extract Strong's numbers from the message (G#### or H####)
+  const strongsPattern = /[GH]\d{3,4}/gi;
+  const strongsNumbers = message.match(strongsPattern);
+  
+  // Check for biblical word study requests
+  const wordStudyKeywords = ['original', 'greek', 'hebrew', 'strong', 'concordance', 'etymology', 'definition', 'meaning'];
+  const isWordStudyRequest = wordStudyKeywords.some(keyword => 
+    message.toLowerCase().includes(keyword)
+  );
   
   // Priority 1: If specific verses are mentioned, use IQ Bible API for Scripture lookup
   if (potentialRefs && potentialRefs.length > 0 && IQ_BIBLE_API_KEY) {
@@ -533,6 +586,44 @@ async function generateAIResponse(message: string): Promise<string> {
       }
     } catch (error) {
       console.log('IQ Bible scripture reference lookup failed:', error);
+    }
+  }
+
+  // Priority 2: Strong's concordance lookup for word studies
+  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+  if ((strongsNumbers || isWordStudyRequest) && RAPIDAPI_KEY) {
+    try {
+      let strongsContext = "";
+      
+      // If specific Strong's numbers are mentioned, look them up
+      if (strongsNumbers && strongsNumbers.length > 0) {
+        for (const strongsNum of strongsNumbers.slice(0, 3)) {
+          const response = await fetch(`https://complete-study-bible.p.rapidapi.com/search-strongs/${strongsNum}/true/`, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': RAPIDAPI_KEY,
+              'X-RapidAPI-Host': 'complete-study-bible.p.rapidapi.com'
+            }
+          });
+
+          if (response.ok) {
+            const strongsData = await response.json();
+            strongsContext += `\n\nStrong's ${strongsNum}:`;
+            strongsContext += `\nOriginal Word: ${strongsData.originalWord || 'N/A'}`;
+            strongsContext += `\nTransliteration: ${strongsData.transliteration || 'N/A'}`;
+            strongsContext += `\nDefinition: ${strongsData.definition || 'N/A'}`;
+            if (strongsData.kjvTranslations && strongsData.kjvTranslations.length > 0) {
+              strongsContext += `\nKJV Translations: ${strongsData.kjvTranslations.join(', ')}`;
+            }
+          }
+        }
+      }
+      
+      if (strongsContext) {
+        biblicalContext += strongsContext;
+      }
+    } catch (error) {
+      console.log('Strong\'s concordance lookup failed:', error);
     }
   }
   

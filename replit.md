@@ -101,6 +101,7 @@ The Scholar is a comprehensive biblical study assistant application built with m
 - **Neon Database**: Serverless PostgreSQL hosting
 - **Google AI (Gemini)**: Powers The Scholar AI with Protestant theological framework
 - **IQ Bible API**: Advanced semantic biblical analysis and enhanced scripture search via RapidAPI subscription
+- **Complete Study Bible API**: Strong's concordance lookups for original language word studies via RapidAPI subscription
 
 ## Deployment Strategy
 
@@ -141,6 +142,12 @@ Changelog:
   * Added semantic word relationship analysis for biblical terms
   * Enhanced AI responses with authentic Scripture data before interpretation
   * Completed full integration with Protestant theological framework
+- June 16, 2025: Added Complete Study Bible API for Strong's concordance
+  * Integrated Strong's number lookup (G#### or H####) for original language studies
+  * Enhanced AI with automatic word study detection and authentic concordance data
+  * Added original Greek/Hebrew words, transliterations, definitions, and KJV translations
+  * Combined with IQ Bible API for comprehensive biblical word analysis
+  * Added development authentication bypass for easier testing
 ```
 
 ## User Preferences
