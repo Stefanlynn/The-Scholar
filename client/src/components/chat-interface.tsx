@@ -148,8 +148,12 @@ export default function ChatInterface() {
               {msg.response && (
                 <div className="scholar-chat-bubble">
                   <div className="flex items-start space-x-3 md:space-x-4">
-                    <div className="w-8 h-8 md:w-10 md:h-10 gradient-gold rounded-full flex items-center justify-center flex-shrink-0">
-                      <GraduationCap className="text-black text-sm md:text-base" />
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <img 
+                        src={scholarLogo} 
+                        alt="The Scholar" 
+                        className="w-6 h-6 md:w-8 md:h-8 object-contain"
+                      />
                     </div>
                     <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4 max-w-xs md:max-w-2xl">
                       <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm md:text-base">{msg.response}</p>

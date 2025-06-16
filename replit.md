@@ -219,6 +219,11 @@ Changelog:
   * Added loading indicators with dynamic text for all AI enhancement buttons
   * Fixed mobile layout for header buttons to prevent overflow and improve usability
   * Updated "Add Verse" to return only scripture references and text without commentary
+- June 16, 2025: Integrated custom Scholar graduation cap logo throughout the application
+  * Replaced text-based graduation cap icons with actual Scholar logo image
+  * Updated sidebar header, mobile navigation, and chat interface to use new logo
+  * Maintained consistent Scholar branding across all user touchpoints
+  * Logo displays properly in both desktop sidebar and mobile tab bar with appropriate sizing
 ```
 
 ## User Preferences
