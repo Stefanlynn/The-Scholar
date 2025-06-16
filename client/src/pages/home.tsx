@@ -26,7 +26,6 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 md:space-x-4">
               <div className="flex items-center space-x-2">
-                <GraduationCap className="h-6 w-6 md:h-7 md:w-7 text-[var(--scholar-gold)]" />
                 <h2 className="text-lg md:text-xl font-semibold text-white">The Scholar</h2>
               </div>
               <div className="hidden sm:flex items-center space-x-2 text-green-400">
