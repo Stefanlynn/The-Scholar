@@ -182,8 +182,12 @@ export class MemStorage implements IStorage {
   async createNote(insertNote: InsertNote): Promise<Note> {
     const id = this.currentNoteId++;
     const note: Note = { 
-      ...insertNote, 
-      id, 
+      id,
+      userId: insertNote.userId,
+      title: insertNote.title,
+      content: insertNote.content,
+      scripture: insertNote.scripture ?? null,
+      tags: insertNote.tags ?? null,
       createdAt: new Date() 
     };
     this.notes.set(id, note);
@@ -213,7 +217,7 @@ export class MemStorage implements IStorage {
   }
 
   // Sermons
-  async getSermons(userId: number): Promise<Sermon[]> {
+  async getSermons(userId: string): Promise<Sermon[]> {
     return Array.from(this.sermons.values()).filter(sermon => sermon.userId === userId);
   }
 
@@ -246,7 +250,7 @@ export class MemStorage implements IStorage {
   }
 
   // Bookmarks
-  async getBookmarks(userId: number): Promise<Bookmark[]> {
+  async getBookmarks(userId: string): Promise<Bookmark[]> {
     return Array.from(this.bookmarks.values()).filter(bookmark => bookmark.userId === userId);
   }
 
@@ -266,7 +270,7 @@ export class MemStorage implements IStorage {
   }
 
   // Library Items
-  async getLibraryItems(userId: number): Promise<LibraryItem[]> {
+  async getLibraryItems(userId: string): Promise<LibraryItem[]> {
     return Array.from(this.libraryItems.values()).filter(item => item.userId === userId);
   }
 
