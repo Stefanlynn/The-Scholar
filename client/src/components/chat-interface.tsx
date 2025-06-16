@@ -308,7 +308,7 @@ export default function ChatInterface() {
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
           >
-            📚 Study Mode
+            Study Mode
           </button>
           <button
             type="button"
@@ -319,7 +319,7 @@ export default function ChatInterface() {
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
           >
-            🙏 Devotional Mode
+            Devotional Mode
           </button>
         </div>
       </div>
