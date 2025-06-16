@@ -83,10 +83,16 @@ export default function Notes() {
     },
     onSuccess: (response: any, variables) => {
       // Update the note with enhanced content
-      const enhancedContent = response.response || response.message?.response || response;
+      let enhancedContent = response.response || response.message?.response || response;
+      
+      // Ensure content is a string
+      if (typeof enhancedContent === 'object') {
+        enhancedContent = JSON.stringify(enhancedContent);
+      }
+      
       updateMutation.mutate({ 
         id: variables.noteId, 
-        data: { content: enhancedContent } 
+        data: { content: String(enhancedContent) } 
       });
       setAiEnhancing(false);
       setEnhancingNoteId(null);
@@ -121,9 +127,10 @@ export default function Notes() {
 
   const filteredNotes = notes?.filter((note) => {
     const searchLower = searchQuery.toLowerCase();
+    const noteContent = typeof note.content === 'string' ? note.content : JSON.stringify(note.content);
     return (
       note.title.toLowerCase().includes(searchLower) ||
-      note.content.toLowerCase().includes(searchLower) ||
+      noteContent.toLowerCase().includes(searchLower) ||
       note.scripture?.toLowerCase().includes(searchLower) ||
       note.tags?.some(tag => tag.toLowerCase().includes(searchLower))
     );
@@ -180,9 +187,10 @@ export default function Notes() {
 
   // Sharing Functions
   const handleShare = (note: Note, shareType: string) => {
+    const noteContent = typeof note.content === 'string' ? note.content : JSON.stringify(note.content);
     switch (shareType) {
       case 'copy':
-        navigator.clipboard.writeText(`${note.title}\n\n${note.content}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
+        navigator.clipboard.writeText(`${note.title}\n\n${noteContent}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
         toast({ title: "Note copied to clipboard" });
         break;
       case 'pdf':
@@ -191,7 +199,7 @@ export default function Notes() {
         break;
       case 'email':
         const subject = encodeURIComponent(`Study Note: ${note.title}`);
-        const body = encodeURIComponent(`${note.content}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
+        const body = encodeURIComponent(`${noteContent}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
         window.open(`mailto:?subject=${subject}&body=${body}`);
         break;
       default:
@@ -355,7 +363,7 @@ export default function Notes() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-300 text-sm line-clamp-4">
-                {note.content}
+                {typeof note.content === 'string' ? note.content : JSON.stringify(note.content)}
               </p>
               <div className="mt-4 text-xs text-gray-500">
                 {new Date(note.createdAt).toLocaleDateString()}
