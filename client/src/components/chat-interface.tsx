@@ -10,12 +10,7 @@ import { Send, Paperclip, Mic, Book, GraduationCap, User, Save, Plus, Check } fr
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 
-const suggestedQuestions = [
-  "Help me understand the Parable of the Sower for sermon prep",
-  "What does 'salvation by grace through faith' mean practically?",
-  "Show me cross-references for Romans 8:28",
-  "How do I teach about spiritual warfare biblically?"
-];
+
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -63,11 +58,7 @@ export default function ChatInterface() {
     }
   };
 
-  const handleSuggestedQuestion = (question: string) => {
-    setMessage(question);
-    textareaRef.current?.focus();
-    adjustTextareaHeight();
-  };
+
 
   const handleSaveAction = (messageId: number, action: string) => {
     setSavedButtons(prev => new Set(prev).add(messageId));
@@ -198,26 +189,7 @@ export default function ChatInterface() {
           ))
         )}
 
-        {/* Suggested Questions */}
-        {(!messages || messages.length === 0) && !isLoading && (
-          <div className="flex justify-center px-2">
-            <div className="bg-[var(--scholar-darker)] rounded-lg p-3 md:p-4 max-w-2xl w-full">
-              <h4 className="text-[var(--scholar-gold)] font-medium mb-3 text-center text-sm md:text-base">Suggested Questions:</h4>
-              <div className="grid grid-cols-1 gap-2">
-                {suggestedQuestions.map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    onClick={() => handleSuggestedQuestion(question)}
-                    className="text-left bg-[var(--scholar-dark)] hover:bg-gray-800 text-xs md:text-sm text-gray-300 p-2 md:p-3 border-gray-700 h-auto whitespace-normal"
-                  >
-                    {question}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+
 
         <div ref={messagesEndRef} />
       </div>
