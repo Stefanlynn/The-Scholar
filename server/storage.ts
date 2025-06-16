@@ -79,7 +79,6 @@ export class MemStorage implements IStorage {
     this.sermons = new Map();
     this.bookmarks = new Map();
     this.libraryItems = new Map();
-    this.currentUserId = 1;
     this.currentChatMessageId = 1;
     this.currentNoteId = 1;
     this.currentSermonId = 1;
@@ -91,18 +90,26 @@ export class MemStorage implements IStorage {
   }
 
   private initializeData() {
-    // Create demo user who hasn't completed onboarding
+    // Create demo user with proper schema
     const demoUser: User = {
-      id: 1,
-      username: "demo",
-      password: "demo",
-      hasCompletedOnboarding: false
+      id: "demo-user-id",
+      email: "demo@example.com",
+      fullName: "Demo User",
+      bio: "A passionate student of God's Word",
+      ministryRole: "student",
+      profilePicture: null,
+      defaultBibleTranslation: "NIV",
+      darkMode: true,
+      notifications: true,
+      hasCompletedOnboarding: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
-    this.users.set(1, demoUser);
+    this.users.set("demo-user-id", demoUser);
   }
 
   // Users
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
@@ -115,22 +122,48 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id, hasCompletedOnboarding: false };
-    this.users.set(id, user);
+    const user: User = { 
+      id: insertUser.id,
+      email: insertUser.email,
+      fullName: insertUser.fullName ?? null,
+      bio: insertUser.bio ?? null,
+      ministryRole: insertUser.ministryRole ?? null,
+      profilePicture: insertUser.profilePicture ?? null,
+      defaultBibleTranslation: insertUser.defaultBibleTranslation ?? "NIV",
+      darkMode: insertUser.darkMode ?? true,
+      notifications: insertUser.notifications ?? true,
+      hasCompletedOnboarding: insertUser.hasCompletedOnboarding ?? false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(insertUser.id, user);
     return user;
   }
 
+  async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    const updatedUser = { ...user, ...updateData, updatedAt: new Date() };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    return this.users.delete(id);
+  }
+
   // Chat Messages
-  async getChatMessages(userId: number): Promise<ChatMessage[]> {
+  async getChatMessages(userId: string): Promise<ChatMessage[]> {
     return Array.from(this.chatMessages.values()).filter(msg => msg.userId === userId);
   }
 
   async createChatMessage(insertMessage: InsertChatMessage): Promise<ChatMessage> {
     const id = this.currentChatMessageId++;
     const message: ChatMessage = { 
-      ...insertMessage, 
-      id, 
+      id,
+      message: insertMessage.message,
+      userId: insertMessage.userId,
+      response: insertMessage.response ?? null,
       timestamp: new Date() 
     };
     this.chatMessages.set(id, message);
@@ -138,7 +171,7 @@ export class MemStorage implements IStorage {
   }
 
   // Notes
-  async getNotes(userId: number): Promise<Note[]> {
+  async getNotes(userId: string): Promise<Note[]> {
     return Array.from(this.notes.values()).filter(note => note.userId === userId);
   }
 
