@@ -22,7 +22,7 @@ import {
   Highlighter, 
   BookmarkPlus, 
   MessageCircle, 
-  Bot,
+  GraduationCap,
   Palette,
   StickyNote,
   X
@@ -676,7 +676,7 @@ export default function Bible() {
                                 className="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30"
                                 title="Ask The Scholar"
                               >
-                                <Bot className="h-3.5 w-3.5" />
+                                <GraduationCap className="h-3.5 w-3.5" />
                               </Button>
                             </div>
                           </div>
