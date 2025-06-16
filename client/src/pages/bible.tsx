@@ -923,7 +923,7 @@ export default function Bible() {
                       className="group p-5 bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-xl border border-purple-500/20 hover:border-purple-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
                       onClick={() => handleStudyTool('commentary')}
                     >
-                      <MessageCircle className="h-7 w-7 text-purple-400 mb-3 group-hover:text-purple-300 transition-colors" />
+                      <GraduationCap className="h-7 w-7 text-purple-400 mb-3 group-hover:text-purple-300 transition-colors" />
                       <h4 className="font-semibold text-gray-100 mb-1">Scholar's Take</h4>
                       <p className="text-gray-400 text-sm leading-relaxed">Theological & practical insights</p>
                     </div>
@@ -1105,8 +1105,8 @@ export default function Bible() {
                   <Skeleton className="h-4 w-2/3 bg-gray-700" />
                 </div>
               ) : (
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-gray-100 leading-relaxed whitespace-pre-wrap text-base">
+                <div className="bg-[var(--scholar-darker)] border border-[var(--scholar-gold)]/20 rounded-lg p-6">
+                  <div className="text-white leading-relaxed whitespace-pre-wrap text-base">
                     {scholarResponse}
                   </div>
                 </div>
