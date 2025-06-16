@@ -842,7 +842,7 @@ Always speak life, call out greatness, and remind people they are loved, chosen,
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `${systemPrompt}\n\nUser Question: ${message}${biblicalContext}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart. If relevant scripture is provided above, reference it directly in your response. Format your response in clean, readable text without asterisks (*) or markdown formatting. Use simple paragraphs and natural language.`
+            text: `${systemPrompt}\n\nUser Question: ${message}${biblicalContext}\n\nPlease respond as The Scholar using your distinctive speaking style. If relevant scripture is provided above, reference it directly in your response. IMPORTANT: Use only plain text - no asterisks, no bold formatting, no markdown. Write in natural paragraphs with your conversational, empowering tone. Speak like you're having a personal conversation about God's Word.`
           }]
         }],
         generationConfig: {
