@@ -9,27 +9,64 @@ import {
   insertLibraryItemSchema 
 } from "@shared/schema";
 
-// Bible search function using bible-api.com
+// Bible search function using API-Bible for authentic scripture data
 async function searchByKeywords(query: string) {
+  try {
+    // Use API-Bible service for authentic biblical text
+    const response = await fetch(`https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/search?query=${encodeURIComponent(query)}&limit=50`, {
+      method: 'GET',
+      headers: {
+        'api-key': process.env.RAPIDAPI_KEY || ''
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.data && data.data.verses) {
+        return data.data.verses.map((verse: any) => {
+          const reference = verse.reference;
+          const bookMatch = reference.match(/^([^0-9]+)/);
+          const chapterVerseMatch = reference.match(/(\d+):(\d+)/);
+          
+          return {
+            book: bookMatch ? bookMatch[1].trim() : "Unknown",
+            chapter: chapterVerseMatch ? parseInt(chapterVerseMatch[1]) : 1,
+            verse: chapterVerseMatch ? parseInt(chapterVerseMatch[2]) : 1,
+            text: verse.text.replace(/<[^>]*>/g, '') // Remove HTML tags
+          };
+        });
+      }
+    }
+  } catch (error) {
+    console.log('API-Bible search failed, trying alternative:', error);
+  }
+  
+  // Fallback to bible-api.com for additional coverage
   try {
     const response = await fetch(`https://bible-api.com/${encodeURIComponent(query)}`);
     if (response.ok) {
       const data = await response.json();
-      return {
-        query,
-        results: data.verses ? data.verses.map((verse: any) => ({
+      if (data.verses && Array.isArray(data.verses)) {
+        return data.verses.map((verse: any) => ({
+          book: verse.book_name || data.reference?.split(' ')[0] || 'Unknown',
+          chapter: verse.chapter || data.chapter || 1,
+          verse: verse.verse || data.verse || 1,
+          text: verse.text || data.text || ''
+        }));
+      } else if (data.text) {
+        return [{
           book: data.reference?.split(' ')[0] || 'Unknown',
-          chapter: verse.chapter || 1,
-          verse: verse.verse || 1,
-          text: verse.text || ''
-        })) : []
-      };
+          chapter: data.chapter || 1,
+          verse: data.verse || 1,
+          text: data.text
+        }];
+      }
     }
   } catch (error) {
-    console.log('Bible search failed:', error);
+    console.log('Bible-api.com also failed:', error);
   }
   
-  return { query, results: [] };
+  return [];
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
