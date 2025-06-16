@@ -39,7 +39,15 @@ export default function Sidebar() {
           return (
             <Link key={item.name} href={item.href}>
               <div className={`scholar-sidebar-item ${isActive ? 'active' : ''}`}>
-                <Icon className="text-lg" />
+                {item.name === "The Scholar" ? (
+                  <img 
+                    src={scholarLogo} 
+                    alt="The Scholar" 
+                    className="w-5 h-5 object-contain"
+                  />
+                ) : (
+                  <Icon className="text-lg" />
+                )}
                 <span>{item.name}</span>
               </div>
             </Link>
