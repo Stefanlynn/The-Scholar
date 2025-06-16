@@ -23,6 +23,22 @@ import {
 import type { IStorage } from "./storage";
 
 export class PostgreSQLStorage implements IStorage {
+  async initialize(): Promise<void> {
+    try {
+      // Create a demo user if it doesn't exist
+      const existingUser = await this.getUser(1);
+      if (!existingUser) {
+        await this.createUser({
+          username: "demo",
+          password: "demo",
+          hasCompletedOnboarding: false
+        });
+      }
+    } catch (error) {
+      console.log("Error initializing PostgreSQL storage:", error);
+    }
+  }
+
   // Users
   async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
@@ -101,7 +117,7 @@ export class PostgreSQLStorage implements IStorage {
 
   async deleteSermon(id: number): Promise<boolean> {
     const result = await db.delete(sermons).where(eq(sermons.id, id));
-    return result.rowCount > 0;
+    return result.length > 0;
   }
 
   // Bookmarks
@@ -116,7 +132,7 @@ export class PostgreSQLStorage implements IStorage {
 
   async deleteBookmark(id: number): Promise<boolean> {
     const result = await db.delete(bookmarks).where(eq(bookmarks.id, id));
-    return result.rowCount > 0;
+    return result.length > 0;
   }
 
   // Library Items
@@ -141,6 +157,6 @@ export class PostgreSQLStorage implements IStorage {
 
   async deleteLibraryItem(id: number): Promise<boolean> {
     const result = await db.delete(libraryItems).where(eq(libraryItems.id, id));
-    return result.rowCount > 0;
+    return result.length > 0;
   }
 }
