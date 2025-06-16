@@ -11,14 +11,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, FileText, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, FileText, Edit, Trash2, Sparkles, Share2, Download, Copy, Mail, BookOpen, Heart, Lightbulb, Zap, MessageSquare } from "lucide-react";
 import type { Note } from "@shared/schema";
 
 export default function Notes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [activeTab, setActiveTab] = useState("notes");
+  const [aiEnhancing, setAiEnhancing] = useState(false);
+  const [enhancingNoteId, setEnhancingNoteId] = useState<number | null>(null);
   const { toast } = useToast();
 
   const { data: notes, isLoading } = useQuery<Note[]>({
@@ -67,6 +72,32 @@ export default function Notes() {
     },
   });
 
+  // AI Enhancement mutation
+  const aiEnhanceMutation = useMutation({
+    mutationFn: async ({ noteId, enhancementType, content }: { noteId: number; enhancementType: string; content: string }) => {
+      const response = await apiRequest("POST", "/api/chat/send", {
+        message: `${enhancementType}: ${content}`,
+        context: "note-enhancement"
+      });
+      return response.response;
+    },
+    onSuccess: (enhancedContent, variables) => {
+      // Update the note with enhanced content
+      updateMutation.mutate({ 
+        id: variables.noteId, 
+        data: { content: enhancedContent } 
+      });
+      setAiEnhancing(false);
+      setEnhancingNoteId(null);
+      toast({ title: "Note enhanced successfully!" });
+    },
+    onError: () => {
+      setAiEnhancing(false);
+      setEnhancingNoteId(null);
+      toast({ title: "Failed to enhance note", variant: "destructive" });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -109,6 +140,63 @@ export default function Notes() {
       ['greek-hebrew', 'cross-references', 'commentary', 'cultural-context', 'study-tool'].includes(tag.toLowerCase())
     )
   );
+
+  // Journal notes (daily reflections)
+  const journalNotes = filteredNotes?.filter(note => 
+    note.tags?.some(tag => 
+      ['journal', 'reflection', 'prayer', 'daily'].includes(tag.toLowerCase())
+    )
+  );
+
+  // AI Enhancement Functions
+  const handleAiEnhancement = (noteId: number, enhancementType: string, content: string) => {
+    setEnhancingNoteId(noteId);
+    setAiEnhancing(true);
+    
+    let prompt = "";
+    switch (enhancementType) {
+      case 'expand':
+        prompt = `Expand this note into a full paragraph with more detail and insight: "${content}"`;
+        break;
+      case 'scripture':
+        prompt = `Add a relevant Scripture verse that supports this thought: "${content}"`;
+        break;
+      case 'illustration':
+        prompt = `Suggest a clear illustration or example for this idea: "${content}"`;
+        break;
+      case 'summarize':
+        prompt = `Summarize this into a clear takeaway statement: "${content}"`;
+        break;
+      case 'clarify':
+        prompt = `Give me a clearer way to express this thought: "${content}"`;
+        break;
+      default:
+        prompt = content;
+    }
+    
+    aiEnhanceMutation.mutate({ noteId, enhancementType: prompt, content });
+  };
+
+  // Sharing Functions
+  const handleShare = (note: Note, shareType: string) => {
+    switch (shareType) {
+      case 'copy':
+        navigator.clipboard.writeText(`${note.title}\n\n${note.content}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
+        toast({ title: "Note copied to clipboard" });
+        break;
+      case 'pdf':
+        // Implementation would require a PDF library
+        toast({ title: "PDF export feature coming soon" });
+        break;
+      case 'email':
+        const subject = encodeURIComponent(`Study Note: ${note.title}`);
+        const body = encodeURIComponent(`${note.content}\n\n${note.scripture ? `Scripture: ${note.scripture}` : ''}`);
+        window.open(`mailto:?subject=${subject}&body=${body}`);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -189,178 +277,37 @@ export default function Notes() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i} className="bg-[var(--scholar-dark)] border-gray-700">
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4 bg-gray-600" />
-                    <Skeleton className="h-4 w-1/2 bg-gray-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20 w-full bg-gray-600" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : filteredNotes?.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-400 mb-2">
-                {searchQuery ? "No notes found" : "No study notes yet"}
-              </h3>
-              <p className="text-gray-500 mb-6">
-                {searchQuery ? "Try adjusting your search criteria" : "Start taking notes on your biblical studies"}
-              </p>
-              {!searchQuery && (
-                <Button 
-                  className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
-                  onClick={() => setIsDialogOpen(true)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Note
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {/* Study Tool Notes Section */}
-              {studyToolNotes && studyToolNotes.length > 0 && (
-                <div>
-                  <div className="flex items-center mb-4">
-                    <h3 className="text-lg font-semibold text-[var(--scholar-gold)] mr-2">
-                      Saved from Study Tools
-                    </h3>
-                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
-                      {studyToolNotes.length}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {studyToolNotes.map((note) => (
-                      <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
-                        <CardHeader>
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
-                              {note.scripture && (
-                                <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
-                              )}
-                              {note.tags && note.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-2">
-                                  {note.tags.map((tag, index) => (
-                                    <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex space-x-1">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setEditingNote(note);
-                                  setIsDialogOpen(true);
-                                }}
-                                className="text-gray-400 hover:text-white"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => deleteMutation.mutate(note.id)}
-                                className="text-gray-400 hover:text-red-400"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-gray-300 text-sm line-clamp-4">
-                            {note.content}
-                          </p>
-                          <div className="mt-4 text-xs text-gray-500">
-                            {new Date(note.createdAt).toLocaleDateString()}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-[var(--scholar-darker)]">
+              <TabsTrigger value="notes" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
+                <FileText className="h-4 w-4 mr-2" />
+                Study Notes
+              </TabsTrigger>
+              <TabsTrigger value="journal" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
+                <Heart className="h-4 w-4 mr-2" />
+                Daily Journal
+              </TabsTrigger>
+              <TabsTrigger value="scholar" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
+                <Sparkles className="h-4 w-4 mr-2" />
+                Scholar Insights
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Manual Notes Section */}
-              {manualNotes && manualNotes.length > 0 && (
-                <div>
-                  <div className="flex items-center mb-4">
-                    <h3 className="text-lg font-semibold text-white mr-2">
-                      Personal Study Notes
-                    </h3>
-                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
-                      {manualNotes.length}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {manualNotes.map((note) => (
-                      <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
-                        <CardHeader>
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
-                              {note.scripture && (
-                                <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
-                              )}
-                              {note.tags && note.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-2">
-                                  {note.tags.map((tag, index) => (
-                                    <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex space-x-1">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setEditingNote(note);
-                                  setIsDialogOpen(true);
-                                }}
-                                className="text-gray-400 hover:text-white"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => deleteMutation.mutate(note.id)}
-                                className="text-gray-400 hover:text-red-400"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-gray-300 text-sm line-clamp-4">
-                            {note.content}
-                          </p>
-                          <div className="mt-4 text-xs text-gray-500">
-                            {new Date(note.createdAt).toLocaleDateString()}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            {/* Study Notes Tab */}
+            <TabsContent value="notes" className="mt-6">
+              {renderNotesSection(manualNotes, "Personal Study Notes", "Create notes for your biblical studies")}
+            </TabsContent>
+
+            {/* Daily Journal Tab */}
+            <TabsContent value="journal" className="mt-6">
+              {renderJournalSection()}
+            </TabsContent>
+
+            {/* Scholar Insights Tab */}
+            <TabsContent value="scholar" className="mt-6">
+              {renderNotesSection(studyToolNotes, "Saved from Study Tools", "Use study tools in the Bible section to create AI-enhanced notes")}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 

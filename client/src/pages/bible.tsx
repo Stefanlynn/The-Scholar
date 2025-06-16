@@ -1112,10 +1112,18 @@ export default function Bible() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-6 pt-4 border-t border-gray-700">
+            <div className="flex justify-between mt-6 pt-4 border-t border-gray-700">
+              <Button 
+                onClick={handleSaveToNotes}
+                disabled={saveToNotesMutation.isPending || !scholarResponse}
+                className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 font-medium"
+              >
+                {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
+              </Button>
               <Button
                 onClick={() => setShowScholarDialog(false)}
-                className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90"
+                variant="ghost"
+                className="text-gray-400 hover:text-white"
               >
                 Close
               </Button>
