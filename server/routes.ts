@@ -277,23 +277,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // If no direct results, try keyword search using multiple common references
+      // If no direct results, search using keyword mapping to authentic scripture
       if (searchResults.results.length === 0) {
-        const searchTerms = ['love', 'faith', 'hope', 'peace', 'joy'];
-        const matchedTerm = searchTerms.find(term => 
-          query.toString().toLowerCase().includes(term)
-        );
+        const keywordVerses: { [key: string]: string[] } = {
+          'love': ['John 3:16', '1 John 4:8', '1 Corinthians 13:4-7'],
+          'faith': ['Hebrews 11:1', 'Ephesians 2:8-9', 'Romans 10:17'],
+          'hope': ['Romans 15:13', 'Jeremiah 29:11', '1 Peter 1:3'],
+          'peace': ['John 14:27', 'Philippians 4:7', 'Isaiah 26:3'],
+          'joy': ['Nehemiah 8:10', 'Psalm 16:11', 'Galatians 5:22'],
+          'sower': ['Matthew 13:3-8', 'Mark 4:3-8', 'Luke 8:5-8'],
+          'parable': ['Matthew 13:3-8', 'Luke 15:11-32', 'Matthew 25:14-30'],
+          'salvation': ['Romans 10:9', 'Acts 16:31', 'Ephesians 2:8-9'],
+          'grace': ['Ephesians 2:8-9', '2 Corinthians 12:9', 'Romans 3:23-24']
+        };
         
-        if (matchedTerm === 'love') {
-          searchResults.results = [
-            { book: 'John', chapter: 3, verse: 16, text: 'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.' },
-            { book: '1 John', chapter: 4, verse: 8, text: 'He that loveth not knoweth not God; for God is love.' }
-          ];
-        } else if (matchedTerm === 'faith') {
-          searchResults.results = [
-            { book: 'Hebrews', chapter: 11, verse: 1, text: 'Now faith is the substance of things hoped for, the evidence of things not seen.' },
-            { book: 'Ephesians', chapter: 2, verse: 8, text: 'For by grace are ye saved through faith; and that not of yourselves: it is the gift of God:' }
-          ];
+        const queryLower = query.toString().toLowerCase();
+        console.log('Searching for keyword in:', queryLower); // Debug log
+        
+        for (const [keyword, verses] of Object.entries(keywordVerses)) {
+          if (queryLower.includes(keyword)) {
+            console.log(`Found keyword: ${keyword}, fetching: ${verses[0]}`); // Debug log
+            const verseRef = verses[0];
+            try {
+              const verseResponse = await fetch(`https://bible-api.com/${encodeURIComponent(verseRef)}`);
+              if (verseResponse.ok) {
+                const verseData = await verseResponse.json();
+                console.log('Bible API response:', verseData); // Debug log
+                if (verseData.verses && verseData.verses.length > 0) {
+                  searchResults.results = verseData.verses.map((verse: any) => ({
+                    book: verse.book_name || 'Unknown',
+                    chapter: verse.chapter || 1,
+                    verse: verse.verse || 1,
+                    text: verse.text?.trim() || ''
+                  }));
+                  console.log('Mapped results:', searchResults.results); // Debug log
+                }
+              }
+            } catch (error) {
+              console.log('Keyword verse lookup failed:', error);
+            }
+            break;
+          }
         }
       }
       
