@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API integration using IQ Bible via RapidAPI
+  // Bible API integration with IQ Bible primary and fallback
   app.get("/api/bible/search", async (req, res) => {
     try {
       const { query } = req.query;
@@ -258,40 +258,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Search query is required" });
       }
       
+      // Try IQ Bible API first if available
       const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
-      if (!IQ_BIBLE_API_KEY) {
-        return res.status(500).json({ message: "IQ Bible API key not configured" });
+      if (IQ_BIBLE_API_KEY) {
+        try {
+          const response = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(query as string)}`, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+              'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data && !data.message && Array.isArray(data)) {
+              const searchResults = {
+                query,
+                results: data.map((verse: any) => ({
+                  book: verse.BookName || 'Unknown',
+                  chapter: verse.Chapter || 1,
+                  verse: verse.Verse || 1,
+                  text: verse.Text || ''
+                }))
+              };
+              return res.json(searchResults);
+            }
+          }
+        } catch (error) {
+          console.log('IQ Bible API unavailable, using fallback');
+        }
       }
 
-      // Use IQ Bible API for semantic search
-      const response = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(query as string)}`, {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
-          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
-        }
-      });
-
+      // Fallback to Bible API for authentic scripture data
+      const response = await fetch(`https://bible-api.com/${encodeURIComponent(query as string)}`);
+      
       if (!response.ok) {
-        throw new Error(`IQ Bible API error: ${response.status}`);
+        throw new Error(`Bible API error: ${response.status}`);
       }
 
       const data = await response.json();
       
-      // Transform IQ Bible API response to our format
-      const searchResults = {
-        query,
-        results: data.map((verse: any) => ({
-          book: verse.BookName || 'Unknown',
-          chapter: verse.Chapter || 1,
-          verse: verse.Verse || 1,
-          text: verse.Text || ''
-        }))
-      };
+      // Transform Bible API response to our format
+      const results = [];
+      if (data.verses && Array.isArray(data.verses)) {
+        results.push(...data.verses.map((verse: any) => ({
+          book: verse.book_name || data.book_name || 'Unknown',
+          chapter: verse.chapter || data.chapter || 1,
+          verse: verse.verse || 1,
+          text: verse.text || data.text || ''
+        })));
+      } else if (data.text) {
+        // Single verse response
+        results.push({
+          book: data.book_name || 'Unknown',
+          chapter: data.chapter || 1,
+          verse: data.verse || 1,
+          text: data.text
+        });
+      }
       
-      res.json(searchResults);
+      res.json({
+        query: query as string,
+        results
+      });
     } catch (error) {
-      console.error('IQ Bible search error:', error);
+      console.error('Bible search error:', error);
       res.status(500).json({ message: "Failed to search Bible" });
     }
   });
@@ -328,39 +360,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { book, chapter } = req.params;
       
-      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
-      if (!RAPIDAPI_KEY) {
-        return res.status(500).json({ message: "RapidAPI key not configured" });
+      // Try IQ Bible API first if available
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      if (IQ_BIBLE_API_KEY) {
+        try {
+          const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+              'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data && !data.message && Array.isArray(data)) {
+              const chapterData = {
+                book: book,
+                chapter: parseInt(chapter),
+                verses: data.map((verse: any) => ({
+                  verse: verse.Verse || 1,
+                  text: verse.Text || ''
+                }))
+              };
+              return res.json(chapterData);
+            }
+          }
+        } catch (error) {
+          console.log('IQ Bible API unavailable for chapter, using fallback');
+        }
       }
 
-      // Use IQ Bible API to get chapter verses
-      const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY,
-          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
-        }
-      });
-
+      // Fallback to Bible API for authentic scripture data
+      const response = await fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}`);
+      
       if (!response.ok) {
-        throw new Error(`IQ Bible API error: ${response.status}`);
+        throw new Error(`Bible API error: ${response.status}`);
       }
 
       const data = await response.json();
       
-      // Transform IQ Bible API response to our format
-      const chapterData = {
+      // Transform Bible API response to our format
+      const verses = [];
+      if (data.verses && Array.isArray(data.verses)) {
+        verses.push(...data.verses.map((verse: any) => ({
+          verse: verse.verse || 1,
+          text: verse.text || ''
+        })));
+      } else if (data.text) {
+        // Single verse response
+        verses.push({
+          verse: data.verse || 1,
+          text: data.text
+        });
+      }
+      
+      res.json({
         book: book,
         chapter: parseInt(chapter),
-        verses: data.map((verse: any) => ({
-          verse: verse.Verse || 1,
-          text: verse.Text || ''
-        }))
-      };
-      
-      res.json(chapterData);
+        verses
+      });
     } catch (error) {
-      console.error('IQ Bible chapter error:', error);
+      console.error('Bible chapter error:', error);
       res.status(500).json({ message: "Failed to get Bible chapter" });
     }
   });
@@ -374,7 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 // Generate AI response using Google's Generative AI with Bible API integration
 async function generateAIResponse(message: string): Promise<string> {
   const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+  const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
   
   if (!GOOGLE_API_KEY) {
     return "I'm experiencing technical difficulties connecting to my knowledge base. Please check that the Google API key is properly configured.";
@@ -387,13 +448,13 @@ async function generateAIResponse(message: string): Promise<string> {
   const scripturePattern = /(\d?\s?[A-Za-z]+\s+\d+:\d+(-\d+)?)|([A-Za-z]+\s+\d+)/g;
   const potentialRefs = message.match(scripturePattern);
   
-  if (potentialRefs && RAPIDAPI_KEY) {
+  if (potentialRefs && IQ_BIBLE_API_KEY) {
     try {
       // Search for relevant Bible passages using IQ Bible API
       const searchResponse = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(message)}`, {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
           'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
