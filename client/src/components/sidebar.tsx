@@ -7,7 +7,6 @@ const navigation = [
   { name: "Bible", href: "/bible", icon: Book },
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
-  { name: "Sermon Prep", href: "/sermon-prep", icon: BookOpen },
   { name: "Profile", href: "/profile", icon: User },
 ];
 
