@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, FileText, Edit, Trash2, PenTool } from "lucide-react";
+import { Plus, Search, FileText, Edit, Trash2, PenTool, BookOpen, Mic, Lightbulb, Quote, Volume2, Wand2, RotateCcw } from "lucide-react";
 import type { Note } from "@shared/schema";
 
 export default function Notes() {
@@ -23,6 +23,24 @@ export default function Notes() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [activeTab, setActiveTab] = useState("notes");
   const { toast } = useToast();
+
+  // Sermon Workspace State
+  const [sermonTitle, setSermonTitle] = useState("");
+  const [sermonScripture, setSermonScripture] = useState("");
+  const [sermonTheme, setSermonTheme] = useState("");
+  const [sermonBody, setSermonBody] = useState("");
+  const [sermonMode, setSermonMode] = useState<"outline" | "manuscript" | "bullets">("outline");
+  const [voiceStyle, setVoiceStyle] = useState<"prophetic" | "teaching" | "evangelistic" | "youth" | "devotional">("prophetic");
+  const [sermonOutline, setSermonOutline] = useState({
+    title: "",
+    text: "",
+    theme: "",
+    point1: "",
+    point2: "",
+    point3: "",
+    callToAction: "",
+    closingVerse: ""
+  });
 
   const { data: notes, isLoading } = useQuery<Note[]>({
     queryKey: ["/api/notes"],
@@ -67,6 +85,43 @@ export default function Notes() {
     },
     onError: () => {
       toast({ title: "Failed to delete note", variant: "destructive" });
+    },
+  });
+
+  // AI Helper Functions for Sermon Workspace
+  const aiEnhanceMutation = useMutation({
+    mutationFn: async ({ action, text, style }: { action: string; text: string; style?: string }) => {
+      return apiRequest("/api/chat/enhance", "POST", { action, text, style });
+    },
+    onSuccess: (response, variables) => {
+      const { action } = variables;
+      if (action === "expand") {
+        setSermonBody(prev => prev + "\n\n" + response.message);
+      } else if (action === "rewrite") {
+        setSermonBody(response.message);
+      } else if (action === "add_verse") {
+        setSermonBody(prev => prev + "\n\n" + response.message);
+      } else if (action === "add_illustration") {
+        setSermonBody(prev => prev + "\n\n" + response.message);
+      } else if (action === "convert_outline") {
+        const outline = response.outline || {};
+        setSermonOutline({
+          title: outline.title || sermonTitle,
+          text: outline.text || sermonScripture,
+          theme: outline.theme || sermonTheme,
+          point1: outline.point1 || "",
+          point2: outline.point2 || "",
+          point3: outline.point3 || "",
+          callToAction: outline.callToAction || "",
+          closingVerse: outline.closingVerse || ""
+        });
+      } else if (action === "style_rewrite") {
+        setSermonBody(response.message);
+      }
+      toast({ title: "Content enhanced successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to enhance content", variant: "destructive" });
     },
   });
 
@@ -372,7 +427,7 @@ export default function Notes() {
 
         <div className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-[var(--scholar-darker)]">
+            <TabsList className="grid w-full grid-cols-3 bg-[var(--scholar-darker)]">
               <TabsTrigger value="notes" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
                 <FileText className="h-4 w-4 mr-2" />
                 Study Notes
@@ -380,6 +435,10 @@ export default function Notes() {
               <TabsTrigger value="journal" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
                 <PenTool className="h-4 w-4 mr-2" />
                 Daily Journal
+              </TabsTrigger>
+              <TabsTrigger value="sermon" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
+                <Mic className="h-4 w-4 mr-2" />
+                Sermon Workspace
               </TabsTrigger>
             </TabsList>
 
@@ -391,6 +450,283 @@ export default function Notes() {
             {/* Daily Journal Tab */}
             <TabsContent value="journal" className="mt-6">
               {renderJournalSection()}
+            </TabsContent>
+
+            {/* Sermon Workspace Tab */}
+            <TabsContent value="sermon" className="mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Sermon Editor (Left Column) */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Sermon Header */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-[var(--scholar-gold)] flex items-center">
+                        <Mic className="h-5 w-5 mr-2" />
+                        Sermon Workspace
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Sermon Title */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Sermon Title
+                        </label>
+                        <Input
+                          value={sermonTitle}
+                          onChange={(e) => setSermonTitle(e.target.value)}
+                          placeholder="Enter your sermon title..."
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white text-lg font-semibold"
+                        />
+                      </div>
+
+                      {/* Main Scripture */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Main Scripture(s)
+                        </label>
+                        <Input
+                          value={sermonScripture}
+                          onChange={(e) => setSermonScripture(e.target.value)}
+                          placeholder="e.g., Romans 8:28-30, John 3:16"
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                        />
+                      </div>
+
+                      {/* Theme / Big Idea */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Theme / Big Idea
+                        </label>
+                        <Input
+                          value={sermonTheme}
+                          onChange={(e) => setSermonTheme(e.target.value)}
+                          placeholder="What's the central message God wants to communicate?"
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                        />
+                      </div>
+
+                      {/* Mode Selector */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Writing Mode
+                        </label>
+                        <div className="flex space-x-2">
+                          {[
+                            { value: "outline", label: "Outline", icon: FileText },
+                            { value: "manuscript", label: "Full Manuscript", icon: BookOpen },
+                            { value: "bullets", label: "Bullets", icon: Quote }
+                          ].map(({ value, label, icon: Icon }) => (
+                            <Button
+                              key={value}
+                              variant={sermonMode === value ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setSermonMode(value as any)}
+                              className={sermonMode === value 
+                                ? "bg-[var(--scholar-gold)] text-black" 
+                                : "border-gray-600 text-gray-300 hover:bg-gray-700"
+                              }
+                            >
+                              <Icon className="h-4 w-4 mr-1" />
+                              {label}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Sermon Body Editor */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-white">Sermon Body</CardTitle>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => aiEnhanceMutation.mutate({ 
+                              action: "expand", 
+                              text: sermonBody || "Help me expand on: " + sermonTheme 
+                            })}
+                            disabled={aiEnhanceMutation.isPending}
+                            className="border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white"
+                          >
+                            <Lightbulb className="h-4 w-4 mr-1" />
+                            Expand Point
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => aiEnhanceMutation.mutate({ 
+                              action: "rewrite", 
+                              text: sermonBody || sermonTheme 
+                            })}
+                            disabled={aiEnhanceMutation.isPending}
+                            className="border-green-500 text-green-400 hover:bg-green-500 hover:text-white"
+                          >
+                            <RotateCcw className="h-4 w-4 mr-1" />
+                            Rewrite Clearly
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => aiEnhanceMutation.mutate({ 
+                              action: "add_verse", 
+                              text: sermonBody || sermonTheme 
+                            })}
+                            disabled={aiEnhanceMutation.isPending}
+                            className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
+                          >
+                            <BookOpen className="h-4 w-4 mr-1" />
+                            Add Supporting Verse
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => aiEnhanceMutation.mutate({ 
+                              action: "add_illustration", 
+                              text: sermonBody || sermonTheme 
+                            })}
+                            disabled={aiEnhanceMutation.isPending}
+                            className="border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white"
+                          >
+                            <Quote className="h-4 w-4 mr-1" />
+                            Add Illustration
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Textarea
+                        value={sermonBody}
+                        onChange={(e) => setSermonBody(e.target.value)}
+                        placeholder={`Write your sermon content here...
+
+${sermonMode === 'outline' ? 'Use headers and bullet points for key ideas' : 
+  sermonMode === 'manuscript' ? 'Write out your full sermon text' : 
+  'Use bullet points for quick reference notes'}`}
+                        rows={20}
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white font-mono text-sm leading-relaxed"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="space-y-6">
+                  {/* Voice & Style Selector */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-[var(--scholar-gold)] flex items-center">
+                        <Volume2 className="h-5 w-5 mr-2" />
+                        Voice & Style
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {[
+                        { value: "prophetic", label: "Prophetic", desc: "Like Kris Vallotton - empowering, identity-focused" },
+                        { value: "teaching", label: "Teaching", desc: "Like John Piper - deep, theological exposition" },
+                        { value: "evangelistic", label: "Evangelistic", desc: "Focused on salvation and outreach" },
+                        { value: "youth", label: "Youth/Modern", desc: "Contemporary, relatable language" },
+                        { value: "devotional", label: "Devotional", desc: "Personal, intimate, reflective" }
+                      ].map(({ value, label, desc }) => (
+                        <div
+                          key={value}
+                          className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                            voiceStyle === value 
+                              ? "border-[var(--scholar-gold)] bg-[var(--scholar-gold)]/10" 
+                              : "border-gray-600 hover:border-gray-500"
+                          }`}
+                          onClick={() => setVoiceStyle(value as any)}
+                        >
+                          <div className="font-medium text-white">{label}</div>
+                          <div className="text-sm text-gray-400">{desc}</div>
+                        </div>
+                      ))}
+                      <Button
+                        onClick={() => aiEnhanceMutation.mutate({ 
+                          action: "style_rewrite", 
+                          text: sermonBody, 
+                          style: voiceStyle 
+                        })}
+                        disabled={aiEnhanceMutation.isPending || !sermonBody}
+                        className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                      >
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Rewrite in {voiceStyle.charAt(0).toUpperCase() + voiceStyle.slice(1)} Style
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Preaching Outline Builder */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-[var(--scholar-gold)]">Preaching Outline</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <Input
+                        value={sermonOutline.title}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Title"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.text}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, text: e.target.value }))}
+                        placeholder="Text"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.theme}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, theme: e.target.value }))}
+                        placeholder="Theme"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.point1}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, point1: e.target.value }))}
+                        placeholder="Point 1"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.point2}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, point2: e.target.value }))}
+                        placeholder="Point 2"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.point3}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, point3: e.target.value }))}
+                        placeholder="Point 3"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.callToAction}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, callToAction: e.target.value }))}
+                        placeholder="Call to Action / Altar Moment"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Input
+                        value={sermonOutline.closingVerse}
+                        onChange={(e) => setSermonOutline(prev => ({ ...prev, closingVerse: e.target.value }))}
+                        placeholder="Closing Verse / Benediction"
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white text-sm"
+                      />
+                      <Button
+                        onClick={() => aiEnhanceMutation.mutate({ 
+                          action: "convert_outline", 
+                          text: `Title: ${sermonTitle}\nScripture: ${sermonScripture}\nTheme: ${sermonTheme}\nBody: ${sermonBody}` 
+                        })}
+                        disabled={aiEnhanceMutation.isPending || !sermonBody}
+                        className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                      >
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Convert My Notes to This Format
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
