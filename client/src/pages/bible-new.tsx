@@ -463,114 +463,128 @@ export default function Bible() {
                   ))}
                 </div>
               ) : chapterData && chapterData.verses && chapterData.verses.length > 0 ? (
-                <Card className="bg-[var(--scholar-dark)] border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="prose prose-lg max-w-none">
-                      <p className="text-gray-200 leading-relaxed text-lg">
-                        {chapterData.verses.map((verse: any, index: number) => {
-                          const verseKey = `${selectedBook}:${selectedChapter}:${verse.verse}`;
-                          const isHighlighted = highlights[verseKey];
-                          const hasNote = verseNotes[verseKey];
-                          
-                          return (
-                            <span key={verse.verse} className="inline">
-                              <span
-                                className={`cursor-pointer hover:bg-gray-700/30 rounded px-1 py-0.5 transition-colors ${
-                                  isHighlighted ? getHighlightClass(verseKey) : ''
+                chapterData.verses.map((verse: any) => {
+                  const verseKey = `${selectedBook}:${selectedChapter}:${verse.verse}`;
+                  const isHighlighted = highlights[verseKey];
+                  const hasNote = verseNotes[verseKey];
+                  const isBookmarked = bookmarks.has(verseKey);
+                  
+                  return (
+                    <div 
+                      key={verse.verse}
+                      className={`bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-4 transition-all active:scale-[0.98] ${
+                        isHighlighted ? getHighlightClass(verseKey) : ''
+                      }`}
+                      onClick={() => handleVerseClick(verse)}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <span className="text-[var(--scholar-gold)] font-bold text-lg min-w-[2rem] mt-1">
+                          {verse.verse}
+                        </span>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <p 
+                              className={`text-gray-200 leading-relaxed text-base flex-1 pr-3 rounded px-2 py-1 ${
+                                isHighlighted ? getHighlightClass(verseKey) : ''
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                              }}
+                            >
+                              {verse.text}
+                            </p>
+                            
+                            {/* Verse Action Icons */}
+                            <div className="flex items-start space-x-2 flex-shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                                }}
+                                className={`p-1.5 rounded-lg ${
+                                  isHighlighted 
+                                    ? 'bg-yellow-500/20 text-yellow-400' 
+                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
                                 }`}
-                                onClick={() => handleVerseClick(verse)}
-                                title={`${selectedBook} ${selectedChapter}:${verse.verse} - Click to interact`}
+                                title="Highlight verse"
                               >
-                                <sup className="text-[var(--scholar-gold)] font-semibold text-sm mr-1 select-none">
-                                  {verse.verse}
-                                </sup>
-                                {verse.text}
-                              </span>
-                              {index < chapterData.verses.length - 1 && " "}
-                            </span>
-                          );
-                        })}
-                      </p>
-                    </div>
-                    
-                    {/* Interactive Tools */}
-                    <div className="mt-6 pt-4 border-t border-gray-700">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]"
-                        >
-                          <Highlighter className="h-4 w-4 mr-2" />
-                          Highlight verses
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]"
-                        >
-                          <StickyNote className="h-4 w-4 mr-2" />
-                          Add notes
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-600 text-gray-300 hover:border-blue-400 hover:text-blue-400"
-                        >
-                          <GraduationCap className="h-4 w-4 mr-2" />
-                          Ask Scholar
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]"
-                          onClick={() => {
-                            const chapterText = chapterData.verses.map((v: any) => `${v.verse} ${v.text}`).join(' ');
-                            navigator.clipboard.writeText(`${selectedBook} ${selectedChapter}\n\n${chapterText}`);
-                            toast({ title: "Chapter copied to clipboard" });
-                          }}
-                        >
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copy chapter
-                        </Button>
-                      </div>
-                      
-                      <p className="text-gray-400 text-sm">
-                        Click any verse number to highlight, add notes, or ask The Scholar about it.
-                      </p>
-                    </div>
-                    
-                    {/* Notes Display */}
-                    {Object.entries(verseNotes).some(([key, note]) => key.startsWith(`${selectedBook}:${selectedChapter}:`)) && (
-                      <div className="mt-6 pt-4 border-t border-gray-700">
-                        <h4 className="text-[var(--scholar-gold)] font-semibold mb-3 flex items-center">
-                          <StickyNote className="h-4 w-4 mr-2" />
-                          Chapter Notes
-                        </h4>
-                        <div className="space-y-3">
-                          {Object.entries(verseNotes)
-                            .filter(([key, note]) => key.startsWith(`${selectedBook}:${selectedChapter}:`))
-                            .map(([verseKey, note]) => {
-                              const verseNum = verseKey.split(':')[2];
-                              return (
-                                <div key={verseKey} className="bg-[var(--scholar-darker)] p-3 rounded-lg">
-                                  <div className="flex items-start space-x-2">
-                                    <span className="text-[var(--scholar-gold)] font-semibold text-sm min-w-[2rem]">
-                                      v{verseNum}
-                                    </span>
-                                    <p className="text-gray-300 text-sm flex-1">{note}</p>
-                                  </div>
+                                <Highlighter className="h-3.5 w-3.5" />
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleVerseClick(verse);
+                                }}
+                                className={`p-1.5 rounded-lg ${
+                                  hasNote 
+                                    ? 'bg-[var(--scholar-gold)]/20 text-[var(--scholar-gold)]' 
+                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
+                                }`}
+                                title="Add note"
+                              >
+                                <StickyNote className="h-3.5 w-3.5" />
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleVerseClick(verse);
+                                }}
+                                className="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30"
+                                title="Ask The Scholar"
+                              >
+                                <GraduationCap className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          {hasNote && (
+                            <div className="mt-3 p-3 bg-[var(--scholar-darker)] rounded-lg">
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <h5 className="text-[var(--scholar-gold)] text-sm font-medium mb-1">Your Note</h5>
+                                  <p className="text-gray-300 text-sm">{hasNote}</p>
                                 </div>
-                              );
-                            })}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setVerseNotes(prev => {
+                                      const newNotes = { ...prev };
+                                      delete newNotes[verseKey];
+                                      return newNotes;
+                                    });
+                                  }}
+                                  className="p-1 text-gray-500 hover:text-gray-300"
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {isBookmarked && (
+                            <div className="mt-2">
+                              <Badge variant="outline" className="text-[var(--scholar-gold)] border-[var(--scholar-gold)]/30 bg-[var(--scholar-gold)]/10">
+                                <BookmarkPlus className="h-3 w-3 mr-1" />
+                                Bookmarked
+                              </Badge>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    </div>
+                  );
+                })
               ) : (
                 <div className="bg-[var(--scholar-dark)] border border-gray-700 rounded-lg p-6 text-center">
                   <p className="text-gray-400">
