@@ -418,30 +418,7 @@ export default function Bible() {
                       </SelectContent>
                     </Select>
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="border-gray-600 text-white hover:bg-gray-700">
-                          <Palette className="h-4 w-4 mr-2" />
-                          Highlight
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-48 bg-[var(--scholar-darker)] border-gray-600">
-                        <div className="space-y-2">
-                          <p className="text-sm text-gray-300 font-medium">Select highlight color:</p>
-                          {highlightColors.map((color) => (
-                            <Button
-                              key={color.value}
-                              variant={highlightColor === color.value ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => setHighlightColor(color.value)}
-                              className={`w-full justify-start ${color.color}`}
-                            >
-                              {color.label}
-                            </Button>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+
                   </div>
 
                   <div className="flex items-center space-x-2">
