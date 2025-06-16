@@ -100,7 +100,7 @@ The Scholar is a comprehensive biblical study assistant application built with m
 ### External Services
 - **Neon Database**: Serverless PostgreSQL hosting
 - **Google AI (Gemini)**: Powers The Scholar AI with Protestant theological framework
-- **Bible API**: Integration planned for biblical text retrieval via RapidAPI
+- **IQ Bible API**: Advanced semantic biblical analysis and enhanced scripture search via RapidAPI subscription
 
 ## Deployment Strategy
 

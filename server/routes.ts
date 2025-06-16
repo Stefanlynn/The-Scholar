@@ -465,7 +465,52 @@ async function generateAIResponse(message: string): Promise<string> {
   const scripturePattern = /(\d?\s?[A-Za-z]+\s+\d+:\d+(-\d+)?)|([A-Za-z]+\s+\d+)/g;
   const potentialRefs = message.match(scripturePattern);
   
-  if (IQ_BIBLE_API_KEY) {
+  // Priority 1: If specific verses are mentioned, use IQ Bible API for Scripture lookup
+  if (potentialRefs && potentialRefs.length > 0 && IQ_BIBLE_API_KEY) {
+    try {
+      // Use IQ Bible semantic analysis to enhance scripture reference understanding
+      const semanticResponse = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed",
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+        }
+      });
+
+      if (semanticResponse.ok) {
+        const semanticWords = await semanticResponse.json();
+        
+        // Extract key terms from the scripture references for IQ Bible analysis
+        const referenceTerms = potentialRefs.join(' ').toLowerCase();
+        const relatedTerms = semanticWords.filter((word: string) => 
+          referenceTerms.includes(word.toLowerCase())
+        );
+
+        // Get Scripture text and IQ Bible enhanced context
+        const scriptureTexts = [];
+        for (const ref of potentialRefs.slice(0, 3)) {
+          const results = await searchByKeywords(ref);
+          if (results.length > 0) {
+            const verse = results[0];
+            scriptureTexts.push(`${verse.book} ${verse.chapter}:${verse.verse} - "${verse.text}"`);
+          }
+        }
+        
+        if (scriptureTexts.length > 0) {
+          biblicalContext = `\n\nReferenced Scripture:\n${scriptureTexts.join('\n')}`;
+          
+          if (relatedTerms.length > 0) {
+            biblicalContext += `\n\nIQ Bible Semantic Analysis: Related biblical terms - ${relatedTerms.slice(0, 8).join(', ')}`;
+          }
+        }
+      }
+    } catch (error) {
+      console.log('IQ Bible scripture reference lookup failed:', error);
+    }
+  }
+  
+  // Priority 2: If no specific verses but IQ Bible can enhance context
+  if (!biblicalContext && IQ_BIBLE_API_KEY) {
     try {
       // Get semantic relations from IQ Bible API for enhanced biblical context
       const semanticResponse = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
@@ -500,7 +545,7 @@ async function generateAIResponse(message: string): Promise<string> {
         }
       }
     } catch (error) {
-      console.log('Bible API context search failed:', error);
+      console.log('IQ Bible semantic analysis failed:', error);
     }
   }
 
