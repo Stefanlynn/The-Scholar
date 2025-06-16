@@ -26,7 +26,9 @@ import {
   MessageSquare,
   LogOut,
   Trash2,
-  Shield
+  Shield,
+  Heart,
+  ExternalLink
 } from "lucide-react";
 import type { User as UserType, UpdateUserProfile } from "@shared/schema";
 
@@ -360,6 +362,44 @@ export default function Profile() {
                   <div className="text-2xl font-bold text-white">{stats?.bookmarks ?? 0}</div>
                   <div className="text-gray-400 text-sm">Bookmarks</div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Support The Scholar */}
+          <Card className="bg-[var(--scholar-dark)] border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Heart className="h-5 w-5 mr-2 text-red-500" />
+                Support The Scholar
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center space-y-4">
+                <div className="p-6 bg-gradient-to-r from-[var(--scholar-gold)]/10 to-yellow-600/10 rounded-lg border border-[var(--scholar-gold)]/20">
+                  <h3 className="text-lg font-semibold text-white mb-2">Help Keep The Scholar Free</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Your donation helps us maintain and improve The Scholar for pastors and students worldwide. 
+                    Premium members get priority support and early access to new features.
+                  </p>
+                  <Button
+                    onClick={() => window.open('https://buy.stripe.com/bJefZhf0Ab521kr8Mh0ZW00', '_blank')}
+                    className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-semibold"
+                  >
+                    <Heart className="h-4 w-4 mr-2" />
+                    Donate & Get Premium
+                    <ExternalLink className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+                
+                {profile?.isPremiumMember && (
+                  <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                    <div className="flex items-center justify-center space-x-2 text-green-400">
+                      <Heart className="h-4 w-4" />
+                      <span className="font-medium">Thank you for being a Premium Member!</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
