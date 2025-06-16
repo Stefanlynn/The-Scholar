@@ -386,7 +386,7 @@ export default function Profile() {
                     onClick={handleSignOut}
                     variant="outline"
                     size="sm"
-                    className="border-gray-600 text-white hover:bg-gray-700"
+                    className="border-gray-600 text-white hover:bg-gray-700 bg-transparent"
                   >
                     Sign Out
                   </Button>
@@ -405,7 +405,7 @@ export default function Profile() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-red-600 text-red-400 hover:bg-red-900/20"
+                        className="border-red-600 text-red-400 hover:bg-red-900/20 bg-transparent"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
