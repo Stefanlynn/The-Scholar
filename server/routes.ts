@@ -819,7 +819,7 @@ Convert this into bullet format with:
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const IQ_BIBLE_API_KEY = "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed";
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
@@ -845,10 +845,11 @@ Convert this into bullet format with:
     try {
       const { book, chapter } = req.params;
       const translation = req.query.translation || 'kjv';
-      const RAPIDAPI_KEY = "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed";
+      const NIV_BIBLE_API_KEY = process.env.NIV_BIBLE_API_KEY;
+      const BIBLE_SEARCH_API_KEY = process.env.BIBLE_SEARCH_API_KEY;
 
       // Try NIV Bible API for NIV translation
-      if (translation === 'niv') {
+      if (translation === 'niv' && NIV_BIBLE_API_KEY) {
         try {
           // Get all verses for the chapter using NIV Bible API
           const verses = [];
@@ -860,7 +861,7 @@ Convert this into bullet format with:
               const response = await fetch(`https://niv-bible.p.rapidapi.com/row?Book=${encodeURIComponent(book)}&Chapter=${chapter}&Verse=${verseNum}`, {
                 method: 'GET',
                 headers: {
-                  'X-RapidAPI-Key': RAPIDAPI_KEY,
+                  'X-RapidAPI-Key': NIV_BIBLE_API_KEY,
                   'X-RapidAPI-Host': 'niv-bible.p.rapidapi.com'
                 }
               });
@@ -897,14 +898,15 @@ Convert this into bullet format with:
       }
 
       // Try Bible Search API for other translations
-      try {
-        const response = await fetch(`https://bible-search.p.rapidapi.com/books-by-name?bookName=${encodeURIComponent(book)}`, {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key': RAPIDAPI_KEY,
-            'X-RapidAPI-Host': 'bible-search.p.rapidapi.com'
-          }
-        });
+      if (BIBLE_SEARCH_API_KEY) {
+        try {
+          const response = await fetch(`https://bible-search.p.rapidapi.com/books-by-name?bookName=${encodeURIComponent(book)}`, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': BIBLE_SEARCH_API_KEY,
+              'X-RapidAPI-Host': 'bible-search.p.rapidapi.com'
+            }
+          });
 
         if (response.ok) {
           const data = await response.json();
@@ -922,8 +924,9 @@ Convert this into bullet format with:
             }
           }
         }
-      } catch (error) {
-        console.log('Bible Search API unavailable, trying IQ Bible');
+        } catch (error) {
+          console.log('Bible Search API unavailable, trying IQ Bible');
+        }
       }
       
       // Try IQ Bible API as fallback
@@ -984,17 +987,17 @@ Convert this into bullet format with:
   app.get("/api/strongs/:strongsNumber", async (req, res) => {
     try {
       const { strongsNumber } = req.params;
-      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+      const COMPLETE_STUDY_BIBLE_API_KEY = process.env.COMPLETE_STUDY_BIBLE_API_KEY;
 
-      if (!RAPIDAPI_KEY) {
-        return res.status(500).json({ message: "RapidAPI key not configured" });
+      if (!COMPLETE_STUDY_BIBLE_API_KEY) {
+        return res.status(500).json({ message: "Complete Study Bible API key not configured" });
       }
 
       // Call Complete Study Bible API for Strong's lookup
       const response = await fetch(`https://complete-study-bible.p.rapidapi.com/search-strongs/${strongsNumber}/true/`, {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Key': COMPLETE_STUDY_BIBLE_API_KEY,
           'X-RapidAPI-Host': 'complete-study-bible.p.rapidapi.com'
         }
       });
