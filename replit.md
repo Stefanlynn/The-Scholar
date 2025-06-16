@@ -115,10 +115,16 @@ The Scholar is a comprehensive biblical study assistant application built with m
 - **Production**: Express serves static files and API routes
 - **Database**: Connection via `DATABASE_URL` environment variable
 
-### Replit Deployment
-- **Auto-scaling**: Configured for Replit's autoscale deployment
-- **Port Configuration**: Server runs on port 5000, external port 80
-- **Build Process**: `npm run build` followed by `npm run start`
+### Netlify Deployment
+- **Serverless Functions**: Backend API converted to Netlify serverless functions
+- **Build Process**: Custom build script handles frontend (Vite) and backend (esbuild) compilation
+- **Static Assets**: Frontend assets served from `dist/public` directory
+- **API Routes**: All `/api/*` requests redirect to `/.netlify/functions/api`
+- **Environment**: Node.js 18 runtime with PostgreSQL database support
+
+### Replit Development
+- **Port Configuration**: Server runs on port 5000 for local development
+- **Hot Reloading**: Both frontend and backend reload automatically during development
 
 ### Development Workflow
 - **Hot Reloading**: Frontend and backend changes reload automatically
@@ -224,6 +230,13 @@ Changelog:
   * Updated sidebar header, mobile navigation, and chat interface to use new logo
   * Maintained consistent Scholar branding across all user touchpoints
   * Logo displays properly in both desktop sidebar and mobile tab bar with appropriate sizing
+- June 16, 2025: Configured comprehensive Netlify deployment infrastructure
+  * Created serverless function wrapper for Express.js backend API using @netlify/functions
+  * Built custom build script with optimized frontend (Vite) and backend (esbuild) compilation
+  * Configured netlify.toml with proper redirects, caching headers, and Node.js 18 runtime
+  * Set up asset handling with logo files properly placed in public directory
+  * Added environment variable support for DATABASE_URL and API keys in serverless context
+  * Implemented API route redirects from /api/* to /.netlify/functions/api for seamless deployment
 ```
 
 ## User Preferences
