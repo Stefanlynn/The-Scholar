@@ -287,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API integration with IQ Bible primary and fallback
+  // Bible API integration using IQ Bible semantic relations
   app.get("/api/bible/search", async (req, res) => {
     try {
       const { query } = req.query;
@@ -295,49 +295,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Search query is required" });
       }
       
-      // Use IQ Bible API with your subscription
+      // Use IQ Bible API with subscription
       const IQ_BIBLE_API_KEY = "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed";
       
-      try {
-        // First get semantic relations to find relevant words
-        const semanticResponse = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
-            'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
-          }
-        });
+      // Get semantic relations from IQ Bible API
+      const semanticResponse = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+        }
+      });
 
-        if (semanticResponse.ok) {
-          const semanticData = await semanticResponse.json();
+      if (semanticResponse.ok) {
+        const semanticWords = await semanticResponse.json();
+        
+        // Search through IQ Bible semantic words for matches
+        const queryLower = (query as string).toLowerCase();
+        const matchingWords = semanticWords.filter((word: string) => 
+          word.toLowerCase().includes(queryLower) || 
+          queryLower.includes(word.toLowerCase())
+        );
+        
+        // Use matching semantic words to enhance search with authentic biblical data
+        const searchResults = await searchByKeywords(query as string);
+        
+        // If we have semantic matches, enhance the results
+        if (matchingWords.length > 0) {
+          const enhancedResults = [];
           
-          // For now, return semantic relations data formatted as search results
-          // This provides access to the IQ Bible's semantic word relationships
-          const results = [];
+          // Add semantic analysis information
+          enhancedResults.push({
+            book: "IQ Bible Analysis",
+            chapter: 1,
+            verse: 1,
+            text: `Related biblical terms: ${matchingWords.slice(0, 10).join(', ')}`
+          });
           
-          // Extract meaningful data from semantic relations
-          if (typeof semanticData === 'object' && semanticData !== null) {
-            // Convert semantic data to search-like results
-            results.push({
-              book: "Semantic Analysis",
-              chapter: 1,
-              verse: 1,
-              text: `IQ Bible semantic analysis available for query: "${query}"`
-            });
-          }
+          // Add the actual biblical search results
+          enhancedResults.push(...searchResults);
           
           return res.json({
             query: query as string,
-            results
+            results: enhancedResults
           });
         }
-      } catch (error) {
-        console.log('IQ Bible API error:', error);
+        
+        // Return regular search results with IQ Bible enhancement
+        return res.json({
+          query: query as string,
+          results: searchResults
+        });
       }
-
-      // Use reliable Bible search through searchByKeywords function
-      const results = await searchByKeywords(query as string);
       
+      // Fallback to regular search if IQ Bible API fails
+      const results = await searchByKeywords(query as string);
       res.json({
         query: query as string,
         results
@@ -348,13 +360,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get semantic relations for biblical words
+  // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
-      if (!IQ_BIBLE_API_KEY) {
-        return res.status(500).json({ message: "IQ Bible API key not configured" });
-      }
+      const IQ_BIBLE_API_KEY = "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed";
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
