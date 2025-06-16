@@ -16,6 +16,7 @@ export default function ChatInterface() {
   const [isThinking, setIsThinking] = useState(false);
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+  const [scholarMode, setScholarMode] = useState<"study" | "devotional">("study");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
@@ -62,7 +63,10 @@ export default function ChatInterface() {
       setIsThinking(true);
       
       // Send to API
-      const response = await apiRequest("POST", "/api/chat/messages", { message: messageText });
+      const response = await apiRequest("POST", "/api/chat/messages", { 
+        message: messageText,
+        mode: scholarMode 
+      });
       return response.json();
     },
     onSuccess: (data) => {
@@ -273,8 +277,36 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
       
+      {/* Mode Toggle */}
+      <div className="border-t border-gray-800 bg-[var(--scholar-black)] px-4 pt-4">
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <button
+            type="button"
+            onClick={() => setScholarMode("study")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              scholarMode === "study"
+                ? "bg-[var(--scholar-gold)] text-[var(--scholar-black)]"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            }`}
+          >
+            📚 Study Mode
+          </button>
+          <button
+            type="button"
+            onClick={() => setScholarMode("devotional")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              scholarMode === "devotional"
+                ? "bg-[var(--scholar-gold)] text-[var(--scholar-black)]"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            }`}
+          >
+            🙏 Devotional Mode
+          </button>
+        </div>
+      </div>
+
       {/* Chat Input */}
-      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-4 pb-20 md:pb-4">
+      <div className="bg-[var(--scholar-black)] px-4 pb-20 md:pb-4">
         <form onSubmit={handleSubmit} className="flex items-end space-x-4">
           <div className="flex-1">
             <div className="relative">
