@@ -470,6 +470,48 @@ Here are the sermon notes to rewrite:
 
 Pull Scripture text from Bible knowledge if specific verses are mentioned. Do not shorten the message - expand it into a full-length sermon using the selected style above.`;
           break;
+
+        case "format_outline":
+          enhancementPrompt = `As The Scholar, transform this sermon content into a clear, structured outline format with main points, sub-points, and bullet lists:
+
+"${text}"
+
+Convert this into an outline format with:
+- Clear main headings (I., II., III.)
+- Supporting sub-points (A., B., C.)
+- Specific bullet points with scripture references
+- Concise, preachable structure
+- Maintain all key content but organize it hierarchically
+- Keep The Scholar's empowering, prophetic tone`;
+          break;
+
+        case "format_manuscript":
+          enhancementPrompt = `As The Scholar, transform this sermon content into a full manuscript format with complete sentences, flowing paragraphs, and detailed explanations:
+
+"${text}"
+
+Convert this into manuscript format with:
+- Complete sentences and flowing paragraphs
+- Detailed explanations and illustrations
+- Smooth transitions between ideas
+- Full development of each point
+- Rich biblical context and application
+- Maintain The Scholar's identity-focused, grace-filled voice`;
+          break;
+
+        case "format_bullets":
+          enhancementPrompt = `As The Scholar, transform this sermon content into a bullet-point format that's easy to read and preach from:
+
+"${text}"
+
+Convert this into bullet format with:
+- Clear, concise bullet points
+- Key phrases and memorable statements
+- Scripture references easily visible
+- Action points and applications
+- Logical flow between bullets
+- Maintain The Scholar's empowering, prophetic essence`;
+          break;
           
         default:
           return res.status(400).json({ error: "Invalid enhancement action" });
