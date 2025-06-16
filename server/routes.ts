@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API integration using bible-api.com (free, reliable service)
+  // Bible API integration using IQ Bible via RapidAPI
   app.get("/api/bible/search", async (req, res) => {
     try {
       const { query } = req.query;
@@ -258,69 +258,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Search query is required" });
       }
       
-      // Use bible-api.com for direct verse lookup
-      let searchResults = { query, results: [] as any[] };
-      
-      // Try direct verse reference first (e.g., "John 3:16")
-      if (query.toString().match(/\w+\s+\d+:\d+/)) {
-        const directResponse = await fetch(`https://bible-api.com/${encodeURIComponent(query as string)}`);
-        if (directResponse.ok) {
-          const directData = await directResponse.json();
-          if (directData.verses) {
-            searchResults.results = directData.verses.map((verse: any) => ({
-              book: directData.reference?.split(' ')[0] || 'Unknown',
-              chapter: verse.chapter || 1,
-              verse: verse.verse || 1,
-              text: verse.text || ''
-            }));
-          }
-        }
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      if (!IQ_BIBLE_API_KEY) {
+        return res.status(500).json({ message: "IQ Bible API key not configured" });
       }
-      
-      // If no direct results, search using keyword mapping to authentic scripture
-      if (searchResults.results.length === 0) {
-        const keywordVerses: { [key: string]: string[] } = {
-          'love': ['John 3:16', '1 John 4:8', '1 Corinthians 13:4-7'],
-          'faith': ['Hebrews 11:1', 'Ephesians 2:8-9', 'Romans 10:17'],
-          'hope': ['Romans 15:13', 'Jeremiah 29:11', '1 Peter 1:3'],
-          'peace': ['John 14:27', 'Philippians 4:7', 'Isaiah 26:3'],
-          'joy': ['Nehemiah 8:10', 'Psalm 16:11', 'Galatians 5:22'],
-          'sower': ['Matthew 13:3-8', 'Mark 4:3-8', 'Luke 8:5-8'],
-          'parable': ['Matthew 13:3-8', 'Luke 15:11-32', 'Matthew 25:14-30'],
-          'salvation': ['Romans 10:9', 'Acts 16:31', 'Ephesians 2:8-9'],
-          'grace': ['Ephesians 2:8-9', '2 Corinthians 12:9', 'Romans 3:23-24']
-        };
-        
-        const queryLower = query.toString().toLowerCase();
-        
-        for (const [keyword, verses] of Object.entries(keywordVerses)) {
-          if (queryLower.includes(keyword)) {
-            const verseRef = verses[0];
-            try {
-              const verseResponse = await fetch(`https://bible-api.com/${encodeURIComponent(verseRef)}`);
-              if (verseResponse.ok) {
-                const verseData = await verseResponse.json();
-                if (verseData.verses && verseData.verses.length > 0) {
-                  searchResults.results = verseData.verses.map((verse: any) => ({
-                    book: verse.book_name || 'Unknown',
-                    chapter: verse.chapter || 1,
-                    verse: verse.verse || 1,
-                    text: verse.text?.trim() || ''
-                  }));
-                }
-              }
-            } catch (error) {
-              console.log('Keyword verse lookup failed:', error);
-            }
-            break;
-          }
+
+      // Use IQ Bible API for semantic search
+      const response = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(query as string)}`, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
+      });
+
+      if (!response.ok) {
+        throw new Error(`IQ Bible API error: ${response.status}`);
       }
+
+      const data = await response.json();
+      
+      // Transform IQ Bible API response to our format
+      const searchResults = {
+        query,
+        results: data.map((verse: any) => ({
+          book: verse.BookName || 'Unknown',
+          chapter: verse.Chapter || 1,
+          verse: verse.Verse || 1,
+          text: verse.Text || ''
+        }))
+      };
       
       res.json(searchResults);
     } catch (error) {
-      console.error('Bible search error:', error);
+      console.error('IQ Bible search error:', error);
       res.status(500).json({ message: "Failed to search Bible" });
+    }
+  });
+
+  // Get semantic relations for biblical words
+  app.get("/api/bible/semantic-relations", async (req, res) => {
+    try {
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      if (!IQ_BIBLE_API_KEY) {
+        return res.status(500).json({ message: "IQ Bible API key not configured" });
+      }
+
+      const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`IQ Bible API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error('IQ Bible semantic relations error:', error);
+      res.status(500).json({ message: "Failed to get semantic relations" });
     }
   });
 
@@ -330,35 +330,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
       if (!RAPIDAPI_KEY) {
-        return res.status(500).json({ message: "Bible API key not configured" });
+        return res.status(500).json({ message: "RapidAPI key not configured" });
       }
 
-      const response = await fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}`, {
+      // Use IQ Bible API to get chapter verses
+      const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json'
+          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
 
       if (!response.ok) {
-        throw new Error(`Bible API error: ${response.status}`);
+        throw new Error(`IQ Bible API error: ${response.status}`);
       }
 
       const data = await response.json();
       
-      // Transform the API response to match our expected format
+      // Transform IQ Bible API response to our format
       const chapterData = {
-        book: data.reference?.split(' ')[0] || book,
+        book: book,
         chapter: parseInt(chapter),
-        verses: data.verses ? data.verses.map((verse: any) => ({
-          verse: verse.verse,
-          text: verse.text
-        })) : []
+        verses: data.map((verse: any) => ({
+          verse: verse.Verse || 1,
+          text: verse.Text || ''
+        }))
       };
       
       res.json(chapterData);
     } catch (error) {
-      console.error('Bible chapter error:', error);
+      console.error('IQ Bible chapter error:', error);
       res.status(500).json({ message: "Failed to get Bible chapter" });
     }
   });
@@ -387,21 +389,21 @@ async function generateAIResponse(message: string): Promise<string> {
   
   if (potentialRefs && RAPIDAPI_KEY) {
     try {
-      // Search for relevant Bible passages using ESV API
-      const searchResponse = await fetch(`https://api.esv.org/v3/passage/search/?q=${encodeURIComponent(message)}&include-passage-references=true&include-verse-numbers=true&page-size=3`, {
+      // Search for relevant Bible passages using IQ Bible API
+      const searchResponse = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(message)}`, {
         method: 'GET',
         headers: {
-          'Authorization': 'Token 88dc2b52c2e6eff9f1bb726721f10c0b3d0c5fef',
-          'Accept': 'application/json'
+          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
 
       if (searchResponse.ok) {
         const searchData = await searchResponse.json();
-        if (searchData.results && searchData.results.length > 0) {
+        if (searchData && searchData.length > 0) {
           biblicalContext = "\n\nRelevant Scripture Context:\n" + 
-            searchData.results.slice(0, 3).map((result: any) => 
-              `${result.reference} - "${result.content.replace(/<[^>]*>/g, '').trim()}"`
+            searchData.slice(0, 3).map((verse: any) => 
+              `${verse.BookName} ${verse.Chapter}:${verse.Verse} - "${verse.Text?.trim()}"`
             ).join("\n");
         }
       }
