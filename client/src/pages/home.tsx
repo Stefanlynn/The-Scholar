@@ -5,7 +5,7 @@ import MobileTabBar from "@/components/mobile-tab-bar";
 import QuickAccess from "@/components/quick-access";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Bookmark } from "lucide-react";
+import { Search, User } from "lucide-react";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,9 +36,8 @@ export default function Home() {
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               </div>
-              <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium p-2 md:px-4">
-                <Bookmark className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Bookmark</span>
+              <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium p-2 md:px-4 rounded-full">
+                <User className="h-4 w-4" />
               </Button>
             </div>
           </div>
