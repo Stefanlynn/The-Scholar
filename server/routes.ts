@@ -465,24 +465,38 @@ async function generateAIResponse(message: string): Promise<string> {
   const scripturePattern = /(\d?\s?[A-Za-z]+\s+\d+:\d+(-\d+)?)|([A-Za-z]+\s+\d+)/g;
   const potentialRefs = message.match(scripturePattern);
   
-  if (potentialRefs && IQ_BIBLE_API_KEY) {
+  if (IQ_BIBLE_API_KEY) {
     try {
-      // Search for relevant Bible passages using IQ Bible API
-      const searchResponse = await fetch(`https://iq-bible.p.rapidapi.com/SearchVersesByWords?Word=${encodeURIComponent(message)}`, {
+      // Get semantic relations from IQ Bible API for enhanced biblical context
+      const semanticResponse = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+          'X-RapidAPI-Key': "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed",
           'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
 
-      if (searchResponse.ok) {
-        const searchData = await searchResponse.json();
-        if (searchData && searchData.length > 0) {
-          biblicalContext = "\n\nRelevant Scripture Context:\n" + 
-            searchData.slice(0, 3).map((verse: any) => 
-              `${verse.BookName} ${verse.Chapter}:${verse.Verse} - "${verse.Text?.trim()}"`
-            ).join("\n");
+      if (semanticResponse.ok) {
+        const semanticWords = await semanticResponse.json();
+        
+        // Find related biblical terms for the user's message
+        const messageLower = message.toLowerCase();
+        const messageWords = message.split(' ');
+        const relatedTerms = semanticWords.filter((word: string) => 
+          messageLower.includes(word.toLowerCase()) || 
+          word.toLowerCase().includes(messageWords[0]?.toLowerCase() || '') ||
+          word.toLowerCase().includes(messageWords[messageWords.length - 1]?.toLowerCase() || '')
+        );
+
+        if (relatedTerms && relatedTerms.length > 0) {
+          // Get biblical context using the related terms found by IQ Bible API
+          const contextResults = await searchByKeywords(relatedTerms.slice(0, 3).join(' '));
+          if (contextResults.length > 0) {
+            biblicalContext = `\n\nIQ Bible Semantic Analysis found related terms: ${relatedTerms.slice(0, 5).join(', ')}\n\nRelevant Scripture Context:\n` + 
+              contextResults.slice(0, 3).map((verse: any) => 
+                `${verse.book} ${verse.chapter}:${verse.verse} - "${verse.text?.trim()}"`
+              ).join("\n");
+          }
         }
       }
     } catch (error) {
@@ -527,7 +541,7 @@ Encouraging, humble, biblically faithful, conversational, and rooted in the Holy
 Always close challenging conversations with hope, grace, and a reminder that Jesus is the center of truth, transformation, and purpose.`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GOOGLE_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
