@@ -510,25 +510,24 @@ export default function Notes() {
                         <label className="text-sm font-medium text-gray-300 mb-2 block">
                           Writing Mode
                         </label>
-                        <div className="flex space-x-2">
+                        <div className="grid grid-cols-3 gap-2">
                           {[
                             { value: "outline", label: "Outline", icon: FileText },
                             { value: "manuscript", label: "Full Manuscript", icon: BookOpen },
                             { value: "bullets", label: "Bullets", icon: Quote }
                           ].map(({ value, label, icon: Icon }) => (
-                            <Button
+                            <div
                               key={value}
-                              variant={sermonMode === value ? "default" : "outline"}
-                              size="sm"
                               onClick={() => setSermonMode(value as any)}
-                              className={sermonMode === value 
-                                ? "bg-[var(--scholar-gold)] text-black" 
-                                : "border-gray-600 text-gray-300 hover:bg-gray-700"
-                              }
+                              className={`p-3 rounded-lg border cursor-pointer transition-all text-center ${
+                                sermonMode === value 
+                                  ? "border-[var(--scholar-gold)] bg-[var(--scholar-gold)]/10 text-[var(--scholar-gold)]" 
+                                  : "border-gray-600 text-gray-300 hover:border-gray-500 hover:bg-gray-700/50"
+                              }`}
                             >
-                              <Icon className="h-4 w-4 mr-1" />
-                              {label}
-                            </Button>
+                              <Icon className="h-5 w-5 mx-auto mb-1" />
+                              <div className="text-xs font-medium">{label}</div>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -538,61 +537,68 @@ export default function Notes() {
                   {/* Sermon Body Editor */}
                   <Card className="bg-[var(--scholar-dark)] border-gray-700">
                     <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-white">Sermon Body</CardTitle>
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => aiEnhanceMutation.mutate({ 
-                              action: "expand", 
-                              text: sermonBody || "Help me expand on: " + sermonTheme 
-                            })}
-                            disabled={aiEnhanceMutation.isPending}
-                            className="border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white"
-                          >
-                            <Lightbulb className="h-4 w-4 mr-1" />
-                            Expand Point
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => aiEnhanceMutation.mutate({ 
-                              action: "rewrite", 
-                              text: sermonBody || sermonTheme 
-                            })}
-                            disabled={aiEnhanceMutation.isPending}
-                            className="border-green-500 text-green-400 hover:bg-green-500 hover:text-white"
-                          >
-                            <RotateCcw className="h-4 w-4 mr-1" />
-                            Rewrite Clearly
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => aiEnhanceMutation.mutate({ 
-                              action: "add_verse", 
-                              text: sermonBody || sermonTheme 
-                            })}
-                            disabled={aiEnhanceMutation.isPending}
-                            className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
-                          >
-                            <BookOpen className="h-4 w-4 mr-1" />
-                            Add Supporting Verse
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => aiEnhanceMutation.mutate({ 
-                              action: "add_illustration", 
-                              text: sermonBody || sermonTheme 
-                            })}
-                            disabled={aiEnhanceMutation.isPending}
-                            className="border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white"
-                          >
-                            <Quote className="h-4 w-4 mr-1" />
-                            Add Illustration
-                          </Button>
+                      <CardTitle className="text-white mb-4">Sermon Body</CardTitle>
+                      
+                      {/* AI Enhancement Tools */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        <div
+                          onClick={() => aiEnhanceMutation.mutate({ 
+                            action: "expand", 
+                            text: sermonBody || "Help me expand on: " + sermonTheme 
+                          })}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            aiEnhanceMutation.isPending 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-blue-500/50 bg-blue-500/10 text-blue-400 hover:border-blue-400 hover:bg-blue-500/20"
+                          }`}
+                        >
+                          <Lightbulb className="h-4 w-4 mx-auto mb-1" />
+                          <div className="text-xs font-medium">Expand Point</div>
+                        </div>
+                        
+                        <div
+                          onClick={() => aiEnhanceMutation.mutate({ 
+                            action: "rewrite", 
+                            text: sermonBody || sermonTheme 
+                          })}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            aiEnhanceMutation.isPending 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-green-500/50 bg-green-500/10 text-green-400 hover:border-green-400 hover:bg-green-500/20"
+                          }`}
+                        >
+                          <RotateCcw className="h-4 w-4 mx-auto mb-1" />
+                          <div className="text-xs font-medium">Rewrite Clearly</div>
+                        </div>
+                        
+                        <div
+                          onClick={() => aiEnhanceMutation.mutate({ 
+                            action: "add_verse", 
+                            text: sermonBody || sermonTheme 
+                          })}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            aiEnhanceMutation.isPending 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-purple-500/50 bg-purple-500/10 text-purple-400 hover:border-purple-400 hover:bg-purple-500/20"
+                          }`}
+                        >
+                          <BookOpen className="h-4 w-4 mx-auto mb-1" />
+                          <div className="text-xs font-medium">Add Verse</div>
+                        </div>
+                        
+                        <div
+                          onClick={() => aiEnhanceMutation.mutate({ 
+                            action: "add_illustration", 
+                            text: sermonBody || sermonTheme 
+                          })}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            aiEnhanceMutation.isPending 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-orange-500/50 bg-orange-500/10 text-orange-400 hover:border-orange-400 hover:bg-orange-500/20"
+                          }`}
+                        >
+                          <Quote className="h-4 w-4 mx-auto mb-1" />
+                          <div className="text-xs font-medium">Add Illustration</div>
                         </div>
                       </div>
                     </CardHeader>
