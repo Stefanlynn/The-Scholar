@@ -97,6 +97,19 @@ export default function Notes() {
     );
   });
 
+  // Organize notes by source type
+  const studyToolNotes = filteredNotes?.filter(note => 
+    note.tags?.some(tag => 
+      ['greek-hebrew', 'cross-references', 'commentary', 'cultural-context', 'study-tool'].includes(tag.toLowerCase())
+    )
+  );
+  
+  const manualNotes = filteredNotes?.filter(note => 
+    !note.tags?.some(tag => 
+      ['greek-hebrew', 'cross-references', 'commentary', 'cultural-context', 'study-tool'].includes(tag.toLowerCase())
+    )
+  );
+
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
@@ -210,59 +223,142 @@ export default function Notes() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredNotes?.map((note) => (
-                <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
-                        {note.scripture && (
-                          <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
-                        )}
-                        {note.tags && note.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {note.tags.map((tag, index) => (
-                              <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
+            <div className="space-y-8">
+              {/* Study Tool Notes Section */}
+              {studyToolNotes && studyToolNotes.length > 0 && (
+                <div>
+                  <div className="flex items-center mb-4">
+                    <h3 className="text-lg font-semibold text-[var(--scholar-gold)] mr-2">
+                      Saved from Study Tools
+                    </h3>
+                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
+                      {studyToolNotes.length}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {studyToolNotes.map((note) => (
+                      <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
+                              {note.scripture && (
+                                <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
+                              )}
+                              {note.tags && note.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  {note.tags.map((tag, index) => (
+                                    <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex space-x-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setEditingNote(note);
+                                  setIsDialogOpen(true);
+                                }}
+                                className="text-gray-400 hover:text-white"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => deleteMutation.mutate(note.id)}
+                                className="text-gray-400 hover:text-red-400"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            setEditingNote(note);
-                            setIsDialogOpen(true);
-                          }}
-                          className="text-gray-400 hover:text-white"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => deleteMutation.mutate(note.id)}
-                          className="text-gray-400 hover:text-red-400"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-300 text-sm line-clamp-4">
-                      {note.content}
-                    </p>
-                    <div className="mt-4 text-xs text-gray-500">
-                      {new Date(note.createdAt).toLocaleDateString()}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-300 text-sm line-clamp-4">
+                            {note.content}
+                          </p>
+                          <div className="mt-4 text-xs text-gray-500">
+                            {new Date(note.createdAt).toLocaleDateString()}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Manual Notes Section */}
+              {manualNotes && manualNotes.length > 0 && (
+                <div>
+                  <div className="flex items-center mb-4">
+                    <h3 className="text-lg font-semibold text-white mr-2">
+                      Personal Study Notes
+                    </h3>
+                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
+                      {manualNotes.length}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {manualNotes.map((note) => (
+                      <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
+                              {note.scripture && (
+                                <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
+                              )}
+                              {note.tags && note.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  {note.tags.map((tag, index) => (
+                                    <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex space-x-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setEditingNote(note);
+                                  setIsDialogOpen(true);
+                                }}
+                                className="text-gray-400 hover:text-white"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => deleteMutation.mutate(note.id)}
+                                className="text-gray-400 hover:text-red-400"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-300 text-sm line-clamp-4">
+                            {note.content}
+                          </p>
+                          <div className="mt-4 text-xs text-gray-500">
+                            {new Date(note.createdAt).toLocaleDateString()}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
