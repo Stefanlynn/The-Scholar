@@ -41,7 +41,7 @@ export default function Profile() {
     enabled: !!user,
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{notes: number, sermons: number, bookmarks: number}>({
     queryKey: ["/api/profile/stats"],
     enabled: !!user,
   });
@@ -338,19 +338,19 @@ export default function Profile() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
                   <FileText className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">{stats?.notes || 0}</div>
+                  <div className="text-2xl font-bold text-white">{stats?.notes ?? 0}</div>
                   <div className="text-gray-400 text-sm">Study Notes</div>
                 </div>
                 
                 <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
                   <MessageSquare className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">{stats?.sermons || 0}</div>
+                  <div className="text-2xl font-bold text-white">{stats?.sermons ?? 0}</div>
                   <div className="text-gray-400 text-sm">Sermon Drafts</div>
                 </div>
                 
                 <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
                   <BookOpen className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white">{stats?.bookmarks || 0}</div>
+                  <div className="text-2xl font-bold text-white">{stats?.bookmarks ?? 0}</div>
                   <div className="text-gray-400 text-sm">Bookmarks</div>
                 </div>
               </div>

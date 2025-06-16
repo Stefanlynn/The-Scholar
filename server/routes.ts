@@ -6,8 +6,36 @@ import {
   insertNoteSchema, 
   insertSermonSchema, 
   insertBookmarkSchema, 
-  insertLibraryItemSchema 
+  insertLibraryItemSchema,
+  insertUserSchema,
+  updateUserProfileSchema
 } from "@shared/schema";
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Middleware to verify user authentication
+async function authenticateUser(req: any, res: any, next: any) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ error: "No authorization header" });
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: "Authentication failed" });
+  }
+}
 
 // Bible search function using API-Bible for authentic scripture data
 async function searchByKeywords(query: string) {
@@ -97,6 +125,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error completing onboarding:", error);
       res.status(500).json({ error: "Failed to complete onboarding" });
+    }
+  });
+
+  // Profile Management Routes
+  app.get("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        // Create user if they don't exist (first time login)
+        const newUser = await storage.createUser({
+          id: req.user.id,
+          email: req.user.email,
+          fullName: req.user.user_metadata?.full_name || null,
+          bio: null,
+          ministryRole: null,
+          profilePicture: req.user.user_metadata?.avatar_url || null,
+          defaultBibleTranslation: "NIV",
+          darkMode: true,
+          notifications: true,
+          hasCompletedOnboarding: false
+        });
+        return res.json(newUser);
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Failed to fetch profile" });
+    }
+  });
+
+  app.put("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const updateData = updateUserProfileSchema.parse(req.body);
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const updatedUser = await storage.updateUser(user.id, updateData);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Failed to update user" });
+      }
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  app.get("/api/profile/stats", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const [notes, sermons, bookmarks] = await Promise.all([
+        storage.getNotes(user.id),
+        storage.getSermons(user.id),
+        storage.getBookmarks(user.id)
+      ]);
+
+      res.json({
+        notes: notes.length,
+        sermons: sermons.length,
+        bookmarks: bookmarks.length
+      });
+    } catch (error) {
+      console.error("Error fetching profile stats:", error);
+      res.status(500).json({ error: "Failed to fetch profile stats" });
+    }
+  });
+
+  app.delete("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUserByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Delete user's data
+      await storage.deleteUser(user.id);
+      
+      // Delete user from Supabase auth
+      const { error } = await supabase.auth.admin.deleteUser(req.user.id);
+      if (error) {
+        console.error("Error deleting user from Supabase:", error);
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).json({ error: "Failed to delete account" });
     }
   });
 

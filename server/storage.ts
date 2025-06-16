@@ -21,36 +21,38 @@ import {
 
 export interface IStorage {
   // Users
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
   
   // Chat Messages
-  getChatMessages(userId: number): Promise<ChatMessage[]>;
+  getChatMessages(userId: string): Promise<ChatMessage[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
   
   // Notes
-  getNotes(userId: number): Promise<Note[]>;
+  getNotes(userId: string): Promise<Note[]>;
   getNote(id: number): Promise<Note | undefined>;
   createNote(note: InsertNote): Promise<Note>;
   updateNote(id: number, note: Partial<InsertNote>): Promise<Note | undefined>;
   deleteNote(id: number): Promise<boolean>;
   
   // Sermons
-  getSermons(userId: number): Promise<Sermon[]>;
+  getSermons(userId: string): Promise<Sermon[]>;
   getSermon(id: number): Promise<Sermon | undefined>;
   createSermon(sermon: InsertSermon): Promise<Sermon>;
   updateSermon(id: number, sermon: Partial<InsertSermon>): Promise<Sermon | undefined>;
   deleteSermon(id: number): Promise<boolean>;
   
   // Bookmarks
-  getBookmarks(userId: number): Promise<Bookmark[]>;
+  getBookmarks(userId: string): Promise<Bookmark[]>;
   createBookmark(bookmark: InsertBookmark): Promise<Bookmark>;
   deleteBookmark(id: number): Promise<boolean>;
   
   // Library Items
-  getLibraryItems(userId: number): Promise<LibraryItem[]>;
+  getLibraryItems(userId: string): Promise<LibraryItem[]>;
   getLibraryItem(id: number): Promise<LibraryItem | undefined>;
   createLibraryItem(item: InsertLibraryItem): Promise<LibraryItem>;
   updateLibraryItem(id: number, item: Partial<InsertLibraryItem>): Promise<LibraryItem | undefined>;
@@ -58,13 +60,12 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
+  private users: Map<string, User>;
   private chatMessages: Map<number, ChatMessage>;
   private notes: Map<number, Note>;
   private sermons: Map<number, Sermon>;
   private bookmarks: Map<number, Bookmark>;
   private libraryItems: Map<number, LibraryItem>;
-  private currentUserId: number;
   private currentChatMessageId: number;
   private currentNoteId: number;
   private currentSermonId: number;
@@ -106,7 +107,11 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    return Array.from(this.users.values()).find(user => user.email === username);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(user => user.email === email);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
