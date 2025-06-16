@@ -261,7 +261,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Use PostgreSQL storage when DATABASE_URL is available, otherwise fallback to memory
-import { PostgreSQLStorage } from "./pg-storage";
-
-export const storage = process.env.DATABASE_URL ? new PostgreSQLStorage() : new MemStorage();
+// Temporarily using memory storage while resolving Supabase connection
+export const storage = new MemStorage();

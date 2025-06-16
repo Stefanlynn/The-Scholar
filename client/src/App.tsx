@@ -1,44 +1,32 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import Library from "@/pages/library";
 import Notes from "@/pages/notes";
 import SermonPrep from "@/pages/sermon-prep";
 import Welcome from "@/pages/welcome";
+import Login from "@/pages/login";
+import Signup from "@/pages/signup";
 
-interface User {
-  id: number;
-  username: string;
-  hasCompletedOnboarding: boolean;
-}
-
-function Router() {
+function AuthenticatedApp() {
+  const { user } = useAuth();
   const [location] = useLocation();
-  
-  const { data: user, isLoading } = useQuery<User>({
-    queryKey: ["/api/users/current"],
-  });
 
-  // Show loading while checking user status
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[var(--scholar-black)] flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
-      </div>
-    );
-  }
+  // Check if user needs onboarding (you can implement this logic based on user metadata)
+  const needsOnboarding = user && !user.user_metadata?.completed_onboarding;
 
-  // If user hasn't completed onboarding and not on welcome page, redirect to welcome
-  if (user && !user.hasCompletedOnboarding && location !== "/welcome") {
+  // If user needs onboarding and not on welcome page, show welcome
+  if (needsOnboarding && location !== "/welcome") {
     return <Welcome />;
   }
 
-  // If user has completed onboarding and on welcome page, redirect to home
-  if (user && user.hasCompletedOnboarding && location === "/welcome") {
+  // If user completed onboarding and on welcome page, redirect to home
+  if (user && !needsOnboarding && location === "/welcome") {
     return <Home />;
   }
 
@@ -54,15 +42,45 @@ function Router() {
   );
 }
 
+function Router() {
+  const { user, loading } = useAuth();
+  const [location] = useLocation();
+
+  // Show loading while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[var(--scholar-black)] flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // If user is not authenticated, show auth pages
+  if (!user) {
+    return (
+      <Switch>
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
+        <Route component={Login} /> {/* Default to login */}
+      </Switch>
+    );
+  }
+
+  // User is authenticated, show the main app
+  return <AuthenticatedApp />;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="bg-[var(--scholar-black)] text-white min-h-screen">
-          <Toaster />
-          <Router />
-        </div>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <div className="bg-[var(--scholar-black)] text-white min-h-screen">
+            <Toaster />
+            <Router />
+          </div>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

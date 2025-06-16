@@ -3,27 +3,30 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { GraduationCap, BookOpen, MessageSquare, ChevronRight } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function Welcome() {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  const completeOnboardingMutation = useMutation({
-    mutationFn: async () => {
-      return apiRequest("POST", "/api/users/complete-onboarding", {});
-    },
-    onSuccess: () => {
-      setLocation("/");
-    },
-  });
-
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
-      completeOnboardingMutation.mutate();
+      setLoading(true);
+      
+      // Update user metadata to mark onboarding as complete
+      if (user) {
+        await supabase.auth.updateUser({
+          data: { completed_onboarding: true }
+        });
+      }
+      
+      setLocation("/");
+      setLoading(false);
     }
   };
 
