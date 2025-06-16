@@ -5,10 +5,16 @@ import MobileTabBar from "@/components/mobile-tab-bar";
 import QuickAccess from "@/components/quick-access";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Search, User, LogOut } from "lucide-react";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
@@ -36,9 +42,18 @@ export default function Home() {
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               </div>
-              <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium p-2 md:px-4 rounded-full">
-                <User className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center space-x-2">
+                <span className="hidden md:block text-sm text-gray-300">
+                  {user?.user_metadata?.full_name || user?.email}
+                </span>
+                <Button 
+                  onClick={handleSignOut}
+                  className="bg-gray-700 text-white hover:bg-gray-600 p-2 rounded-full"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

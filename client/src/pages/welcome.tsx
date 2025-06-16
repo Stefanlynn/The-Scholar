@@ -126,11 +126,11 @@ export default function Welcome() {
             </div>
             <Button 
               onClick={handleNext}
-              disabled={completeOnboardingMutation.isPending}
+              disabled={loading}
               className="bg-blue-600 text-white hover:bg-blue-700 font-medium px-8 py-3 text-lg flex items-center space-x-2"
             >
-              <span>{completeOnboardingMutation.isPending ? "Loading..." : "Enter The Scholar"}</span>
-              {!completeOnboardingMutation.isPending && <ChevronRight className="w-5 h-5" />}
+              <span>{loading ? "Loading..." : "Enter The Scholar"}</span>
+              {!loading && <ChevronRight className="w-5 h-5" />}
             </Button>
           </div>
         );
