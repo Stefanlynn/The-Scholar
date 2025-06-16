@@ -1,13 +1,12 @@
 import { Link, useLocation } from "wouter";
 import { BookOpen, Book, Library, FileText, MessageSquare, User } from "lucide-react";
-import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 
 const navigation = [
-  { name: "Scholar", href: "/", icon: "logo", isLogo: true },
-  { name: "Bible", href: "/bible", icon: Book, isLogo: false },
-  { name: "Library", href: "/library", icon: Library, isLogo: false },
-  { name: "Notes", href: "/notes", icon: FileText, isLogo: false },
-  { name: "Profile", href: "/profile", icon: User, isLogo: false },
+  { name: "Scholar", href: "/", icon: MessageSquare },
+  { name: "Bible", href: "/bible", icon: Book },
+  { name: "Library", href: "/library", icon: Library },
+  { name: "Notes", href: "/notes", icon: FileText },
+  { name: "Profile", href: "/profile", icon: User },
 ];
 
 export default function MobileTabBar() {
@@ -26,21 +25,7 @@ export default function MobileTabBar() {
                   isActive ? 'text-[var(--scholar-gold)]' : 'text-gray-400'
                 }`}
               >
-                {item.isLogo ? (
-                  <img 
-                    src={scholarLogo} 
-                    alt="The Scholar" 
-                    className={`w-5 h-5 object-contain transition-all duration-200`}
-                    style={isActive ? { 
-                      filter: 'brightness(0) saturate(100%) invert(89%) sepia(95%) saturate(1352%) hue-rotate(346deg) brightness(102%) contrast(92%)'
-                    } : {
-                      filter: 'brightness(0) invert(1)',
-                      opacity: '0.6'
-                    }}
-                  />
-                ) : (
-                  <item.icon className="text-lg" />
-                )}
+                <item.icon className="text-lg" />
                 <span className="text-xs">{item.name}</span>
               </button>
             </Link>
