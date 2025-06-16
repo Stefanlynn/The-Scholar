@@ -67,49 +67,56 @@ export default function Library() {
 
   // Render component for each section
   const renderDevotionals = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Devotionals</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Devotionals</h3>
+          <p className="text-gray-400">Grow deeper in your faith with structured devotional journeys</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Create Devotional
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleDevotionals.map((devotional) => (
-          <Card key={devotional.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2">{devotional.title}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {devotional.type}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
-                      {devotional.topic}
-                    </Badge>
-                  </div>
-                  <p className="text-gray-400 text-sm mb-3">{devotional.description}</p>
-                  {devotional.progress > 0 && (
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs text-gray-400">
-                        <span>Progress</span>
-                        <span>{devotional.progress}%</span>
-                      </div>
-                      <Progress value={devotional.progress} className="h-2" />
-                    </div>
-                  )}
+          <Card key={devotional.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <Heart className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {devotional.type}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-gray-700/50 text-gray-300 border-0">
+                    {devotional.topic}
+                  </Badge>
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {devotional.title}
+              </CardTitle>
+              <p className="text-gray-400 text-sm leading-relaxed">{devotional.description}</p>
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
-                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 flex-1">
+            <CardContent className="pt-0">
+              {devotional.progress > 0 && (
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Progress</span>
+                    <span className="text-[var(--scholar-gold)] font-medium">{devotional.progress}%</span>
+                  </div>
+                  <Progress value={devotional.progress} className="h-2 bg-gray-700" />
+                </div>
+              )}
+              <div className="flex space-x-3">
+                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md">
                   <Play className="h-4 w-4 mr-2" />
                   {devotional.progress > 0 ? 'Continue' : 'Start'}
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <Share className="h-4 w-4" />
                 </Button>
               </div>
@@ -121,50 +128,57 @@ export default function Library() {
   );
 
   const renderReadingPlans = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Bible Reading Plans</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Bible Reading Plans</h3>
+          <p className="text-gray-400">Journey through Scripture with guided reading plans</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Create Plan
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleReadingPlans.map((plan) => (
-          <Card key={plan.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2">{plan.title}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {plan.type}
-                    </Badge>
-                    <div className="flex items-center text-gray-400 text-sm">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {plan.duration}
-                    </div>
+          <Card key={plan.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <BookOpen className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {plan.type}
+                  </Badge>
+                  <div className="flex items-center text-gray-400 text-sm bg-gray-700/30 px-2 py-1 rounded-md">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {plan.duration}
                   </div>
-                  <p className="text-gray-400 text-sm mb-3">{plan.description}</p>
-                  {plan.progress > 0 && (
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs text-gray-400">
-                        <span>Progress</span>
-                        <span>{plan.progress}%</span>
-                      </div>
-                      <Progress value={plan.progress} className="h-2" />
-                    </div>
-                  )}
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {plan.title}
+              </CardTitle>
+              <p className="text-gray-400 text-sm leading-relaxed">{plan.description}</p>
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
-                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 flex-1">
+            <CardContent className="pt-0">
+              {plan.progress > 0 && (
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Progress</span>
+                    <span className="text-[var(--scholar-gold)] font-medium">{plan.progress}%</span>
+                  </div>
+                  <Progress value={plan.progress} className="h-2 bg-gray-700" />
+                </div>
+              )}
+              <div className="flex space-x-3">
+                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md">
                   <BookOpen className="h-4 w-4 mr-2" />
                   {plan.progress > 0 ? 'Continue' : 'Start'}
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <Target className="h-4 w-4" />
                 </Button>
               </div>
@@ -176,44 +190,54 @@ export default function Library() {
   );
 
   const renderSermonResources = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Teaching & Sermon Resources</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Teaching & Sermon Resources</h3>
+          <p className="text-gray-400">Equip yourself with sermon outlines, series structures, and communication guides</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Add Resource
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleSermonResources.map((resource) => (
-          <Card key={resource.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2">{resource.title}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {resource.type}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
-                      {resource.category}
-                    </Badge>
-                  </div>
-                  {resource.text && (
-                    <p className="text-gray-400 text-sm mb-2">
-                      <span className="text-[var(--scholar-gold)]">Text:</span> {resource.text}
-                    </p>
-                  )}
+          <Card key={resource.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <Mic className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {resource.type}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-gray-700/50 text-gray-300 border-0">
+                    {resource.category}
+                  </Badge>
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {resource.title}
+              </CardTitle>
+              {resource.text && (
+                <div className="bg-gray-800/50 p-3 rounded-lg mb-3">
+                  <p className="text-sm">
+                    <span className="text-[var(--scholar-gold)] font-medium">Scripture:</span>{" "}
+                    <span className="text-gray-300">{resource.text}</span>
+                  </p>
+                </div>
+              )}
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
-                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 flex-1">
+            <CardContent className="pt-0">
+              <div className="flex space-x-3">
+                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md">
                   <FileText className="h-4 w-4 mr-2" />
                   View
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <Download className="h-4 w-4" />
                 </Button>
               </div>
@@ -225,42 +249,49 @@ export default function Library() {
   );
 
   const renderStudyTools = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Study Tools</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Study Tools</h3>
+          <p className="text-gray-400">Deep dive into Scripture with word studies, cross-references, and cultural context</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Add Study
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleStudyTools.map((tool) => (
-          <Card key={tool.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2">{tool.title}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {tool.type}
+          <Card key={tool.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <GraduationCap className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {tool.type}
+                  </Badge>
+                  {tool.reference && (
+                    <Badge variant="secondary" className="bg-gray-700/50 text-gray-300 border-0 font-mono text-xs">
+                      {tool.reference}
                     </Badge>
-                    {tool.reference && (
-                      <Badge variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300">
-                        {tool.reference}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-gray-400 text-sm">{tool.description}</p>
+                  )}
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {tool.title}
+              </CardTitle>
+              <p className="text-gray-400 text-sm leading-relaxed">{tool.description}</p>
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
-                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 flex-1">
+            <CardContent className="pt-0">
+              <div className="flex space-x-3">
+                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md">
                   <GraduationCap className="h-4 w-4 mr-2" />
                   Study
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <BookMarked className="h-4 w-4" />
                 </Button>
               </div>
@@ -272,43 +303,53 @@ export default function Library() {
   );
 
   const renderTheologyCourses = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Theology Crash Courses</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Theology Crash Courses</h3>
+          <p className="text-gray-400">Build a solid foundation with short, focused lessons on core biblical truths</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Add Course
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleTheologyCourses.map((course) => (
-          <Card key={course.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2 flex items-center">
-                    {course.title}
-                    {course.completed && (
-                      <CheckCircle className="h-5 w-5 ml-2 text-green-500" />
-                    )}
-                  </CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {course.type}
-                    </Badge>
-                    <div className="flex items-center text-gray-400 text-sm">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {course.duration}
-                    </div>
+          <Card key={course.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <Lightbulb className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {course.type}
+                  </Badge>
+                  <div className="flex items-center text-gray-400 text-sm bg-gray-700/30 px-2 py-1 rounded-md">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {course.duration}
                   </div>
+                  {course.completed && (
+                    <div className="p-1 bg-green-500/20 rounded-full">
+                      <CheckCircle className="h-4 w-4 text-green-400" />
+                    </div>
+                  )}
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {course.title}
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
+            <CardContent className="pt-0">
+              <div className="flex space-x-3">
                 <Button 
                   size="sm" 
-                  className={course.completed ? "bg-green-600 text-white hover:bg-green-700" : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"} 
+                  className={course.completed 
+                    ? "bg-green-600 text-white hover:bg-green-700 flex-1 font-medium shadow-md" 
+                    : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md"
+                  } 
                   disabled={course.completed}
                 >
                   {course.completed ? (
@@ -323,7 +364,7 @@ export default function Library() {
                     </>
                   )}
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <Lightbulb className="h-4 w-4" />
                 </Button>
               </div>
@@ -335,41 +376,48 @@ export default function Library() {
   );
 
   const renderAudioLibrary = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Audio & Podcast Library</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Audio & Podcast Library</h3>
+          <p className="text-gray-400">Listen to teachings, podcasts, and uploaded content on the go</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Plus className="h-4 w-4 mr-2" />
           Upload Audio
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {sampleAudioContent.map((audio) => (
-          <Card key={audio.id} className="bg-[var(--scholar-dark)] border-gray-700">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-white text-lg mb-2">{audio.title}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Badge variant="outline" className="border-[var(--scholar-gold)] text-[var(--scholar-gold)]">
-                      {audio.type}
-                    </Badge>
-                    <div className="flex items-center text-gray-400 text-sm">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {audio.duration}
-                    </div>
+          <Card key={audio.id} className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-3 bg-[var(--scholar-gold)]/10 rounded-lg">
+                  <Play className="h-6 w-6 text-[var(--scholar-gold)]" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] bg-[var(--scholar-gold)]/5 font-medium">
+                    {audio.type}
+                  </Badge>
+                  <div className="flex items-center text-gray-400 text-sm bg-gray-700/30 px-2 py-1 rounded-md">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {audio.duration}
                   </div>
-                  <p className="text-gray-400 text-sm">by {audio.speaker}</p>
                 </div>
               </div>
+              <CardTitle className="text-white text-xl mb-2 group-hover:text-[var(--scholar-gold)] transition-colors">
+                {audio.title}
+              </CardTitle>
+              <p className="text-gray-400 text-sm">by <span className="text-gray-300 font-medium">{audio.speaker}</span></p>
             </CardHeader>
-            <CardContent>
-              <div className="flex space-x-2">
-                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 flex-1">
+            <CardContent className="pt-0">
+              <div className="flex space-x-3">
+                <Button size="sm" className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-400 flex-1 font-medium shadow-md">
                   <Play className="h-4 w-4 mr-2" />
                   Play
                 </Button>
-                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 hover:border-[var(--scholar-gold)] hover:text-[var(--scholar-gold)]">
                   <Download className="h-4 w-4" />
                 </Button>
               </div>
@@ -381,56 +429,87 @@ export default function Library() {
   );
 
   const renderSavedContent = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Saved Content</h3>
-        <Button className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Saved Content</h3>
+          <p className="text-gray-400">Quick access to your drafts, notes, study sessions, and favorites</p>
+        </div>
+        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:from-yellow-400 hover:to-[var(--scholar-gold)] shadow-lg font-semibold px-6">
           <Star className="h-4 w-4 mr-2" />
           View All Favorites
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
-          <CardHeader className="pb-4">
-            <div className="flex items-center space-x-3">
-              <FileText className="h-8 w-8 text-[var(--scholar-gold)]" />
-              <div>
-                <h4 className="text-white font-medium">Sermon Drafts</h4>
-                <p className="text-gray-400 text-sm">12 items</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <Card className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group cursor-pointer">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-4 bg-[var(--scholar-gold)]/10 rounded-xl">
+                <FileText className="h-8 w-8 text-[var(--scholar-gold)]" />
               </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white group-hover:text-[var(--scholar-gold)] transition-colors">12</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Items</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-lg mb-1 group-hover:text-[var(--scholar-gold)] transition-colors">Sermon Drafts</h4>
+              <p className="text-gray-400 text-sm">Work in progress sermons and outlines</p>
             </div>
           </CardHeader>
         </Card>
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
-          <CardHeader className="pb-4">
-            <div className="flex items-center space-x-3">
-              <GraduationCap className="h-8 w-8 text-[var(--scholar-gold)]" />
-              <div>
-                <h4 className="text-white font-medium">AI Chat Notes</h4>
-                <p className="text-gray-400 text-sm">28 items</p>
+        
+        <Card className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group cursor-pointer">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-4 bg-[var(--scholar-gold)]/10 rounded-xl">
+                <GraduationCap className="h-8 w-8 text-[var(--scholar-gold)]" />
               </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white group-hover:text-[var(--scholar-gold)] transition-colors">28</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Items</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-lg mb-1 group-hover:text-[var(--scholar-gold)] transition-colors">AI Chat Notes</h4>
+              <p className="text-gray-400 text-sm">Saved conversations with The Scholar</p>
             </div>
           </CardHeader>
         </Card>
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
-          <CardHeader className="pb-4">
-            <div className="flex items-center space-x-3">
-              <BookOpen className="h-8 w-8 text-[var(--scholar-gold)]" />
-              <div>
-                <h4 className="text-white font-medium">Study Sessions</h4>
-                <p className="text-gray-400 text-sm">15 items</p>
+        
+        <Card className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group cursor-pointer">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-4 bg-[var(--scholar-gold)]/10 rounded-xl">
+                <BookOpen className="h-8 w-8 text-[var(--scholar-gold)]" />
               </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white group-hover:text-[var(--scholar-gold)] transition-colors">15</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Items</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-lg mb-1 group-hover:text-[var(--scholar-gold)] transition-colors">Study Sessions</h4>
+              <p className="text-gray-400 text-sm">Personal Bible study notes and insights</p>
             </div>
           </CardHeader>
         </Card>
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
-          <CardHeader className="pb-4">
-            <div className="flex items-center space-x-3">
-              <Heart className="h-8 w-8 text-[var(--scholar-gold)]" />
-              <div>
-                <h4 className="text-white font-medium">Favorites</h4>
-                <p className="text-gray-400 text-sm">45 items</p>
+        
+        <Card className="bg-gradient-to-br from-[var(--scholar-dark)] to-[var(--scholar-darker)] border-gray-700 hover:border-[var(--scholar-gold)]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[var(--scholar-gold)]/10 group cursor-pointer">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-4 bg-[var(--scholar-gold)]/10 rounded-xl">
+                <Heart className="h-8 w-8 text-[var(--scholar-gold)]" />
               </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white group-hover:text-[var(--scholar-gold)] transition-colors">45</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Items</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-lg mb-1 group-hover:text-[var(--scholar-gold)] transition-colors">Favorites</h4>
+              <p className="text-gray-400 text-sm">Bookmarked verses and resources</p>
             </div>
           </CardHeader>
         </Card>
