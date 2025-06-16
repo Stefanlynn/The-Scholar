@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { BookOpen, Book, Library, FileText, MessageSquare, User, Settings } from "lucide-react";
+import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 
 const navigation = [
   { name: "The Scholar", href: "/", icon: MessageSquare },
@@ -17,8 +18,12 @@ export default function Sidebar() {
     <div className="w-64 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col hidden md:flex">
       <div className="p-6 border-b border-gray-800">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 gradient-gold rounded-lg flex items-center justify-center">
-            <Book className="text-black text-lg" />
+          <div className="w-10 h-10 flex items-center justify-center">
+            <img 
+              src={scholarLogo} 
+              alt="The Scholar" 
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">The Scholar</h1>
