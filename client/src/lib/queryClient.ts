@@ -16,12 +16,17 @@ export async function apiRequest(
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
   
+  const headers: Record<string, string> = {};
+  if (data) {
+    headers["Content-Type"] = "application/json";
+  }
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  
   const res = await fetch(url, {
     method,
-    headers: {
-      ...(data && { "Content-Type": "application/json" }),
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -40,11 +45,14 @@ export const getQueryFn: <T>(options: {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
     
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

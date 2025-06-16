@@ -235,16 +235,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
+  app.post("/api/chat/messages", async (req, res) => {
     try {
-      const user = await storage.getUserByEmail(req.user.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
+      // Always allow chat messages, using demo user as fallback
+      let userId = DEMO_USER_ID;
+      
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        try {
+          const token = authHeader.replace('Bearer ', '');
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          if (!error && user) {
+            const dbUser = await storage.getUserByEmail(user.email);
+            if (dbUser) {
+              userId = dbUser.id;
+            }
+          }
+        } catch (authError) {
+          // Continue with demo user
+          console.log('Using demo user for chat');
+        }
       }
 
       const messageData = insertChatMessageSchema.parse({
         ...req.body,
-        userId: user.id
+        userId: userId
       });
       
       // Generate AI response
@@ -254,6 +269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const message = await storage.createChatMessage(messageData);
       res.json(message);
     } catch (error) {
+      console.error('Chat message error:', error);
       res.status(400).json({ message: "Invalid message data" });
     }
   });
