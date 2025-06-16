@@ -6,7 +6,7 @@ import QuickAccess from "@/components/quick-access";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, GraduationCap } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
@@ -26,7 +26,10 @@ export default function Home() {
         <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 md:space-x-4">
-              <h2 className="text-lg md:text-xl font-semibold text-white">The Scholar</h2>
+              <div className="flex items-center space-x-2">
+                <GraduationCap className="h-6 w-6 md:h-7 md:w-7 text-[var(--scholar-gold)]" />
+                <h2 className="text-lg md:text-xl font-semibold text-white">The Scholar</h2>
+              </div>
               <div className="hidden sm:flex items-center space-x-2 text-green-400">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="text-sm">Online</span>

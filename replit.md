@@ -192,6 +192,10 @@ Changelog:
   * Enhanced profile page to invalidate all user-related queries when preferences update
   * Integrated Supabase authentication tokens in API requests for proper user data access
   * Ensured profile changes (Bible translation, dark mode, etc.) update throughout entire application
+- June 16, 2025: Enhanced visual design and branding improvements
+  * Fixed account settings section with improved dark theme styling and readability
+  * Replaced white button boxes with properly styled transparent buttons
+  * Added graduation cap hat icon next to "The Scholar" logo in golden color for scholarly branding
 ```
 
 ## User Preferences
