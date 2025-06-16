@@ -18,7 +18,7 @@ export default function Sidebar() {
     <div className="w-64 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col hidden md:flex">
       <div className="p-6 border-b border-gray-800">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 flex items-center justify-center">
+          <div className="w-10 h-10 flex items-center justify-center bg-white/10 rounded-lg">
             <img 
               src={scholarLogo} 
               alt="The Scholar" 
