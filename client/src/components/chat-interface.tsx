@@ -115,9 +115,37 @@ export default function ChatInterface() {
     }
   };
 
+  const saveToNotesMutation = useMutation({
+    mutationFn: async (noteData: { title: string; content: string }) => {
+      const response = await apiRequest("POST", "/api/notes", noteData);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Saved to Notes successfully!" });
+    },
+    onError: () => {
+      toast({ title: "Failed to save to Notes", variant: "destructive" });
+    },
+  });
+
   const handleSaveAction = (messageId: number, action: string) => {
+    // Find the message to save
+    const messageToSave = conversation.find(msg => msg.id === messageId);
+    if (!messageToSave || !messageToSave.response) {
+      toast({ title: "No response to save", variant: "destructive" });
+      return;
+    }
+
     setSavedButtons(prev => new Set(prev).add(messageId));
-    toast({ title: `${action} successful!` });
+    
+    // Create note from The Scholar's response
+    const noteTitle = `Scholar Response: ${messageToSave.message.slice(0, 50)}${messageToSave.message.length > 50 ? '...' : ''}`;
+    const noteContent = `Question: ${messageToSave.message}\n\nThe Scholar's Response:\n${messageToSave.response}`;
+    
+    saveToNotesMutation.mutate({
+      title: noteTitle,
+      content: noteContent
+    });
     
     setTimeout(() => {
       setSavedButtons(prev => {
