@@ -142,7 +142,22 @@ export default function Bible() {
       }).then(res => res.json());
     },
     onSuccess: (data) => {
-      toast({ title: "Scholar response ready", description: "Check your chat for the answer" });
+      toast({ 
+        title: "Analysis Complete", 
+        description: "The Scholar has analyzed your verse. Navigate to chat to see the full response.",
+        duration: 5000
+      });
+      // Navigate to chat page after a brief delay
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "Connection Error", 
+        description: "Unable to connect to The Scholar. Please try again.",
+        variant: "destructive" 
+      });
     }
   });
 
@@ -213,10 +228,6 @@ export default function Bible() {
         query = `Create sermon preparation tools for "${verseText}" (${verseRef}). Provide outline points, illustrations, practical applications, and modern headlines that reflect this truth.`;
         break;
         
-      case 'notes':
-        // Handle personal notes differently - keep dialog open for note input
-        return;
-        
       case 'structural-patterns':
         query = `Analyze the literary structure and patterns in "${verseText}" (${verseRef}). Identify chiasms, repetition, poetic elements, and show where this passage fits in broader biblical structure.`;
         break;
@@ -227,9 +238,14 @@ export default function Bible() {
     }
     
     if (query) {
-      // Send to Scholar AI and navigate to chat
+      // Show immediate feedback
+      toast({ 
+        title: "Analyzing verse...", 
+        description: "Connecting to biblical resources and AI analysis",
+        duration: 3000
+      });
+      
       scholarMutation.mutate(query);
-      // Close the dialog and potentially navigate to chat
       setSelectedVerse(null);
     }
   };
@@ -886,17 +902,7 @@ export default function Bible() {
                       <p className="text-gray-400 text-sm leading-relaxed">Outlines, illustrations, applications</p>
                     </div>
 
-                    {/* 7. Personal Notes */}
-                    <div
-                      className="group p-5 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-xl border border-orange-500/20 hover:border-orange-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
-                      onClick={() => handleStudyTool('notes')}
-                    >
-                      <PenTool className="h-7 w-7 text-orange-400 mb-3 group-hover:text-orange-300 transition-colors" />
-                      <h4 className="font-semibold text-gray-100 mb-1">Notes & Journal</h4>
-                      <p className="text-gray-400 text-sm leading-relaxed">Add personal reflections</p>
-                    </div>
-
-                    {/* 8. Structural Patterns */}
+                    {/* 7. Structural Patterns */}
                     <div
                       className="group p-5 bg-gradient-to-br from-teal-500/10 to-teal-600/5 rounded-xl border border-teal-500/20 hover:border-teal-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-teal-500/10"
                       onClick={() => handleStudyTool('structural-patterns')}
@@ -906,7 +912,7 @@ export default function Bible() {
                       <p className="text-gray-400 text-sm leading-relaxed">Patterns, devices, biblical structure</p>
                     </div>
 
-                    {/* 9. Devotional Builder */}
+                    {/* 8. Devotional Builder */}
                     <div
                       className="group p-5 bg-gradient-to-br from-rose-500/10 to-rose-600/5 rounded-xl border border-rose-500/20 hover:border-rose-400/40 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-rose-500/10"
                       onClick={() => handleStudyTool('devotional')}
