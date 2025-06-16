@@ -27,6 +27,7 @@ import {
   Zap
 } from "lucide-react";
 import Sidebar from "@/components/sidebar";
+import MobileTabBar from "@/components/mobile-tab-bar";
 
 export default function Library() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -331,6 +332,7 @@ export default function Library() {
           </div>
         </div>
       </div>
+      <MobileTabBar />
     </div>
   );
 }
