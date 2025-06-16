@@ -424,7 +424,7 @@ export default function Profile() {
                           <Button
                             onClick={() => setShowDeleteDialog(false)}
                             variant="outline"
-                            className="flex-1 border-gray-600 text-white"
+                            className="flex-1 border-gray-600 text-white hover:bg-gray-700 bg-transparent"
                           >
                             Cancel
                           </Button>
