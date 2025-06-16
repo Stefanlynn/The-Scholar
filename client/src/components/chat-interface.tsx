@@ -221,9 +221,9 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Chat Input */}
-      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-3 md:p-4 flex-shrink-0">
-        <form onSubmit={handleSubmit} className="flex items-end space-x-2 md:space-x-4">
+      {/* Chat Input Box - Always Visible */}
+      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-4 flex-shrink-0" style={{ minHeight: '100px' }}>
+        <form onSubmit={handleSubmit} className="flex items-end space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
@@ -232,15 +232,16 @@ export default function ChatInterface() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border border-gray-700 text-white px-3 md:px-4 py-2 md:py-3 pr-10 md:pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[2.5rem] md:min-h-[3rem] max-h-32 text-sm md:text-base"
+                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-4 py-3 pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] max-h-32 text-base"
                 rows={1}
+                style={{ backgroundColor: '#0a0a0a', color: 'white' }}
               />
               <Button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
-                className="absolute bottom-2 md:bottom-3 right-2 md:right-3 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-1.5 md:p-2 h-6 w-6 md:h-8 md:w-8"
+                className="absolute bottom-3 right-3 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-2 h-8 w-8 rounded-full"
               >
-                <Send className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                <Send className="h-3 w-3" />
               </Button>
             </div>
             <div className="flex items-center justify-between mt-2">
