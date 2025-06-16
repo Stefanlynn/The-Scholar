@@ -73,7 +73,8 @@ export default function Bible() {
   const { toast } = useToast();
 
   const { data: chapterData, isLoading } = useQuery({
-    queryKey: ["/api/bible", selectedBook, selectedChapter],
+    queryKey: ["/api/bible", selectedBook, selectedChapter, selectedTranslation],
+    queryFn: () => getBibleChapter(selectedBook, selectedChapter, selectedTranslation),
     enabled: !!selectedBook && !!selectedChapter,
   });
 

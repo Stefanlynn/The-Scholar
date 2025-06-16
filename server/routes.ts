@@ -415,8 +415,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/bible/:book/:chapter", async (req, res) => {
     try {
       const { book, chapter } = req.params;
+      const translation = req.query.translation || 'kjv';
+      const RAPIDAPI_KEY = "968991c5c1mshc63a6b5b6e7e92dp1f8685jsnbfc8e9663eed";
+
+      // Try NIV Bible API for NIV translation
+      if (translation === 'niv') {
+        try {
+          // Get all verses for the chapter using NIV Bible API
+          const verses = [];
+          let verseNum = 1;
+          let hasMoreVerses = true;
+
+          while (hasMoreVerses && verseNum <= 176) { // Max verses in any chapter
+            try {
+              const response = await fetch(`https://niv-bible.p.rapidapi.com/row?Book=${encodeURIComponent(book)}&Chapter=${chapter}&Verse=${verseNum}`, {
+                method: 'GET',
+                headers: {
+                  'X-RapidAPI-Key': RAPIDAPI_KEY,
+                  'X-RapidAPI-Host': 'niv-bible.p.rapidapi.com'
+                }
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                if (data && data.text && data.text.trim()) {
+                  verses.push({
+                    verse: verseNum,
+                    text: data.text
+                  });
+                  verseNum++;
+                } else {
+                  hasMoreVerses = false;
+                }
+              } else {
+                hasMoreVerses = false;
+              }
+            } catch (error) {
+              hasMoreVerses = false;
+            }
+          }
+
+          if (verses.length > 0) {
+            return res.json({
+              book: book,
+              chapter: parseInt(chapter),
+              verses: verses
+            });
+          }
+        } catch (error) {
+          console.log('NIV Bible API unavailable, trying Bible Search API');
+        }
+      }
+
+      // Try Bible Search API for other translations
+      try {
+        const response = await fetch(`https://bible-search.p.rapidapi.com/books-by-name?bookName=${encodeURIComponent(book)}`, {
+          method: 'GET',
+          headers: {
+            'X-RapidAPI-Key': RAPIDAPI_KEY,
+            'X-RapidAPI-Host': 'bible-search.p.rapidapi.com'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.chapters && data.chapters[parseInt(chapter) - 1]) {
+            const chapterData = data.chapters[parseInt(chapter) - 1];
+            if (chapterData.verses) {
+              return res.json({
+                book: book,
+                chapter: parseInt(chapter),
+                verses: chapterData.verses.map((verse: any, index: number) => ({
+                  verse: index + 1,
+                  text: verse
+                }))
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Bible Search API unavailable, trying IQ Bible');
+      }
       
-      // Try IQ Bible API first if available
+      // Try IQ Bible API as fallback
       const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
       if (IQ_BIBLE_API_KEY) {
         try {
@@ -443,11 +524,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
         } catch (error) {
-          console.log('IQ Bible API unavailable for chapter, using fallback');
+          console.log('IQ Bible API unavailable for chapter, using search fallback');
         }
       }
 
-      // Use searchByKeywords to get chapter verses with authentic data
+      // Final fallback to search-based results
       const searchResults = await searchByKeywords(`${book} ${chapter}`);
       
       // Filter and organize results by chapter

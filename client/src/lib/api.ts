@@ -42,8 +42,8 @@ export async function searchBible(query: string): Promise<BibleSearchResult> {
   return response.json();
 }
 
-export async function getBibleChapter(book: string, chapter: number): Promise<BibleChapter> {
-  const response = await fetch(`${API_BASE_URL}/api/bible/${encodeURIComponent(book)}/${chapter}`);
+export async function getBibleChapter(book: string, chapter: number, translation: string = 'kjv'): Promise<BibleChapter> {
+  const response = await fetch(`${API_BASE_URL}/api/bible/${encodeURIComponent(book)}/${chapter}?translation=${translation}`);
   if (!response.ok) {
     throw new Error("Failed to get Bible chapter");
   }
