@@ -63,7 +63,7 @@ export default function Library() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-6 py-8 space-y-12">
+          <div className="max-w-7xl mx-auto px-6 py-8 pb-20 md:pb-8 space-y-12">
             
             {/* Quick Access */}
             <section>
