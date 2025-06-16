@@ -36,9 +36,16 @@ function Router() {
   const { user, loading } = useAuth();
   const [location] = useLocation();
 
-  // Check if user wants to skip auth for development
+  // Check if user wants to skip auth for development (persistent)
   const urlParams = new URLSearchParams(window.location.search);
-  const skipAuth = urlParams.get('skip') === 'true';
+  const skipFromUrl = urlParams.get('skip') === 'true';
+  const skipFromStorage = localStorage.getItem('skipAuth') === 'true';
+  const skipAuth = skipFromUrl || skipFromStorage;
+
+  // Store skip auth preference for session
+  if (skipFromUrl && !skipFromStorage) {
+    localStorage.setItem('skipAuth', 'true');
+  }
 
   // Show loading while checking auth status (unless skipping)
   if (loading && !skipAuth) {
