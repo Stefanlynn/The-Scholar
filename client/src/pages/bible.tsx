@@ -84,9 +84,25 @@ export default function Bible() {
   const [showScholarDialog, setShowScholarDialog] = useState(false);
   const [scholarLoading, setScholarLoading] = useState(false);
   const [currentVerseForStudy, setCurrentVerseForStudy] = useState<any>(null);
+  const [currentStudyTool, setCurrentStudyTool] = useState<string>("");
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Get tool-specific title and icon
+  const getStudyToolTitle = (toolType: string) => {
+    const toolTitles = {
+      'greek-hebrew': 'Greek / Hebrew Breakdown',
+      'cross-references': 'Cross-References',
+      'commentary': "The Scholar's Take",
+      'cultural-context': 'Cultural & Historical Context',
+      'topical-tags': 'Topical Tags',
+      'sermon-tools': 'Sermon Integration Tools',
+      'structural-patterns': 'Literary Structure',
+      'devotional': 'Devotional Builder'
+    };
+    return toolTitles[toolType as keyof typeof toolTitles] || 'Biblical Analysis';
+  };
 
   const { data: chapterData, isLoading } = useQuery({
     queryKey: ["/api/bible", selectedBook, selectedChapter, selectedTranslation],
@@ -207,11 +223,12 @@ export default function Bible() {
     const verseRef = `${selectedBook} ${selectedChapter}:${selectedVerse.verse}`;
     const verseText = selectedVerse.text;
     
-    // Store current verse for display in dialog
+    // Store current verse and tool for display in dialog
     setCurrentVerseForStudy({
       reference: verseRef,
       text: verseText
     });
+    setCurrentStudyTool(toolType);
     
     // Show loading immediately
     setScholarLoading(true);
@@ -1029,7 +1046,7 @@ export default function Bible() {
             <DialogHeader>
               <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center">
                 <GraduationCap className="h-6 w-6 mr-2" />
-                The Scholar's Analysis
+                {currentStudyTool ? getStudyToolTitle(currentStudyTool) : "The Scholar's Analysis"}
               </DialogTitle>
             </DialogHeader>
             
