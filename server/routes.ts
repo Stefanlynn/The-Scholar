@@ -290,33 +290,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Fallback to Bible API for authentic scripture data
-      const response = await fetch(`https://bible-api.com/${encodeURIComponent(query as string)}`);
-      
-      if (!response.ok) {
-        throw new Error(`Bible API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      // Transform Bible API response to our format
-      const results = [];
-      if (data.verses && Array.isArray(data.verses)) {
-        results.push(...data.verses.map((verse: any) => ({
-          book: verse.book_name || data.book_name || 'Unknown',
-          chapter: verse.chapter || data.chapter || 1,
-          verse: verse.verse || 1,
-          text: verse.text || data.text || ''
-        })));
-      } else if (data.text) {
-        // Single verse response
-        results.push({
-          book: data.book_name || 'Unknown',
-          chapter: data.chapter || 1,
-          verse: data.verse || 1,
-          text: data.text
-        });
-      }
+      // Use reliable Bible search through searchByKeywords function
+      const results = await searchByKeywords(query as string);
       
       res.json({
         query: query as string,
@@ -391,34 +366,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Fallback to Bible API for authentic scripture data
-      const response = await fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}`);
+      // Use searchByKeywords to get chapter verses with authentic data
+      const searchResults = await searchByKeywords(`${book} ${chapter}`);
       
-      if (!response.ok) {
-        throw new Error(`Bible API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      // Transform Bible API response to our format
-      const verses = [];
-      if (data.verses && Array.isArray(data.verses)) {
-        verses.push(...data.verses.map((verse: any) => ({
-          verse: verse.verse || 1,
-          text: verse.text || ''
-        })));
-      } else if (data.text) {
-        // Single verse response
-        verses.push({
-          verse: data.verse || 1,
-          text: data.text
-        });
-      }
+      // Filter and organize results by chapter
+      const chapterVerses = searchResults
+        .filter(result => result.book.toLowerCase().includes(book.toLowerCase()) && result.chapter === parseInt(chapter))
+        .map(result => ({
+          verse: result.verse,
+          text: result.text
+        }))
+        .sort((a, b) => a.verse - b.verse);
       
       res.json({
         book: book,
         chapter: parseInt(chapter),
-        verses
+        verses: chapterVerses
       });
     } catch (error) {
       console.error('Bible chapter error:', error);
