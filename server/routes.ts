@@ -524,14 +524,17 @@ Pull Scripture text from Bible knowledge if specific verses are mentioned. Do no
 
   app.post("/api/notes", async (req, res) => {
     try {
+      console.log("Received note data:", req.body);
       const noteData = insertNoteSchema.parse({
         ...req.body,
         userId: DEMO_USER_ID
       });
+      console.log("Parsed note data:", noteData);
       const note = await storage.createNote(noteData);
       res.json(note);
     } catch (error) {
-      res.status(400).json({ message: "Invalid note data" });
+      console.error("Note creation error:", error);
+      res.status(400).json({ message: "Invalid note data", error: error.message });
     }
   });
 
