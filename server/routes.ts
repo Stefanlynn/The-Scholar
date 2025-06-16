@@ -227,7 +227,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bible API proxy (using API.Bible or similar service)
+  // Bible API integration using bible-api.com (free, reliable service)
   app.get("/api/bible/search", async (req, res) => {
     try {
       const { query } = req.query;
@@ -235,23 +235,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Search query is required" });
       }
       
-      // Here you would integrate with a Bible API like API.Bible
-      // For now, returning a placeholder response
+      // Use ESV Bible API for search functionality
+      const response = await fetch(`https://api.esv.org/v3/passage/search/?q=${encodeURIComponent(query as string)}&include-passage-references=true&include-verse-numbers=true&page-size=10`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Token 88dc2b52c2e6eff9f1bb726721f10c0b3d0c5fef',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        // Fallback to simple keyword-based search using bible-api.com
+        const fallbackResults = await searchByKeywords(query as string);
+        return res.json(fallbackResults);
+      }
+
+      const data = await response.json();
+      
+      // Transform ESV API response to our format
       const searchResults = {
         query,
-        results: [
-          {
-            book: "Matthew",
-            chapter: 13,
-            verse: 3,
-            text: "And he spake many things unto them in parables, saying, Behold, a sower went forth to sow;"
-          }
-        ]
+        results: data.results ? data.results.map((result: any) => ({
+          book: result.reference.split(' ')[0],
+          chapter: parseInt(result.reference.match(/(\d+):/)?.[1] || '1'),
+          verse: parseInt(result.reference.match(/:(\d+)/)?.[1] || '1'),
+          text: result.content.replace(/<[^>]*>/g, '').trim()
+        })) : []
       };
       
       res.json(searchResults);
     } catch (error) {
-      res.status(500).json({ message: "Failed to search Bible" });
+      console.error('Bible search error:', error);
+      // Fallback search
+      const fallbackResults = await searchByKeywords(req.query.query as string);
+      res.json(fallbackResults);
     }
   });
 
@@ -259,18 +276,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { book, chapter } = req.params;
       
-      // Here you would integrate with a Bible API
-      // For now, returning a placeholder response
+      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+      if (!RAPIDAPI_KEY) {
+        return res.status(500).json({ message: "Bible API key not configured" });
+      }
+
+      const response = await fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Bible API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Transform the API response to match our expected format
       const chapterData = {
-        book,
+        book: data.reference?.split(' ')[0] || book,
         chapter: parseInt(chapter),
-        verses: [
-          { verse: 1, text: "Sample verse text..." },
-        ]
+        verses: data.verses ? data.verses.map((verse: any) => ({
+          verse: verse.verse,
+          text: verse.text
+        })) : []
       };
       
       res.json(chapterData);
     } catch (error) {
+      console.error('Bible chapter error:', error);
       res.status(500).json({ message: "Failed to get Bible chapter" });
     }
   });
@@ -279,12 +315,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-// Generate AI response using Google's Generative AI
+// Generate AI response using Google's Generative AI with Bible API integration
 async function generateAIResponse(message: string): Promise<string> {
   const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
   
   if (!GOOGLE_API_KEY) {
     return "I'm experiencing technical difficulties connecting to my knowledge base. Please check that the Google API key is properly configured.";
+  }
+
+  // Enhanced context with Bible API access
+  let biblicalContext = "";
+  
+  // Extract potential scripture references from the message
+  const scripturePattern = /(\d?\s?[A-Za-z]+\s+\d+:\d+(-\d+)?)|([A-Za-z]+\s+\d+)/g;
+  const potentialRefs = message.match(scripturePattern);
+  
+  if (potentialRefs && RAPIDAPI_KEY) {
+    try {
+      // Search for relevant Bible passages based on keywords
+      const searchResponse = await fetch(`https://bible-search2.p.rapidapi.com/search?query=${encodeURIComponent(message)}&version=kjv&limit=3`, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': RAPIDAPI_KEY,
+          'X-RapidAPI-Host': 'bible-search2.p.rapidapi.com'
+        }
+      });
+
+      if (searchResponse.ok) {
+        const searchData = await searchResponse.json();
+        if (searchData.verses && searchData.verses.length > 0) {
+          biblicalContext = "\n\nRelevant Scripture Context:\n" + 
+            searchData.verses.slice(0, 3).map((verse: any) => 
+              `${verse.book_name} ${verse.chapter}:${verse.verse} - "${verse.text}"`
+            ).join("\n");
+        }
+      }
+    } catch (error) {
+      console.log('Bible API context search failed:', error);
+    }
   }
 
   const systemPrompt = `# Scholar AI System Prompt (Protestant Edition)
@@ -332,7 +401,7 @@ Always close challenging conversations with hope, grace, and a reminder that Jes
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `${systemPrompt}\n\nUser Question: ${message}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart.`
+            text: `${systemPrompt}\n\nUser Question: ${message}${biblicalContext}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart. If relevant scripture is provided above, reference it directly in your response.`
           }]
         }],
         generationConfig: {
