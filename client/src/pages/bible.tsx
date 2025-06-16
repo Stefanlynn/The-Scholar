@@ -576,7 +576,7 @@ export default function Bible() {
                                     }}
                                     className="h-8 w-8 p-0 hover:bg-gray-600 text-gray-400"
                                   >
-                                    <Bot className="h-4 w-4" />
+                                    <GraduationCap className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>Ask The Scholar</TooltipContent>
@@ -626,29 +626,20 @@ export default function Bible() {
                         </span>
                         <div className="flex-1">
                           <div className="flex items-start justify-between">
-                            <p className="text-gray-200 leading-relaxed text-base flex-1 pr-3">
+                            <p 
+                              className={`text-gray-200 leading-relaxed text-base flex-1 pr-3 rounded px-2 py-1 ${
+                                isHighlighted ? getHighlightClass(verseKey) : ''
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                              }}
+                            >
                               {verse.text}
                             </p>
                             
                             {/* Verse Action Icons */}
                             <div className="flex items-start space-x-2 flex-shrink-0">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
-                                }}
-                                className={`p-1.5 rounded-lg ${
-                                  isHighlighted 
-                                    ? 'bg-yellow-500/20 text-yellow-400' 
-                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
-                                }`}
-                                title="Highlight verse"
-                              >
-                                <Highlighter className="h-3.5 w-3.5" />
-                              </Button>
-                              
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -757,7 +748,7 @@ export default function Bible() {
                   {/* Ask The Scholar */}
                   <div className="space-y-3">
                     <h4 className="font-medium text-white flex items-center">
-                      <Bot className="h-4 w-4 mr-2" />
+                      <GraduationCap className="h-4 w-4 mr-2" />
                       Ask The Scholar
                     </h4>
                     <Textarea
