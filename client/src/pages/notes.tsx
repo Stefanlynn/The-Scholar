@@ -276,29 +276,29 @@ export default function Notes() {
                         {enhancingNoteId === note.id ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--scholar-gold)]"></div>
                         ) : (
-                          <Sparkles className="h-4 w-4" />
+                          <GraduationCap className="h-4 w-4" />
                         )}
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700">
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'expand', note.content)}>
-                        <Zap className="h-4 w-4 mr-2" />
+                    <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700 text-white">
+                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'expand', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                        <Zap className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
                         Expand into full paragraph
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'scripture', note.content)}>
-                        <BookOpen className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'scripture', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                        <BookOpen className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
                         Add supporting Scripture
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'illustration', note.content)}>
-                        <Lightbulb className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'illustration', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                        <Lightbulb className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
                         Suggest illustration
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'summarize', note.content)}>
-                        <MessageSquare className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'summarize', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                        <MessageSquare className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
                         Summarize takeaway
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'clarify', note.content)}>
-                        <Edit className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem onClick={() => handleAiEnhancement(note.id, 'clarify', note.content)} className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                        <Edit className="h-4 w-4 mr-2 text-[var(--scholar-gold)]" />
                         Clarify expression
                       </DropdownMenuItem>
                     </DropdownMenuContent>
