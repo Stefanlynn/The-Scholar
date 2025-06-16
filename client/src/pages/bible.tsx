@@ -89,6 +89,20 @@ export default function Bible() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Save Scholar response to notes
+  const saveToNotesMutation = useMutation({
+    mutationFn: async (data: { title: string; content: string; scripture: string; tags: string[] }) => {
+      return apiRequest("POST", "/api/notes", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      toast({ title: "Analysis saved to notes successfully!" });
+    },
+    onError: () => {
+      toast({ title: "Failed to save to notes", variant: "destructive" });
+    },
+  });
+
   // Get tool-specific title and icon
   const getStudyToolTitle = (toolType: string) => {
     const toolTitles = {
@@ -102,6 +116,21 @@ export default function Bible() {
       'devotional': 'Devotional Builder'
     };
     return toolTitles[toolType as keyof typeof toolTitles] || 'Biblical Analysis';
+  };
+
+  // Handle saving Scholar response to notes
+  const handleSaveToNotes = () => {
+    if (!scholarResponse || !currentVerseForStudy || !currentStudyTool) return;
+    
+    const toolTitle = getStudyToolTitle(currentStudyTool);
+    const noteData = {
+      title: `${toolTitle} - ${currentVerseForStudy.reference}`,
+      content: scholarResponse,
+      scripture: currentVerseForStudy.reference,
+      tags: [currentStudyTool, 'study-tool']
+    };
+    
+    saveToNotesMutation.mutate(noteData);
   };
 
   const { data: chapterData, isLoading } = useQuery({
