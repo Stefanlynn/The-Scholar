@@ -83,6 +83,7 @@ export default function Bible() {
   const [scholarResponse, setScholarResponse] = useState<string>("");
   const [showScholarDialog, setShowScholarDialog] = useState(false);
   const [scholarLoading, setScholarLoading] = useState(false);
+  const [currentVerseForStudy, setCurrentVerseForStudy] = useState<any>(null);
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -205,6 +206,17 @@ export default function Bible() {
     
     const verseRef = `${selectedBook} ${selectedChapter}:${selectedVerse.verse}`;
     const verseText = selectedVerse.text;
+    
+    // Store current verse for display in dialog
+    setCurrentVerseForStudy({
+      reference: verseRef,
+      text: verseText
+    });
+    
+    // Show loading immediately
+    setScholarLoading(true);
+    setShowScholarDialog(true);
+    setScholarResponse("");
     
     let query = "";
     
@@ -1020,7 +1032,20 @@ export default function Bible() {
                 The Scholar's Analysis
               </DialogTitle>
             </DialogHeader>
-            <div className="mt-6">
+            
+            {/* Verse Reference Display */}
+            {currentVerseForStudy && (
+              <div className="bg-[var(--scholar-darker)] border border-[var(--scholar-gold)]/20 rounded-lg p-4 mb-6">
+                <div className="text-[var(--scholar-gold)] font-semibold text-lg mb-2">
+                  {currentVerseForStudy.reference}
+                </div>
+                <div className="text-gray-200 leading-relaxed italic text-base">
+                  "{currentVerseForStudy.text}"
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-4">
               {scholarLoading ? (
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3 text-[var(--scholar-gold)]">
@@ -1030,6 +1055,8 @@ export default function Bible() {
                   <Skeleton className="h-4 w-full bg-gray-700" />
                   <Skeleton className="h-4 w-3/4 bg-gray-700" />
                   <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                  <Skeleton className="h-4 w-4/5 bg-gray-700" />
+                  <Skeleton className="h-4 w-2/3 bg-gray-700" />
                 </div>
               ) : (
                 <div className="prose prose-invert max-w-none">
