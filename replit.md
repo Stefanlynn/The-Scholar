@@ -209,6 +209,13 @@ Changelog:
   * Added comprehensive copy and download functionality for sermon content including individual section copying
   * Integrated detailed style guide for complete sermon rewriting with authentic voice characteristics
   * Created backend API endpoint `/api/chat/enhance` with detailed prompts for each preaching style
+- June 16, 2025: Enhanced sermon AI functionality with text selection and undo features
+  * Fixed API parameter order bugs causing "Method is not a valid HTTP token" errors
+  * Implemented text selection requirement for AI enhancement buttons
+  * Added clear Scholar attribution formatting for all AI enhancements
+  * Built undo/revert functionality to restore previous content before enhancement
+  * Enhanced error handling and user feedback for better workflow experience
+  * Buttons now require highlighted text and provide specific responses per action type
 ```
 
 ## User Preferences
