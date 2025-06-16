@@ -19,6 +19,6 @@ const serverlessHandler = serverless(app);
 
 // Export the Netlify handler
 export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
-  const result = await serverlessHandler(event, context);
+  const result = await serverlessHandler(event, context) as any;
   return result;
 };

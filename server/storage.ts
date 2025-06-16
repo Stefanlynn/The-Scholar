@@ -203,14 +203,7 @@ export class MemStorage implements IStorage {
     return updatedNote;
   }
 
-  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...updateData };
-    this.users.set(id, updatedUser);
-    return updatedUser;
-  }
+
 
   async deleteNote(id: number): Promise<boolean> {
     return this.notes.delete(id);

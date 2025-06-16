@@ -1,6 +1,6 @@
 [build]
   publish = "dist/public"
-  command = "npm run build"
+  command = "./build.sh"
 
 [build.environment]
   NODE_VERSION = "18"
