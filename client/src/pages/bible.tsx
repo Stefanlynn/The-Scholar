@@ -622,6 +622,23 @@ export default function Bible() {
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  isHighlighted ? handleRemoveHighlight(verseKey) : handleHighlight(verseKey);
+                                }}
+                                className={`p-1.5 rounded-lg ${
+                                  isHighlighted 
+                                    ? 'bg-yellow-500/20 text-yellow-400' 
+                                    : 'bg-gray-700/30 text-gray-500 hover:text-gray-300'
+                                }`}
+                                title="Highlight verse"
+                              >
+                                <Highlighter className="h-3.5 w-3.5" />
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   handleVerseClick(verse);
                                 }}
                                 className={`p-1.5 rounded-lg ${
