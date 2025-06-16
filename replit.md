@@ -259,6 +259,13 @@ Changelog:
   * Welcome message now appears whenever conversation is empty and returns after clearing chat
   * Added "New Conversation" button to clear current chat and restore welcome message
   * Mode selection persists throughout the conversation for consistent Scholar personality
+- June 16, 2025: Integrated expert voice adaptation system for topic-specific responses
+  * Added automatic voice adaptation based on question topics using expert biblical teachers
+  * Study Mode uses voices like Dr. Frank Turek, John Maxwell, John Piper, and Tim Mackie based on topic
+  * Devotional Mode channels Bob Hamp and Kris Vallotton's approaches for heart-level ministry
+  * The Scholar automatically selects appropriate expert voice: apologetics, leadership, exposition, prophetic insight, or pastoral care
+  * Maintains all existing biblical API integrations while delivering insights through expert personality lenses
+  * Removed "Add to Sermon" button and ensured "Save to Notes" properly integrates with Notes section
 ```
 
 ## User Preferences
