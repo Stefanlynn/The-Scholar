@@ -19,7 +19,7 @@ export default function Home() {
         <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 md:space-x-4">
-              <h2 className="text-lg md:text-xl font-semibold text-white">The Scholar AI</h2>
+              <h2 className="text-lg md:text-xl font-semibold text-white">The Scholar</h2>
               <div className="hidden sm:flex items-center space-x-2 text-green-400">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="text-sm">Online</span>

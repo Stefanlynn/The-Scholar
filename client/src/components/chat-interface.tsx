@@ -91,22 +91,22 @@ export default function ChatInterface() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 pb-20 md:pb-6">
         {/* Welcome Message */}
         <div className="scholar-chat-bubble">
-          <div className="flex items-start space-x-4">
-            <div className="w-10 h-10 gradient-gold rounded-full flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="text-black" />
+          <div className="flex items-start space-x-3 md:space-x-4">
+            <div className="w-8 h-8 md:w-10 md:h-10 gradient-gold rounded-full flex items-center justify-center flex-shrink-0">
+              <GraduationCap className="text-black text-sm md:text-base" />
             </div>
-            <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-4 max-w-2xl">
-              <p className="text-gray-200 leading-relaxed">Welcome to The Scholar! I'm your AI-powered biblical study assistant. I can help you with:</p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-4 w-4" />Biblical interpretation and exegesis</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-4 w-4" />Historical and cultural context</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-4 w-4" />Sermon preparation and outline creation</li>
-                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-4 w-4" />Cross-references and thematic studies</li>
+            <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4 max-w-xs md:max-w-2xl">
+              <p className="text-gray-200 leading-relaxed text-sm md:text-base">Welcome to The Scholar! I'm your AI-powered biblical study assistant. I can help you with:</p>
+              <ul className="mt-3 space-y-2 text-xs md:text-sm text-gray-300">
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Biblical interpretation and exegesis</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Historical and cultural context</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Sermon preparation and outline creation</li>
+                <li className="flex items-center"><Check className="text-[var(--scholar-gold)] mr-2 h-3 w-3 md:h-4 md:w-4" />Cross-references and thematic studies</li>
               </ul>
-              <p className="mt-3 text-gray-400 text-sm">What would you like to study today?</p>
+              <p className="mt-3 text-gray-400 text-xs md:text-sm">What would you like to study today?</p>
             </div>
           </div>
         </div>
@@ -129,12 +129,12 @@ export default function ChatInterface() {
             <div key={msg.id} className="space-y-4">
               {/* User Message */}
               <div className="scholar-chat-bubble">
-                <div className="flex items-start space-x-4 justify-end">
-                  <div className="gradient-gold text-black rounded-2xl rounded-tr-none p-4 max-w-2xl">
-                    <p>{msg.message}</p>
+                <div className="flex items-start space-x-3 md:space-x-4 justify-end">
+                  <div className="gradient-gold text-black rounded-2xl rounded-tr-none p-3 md:p-4 max-w-xs md:max-w-2xl">
+                    <p className="text-sm md:text-base">{msg.message}</p>
                   </div>
-                  <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="text-white" />
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="text-white text-sm md:text-base" />
                   </div>
                 </div>
               </div>
@@ -142,19 +142,19 @@ export default function ChatInterface() {
               {/* AI Response */}
               {msg.response && (
                 <div className="scholar-chat-bubble">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 gradient-gold rounded-full flex items-center justify-center flex-shrink-0">
-                      <GraduationCap className="text-black" />
+                  <div className="flex items-start space-x-3 md:space-x-4">
+                    <div className="w-8 h-8 md:w-10 md:h-10 gradient-gold rounded-full flex items-center justify-center flex-shrink-0">
+                      <GraduationCap className="text-black text-sm md:text-base" />
                     </div>
-                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-4 max-w-2xl">
-                      <p className="text-gray-200 leading-relaxed whitespace-pre-line">{msg.response}</p>
+                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4 max-w-xs md:max-w-2xl">
+                      <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm md:text-base">{msg.response}</p>
                       
-                      <div className="mt-4 flex space-x-2">
+                      <div className="mt-3 md:mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleSaveAction(msg.id, "Save to Notes")}
-                          className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs"
+                          className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs w-full sm:w-auto"
                         >
                           {savedButtons.has(msg.id) ? (
                             <>
@@ -164,7 +164,8 @@ export default function ChatInterface() {
                           ) : (
                             <>
                               <Save className="mr-1 h-3 w-3" />
-                              Save to Notes
+                              <span className="hidden sm:inline">Save to Notes</span>
+                              <span className="sm:hidden">Save</span>
                             </>
                           )}
                         </Button>
@@ -172,7 +173,7 @@ export default function ChatInterface() {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleSaveAction(msg.id, "Add to Sermon")}
-                          className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs"
+                          className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs w-full sm:w-auto"
                         >
                           {savedButtons.has(msg.id + 1000) ? (
                             <>
@@ -182,7 +183,8 @@ export default function ChatInterface() {
                           ) : (
                             <>
                               <Plus className="mr-1 h-3 w-3" />
-                              Add to Sermon
+                              <span className="hidden sm:inline">Add to Sermon</span>
+                              <span className="sm:hidden">Add</span>
                             </>
                           )}
                         </Button>
@@ -197,16 +199,16 @@ export default function ChatInterface() {
 
         {/* Suggested Questions */}
         {(!messages || messages.length === 0) && !isLoading && (
-          <div className="flex justify-center">
-            <div className="bg-[var(--scholar-darker)] rounded-lg p-4 max-w-2xl">
-              <h4 className="text-[var(--scholar-gold)] font-medium mb-3 text-center">Suggested Questions:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="flex justify-center px-2">
+            <div className="bg-[var(--scholar-darker)] rounded-lg p-3 md:p-4 max-w-2xl w-full">
+              <h4 className="text-[var(--scholar-gold)] font-medium mb-3 text-center text-sm md:text-base">Suggested Questions:</h4>
+              <div className="grid grid-cols-1 gap-2">
                 {suggestedQuestions.map((question, index) => (
                   <Button
                     key={index}
                     variant="outline"
                     onClick={() => handleSuggestedQuestion(question)}
-                    className="text-left bg-[var(--scholar-dark)] hover:bg-gray-800 text-sm text-gray-300 p-3 border-gray-700 h-auto whitespace-normal"
+                    className="text-left bg-[var(--scholar-dark)] hover:bg-gray-800 text-xs md:text-sm text-gray-300 p-2 md:p-3 border-gray-700 h-auto whitespace-normal"
                   >
                     {question}
                   </Button>
