@@ -17,7 +17,7 @@ import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
-  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const [optimisticMessage, setOptimisticMessage] = useState<ChatMessage | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,12 +29,15 @@ export default function ChatInterface() {
     enabled: !!user,
   });
 
-  // Combine server messages with local messages
-  const messages = [...(serverMessages || []), ...localMessages];
+  // Show server messages plus any optimistic message
+  const messages = [
+    ...(serverMessages || []),
+    ...(optimisticMessage ? [optimisticMessage] : [])
+  ];
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
-      // Add user message immediately to local state
+      // Show user message immediately
       const userMessage: ChatMessage = {
         id: Date.now(), // temporary ID
         message: messageText,
@@ -42,7 +45,7 @@ export default function ChatInterface() {
         response: null,
         timestamp: new Date().toISOString() as any
       };
-      setLocalMessages(prev => [...prev, userMessage]);
+      setOptimisticMessage(userMessage);
       setIsThinking(true);
       
       // Send to API
@@ -50,16 +53,15 @@ export default function ChatInterface() {
       return response.json();
     },
     onSuccess: (data) => {
-      // Remove the temporary user message and thinking state
-      setLocalMessages([]);
+      // Clear optimistic state and refresh to get complete conversation
+      setOptimisticMessage(null);
       setIsThinking(false);
-      // Refresh server messages to get the complete conversation
-      queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
       setMessage("");
       adjustTextareaHeight();
+      queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
     },
     onError: () => {
-      setLocalMessages([]);
+      setOptimisticMessage(null);
       setIsThinking(false);
       toast({ title: "Failed to send message", variant: "destructive" });
     },
@@ -79,7 +81,7 @@ export default function ChatInterface() {
   // Auto-scroll when messages change or thinking state changes
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isThinking]);
+  }, [serverMessages, optimisticMessage, isThinking]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
