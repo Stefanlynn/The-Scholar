@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, FileText, Edit, Trash2, Sparkles, Share2, Download, Copy, Mail, BookOpen, Heart, Lightbulb, Zap, MessageSquare } from "lucide-react";
+import { Plus, Search, FileText, Edit, Trash2, Sparkles, Share2, Download, Copy, Mail, BookOpen, Heart, Lightbulb, Zap, MessageSquare, GraduationCap, PenTool } from "lucide-react";
 import type { Note } from "@shared/schema";
 
 export default function Notes() {
@@ -519,7 +519,7 @@ export default function Notes() {
                 Study Notes
               </TabsTrigger>
               <TabsTrigger value="journal" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black">
-                <Heart className="h-4 w-4 mr-2" />
+                <PenTool className="h-4 w-4 mr-2" />
                 Daily Journal
               </TabsTrigger>
             </TabsList>
