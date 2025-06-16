@@ -33,22 +33,37 @@ function AuthenticatedApp() {
 }
 
 function Router() {
-  const { user, loading } = useAuth();
   const [location] = useLocation();
 
-  // Check if user wants to skip auth for development (persistent)
-  const urlParams = new URLSearchParams(window.location.search);
-  const skipFromUrl = urlParams.get('skip') === 'true';
-  const skipFromStorage = localStorage.getItem('skipAuth') === 'true';
-  const skipAuth = skipFromUrl || skipFromStorage;
+  // Check for development bypass
+  const skipAuth = localStorage.getItem('skipAuth') === 'true';
 
-  // Store skip auth preference for session
-  if (skipFromUrl && !skipFromStorage) {
-    localStorage.setItem('skipAuth', 'true');
+  // Development bypass - go directly to main app
+  if (skipAuth) {
+    return <AuthenticatedApp />;
   }
 
-  // Show loading while checking auth status (unless skipping)
-  if (loading && !skipAuth) {
+  // Try to get auth context, but don't break if it fails
+  let user = null;
+  let loading = false;
+  
+  try {
+    const authContext = useAuth();
+    user = authContext.user;
+    loading = authContext.loading;
+  } catch (error) {
+    // AuthContext not available, show login
+    return (
+      <Switch>
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
+        <Route component={Login} />
+      </Switch>
+    );
+  }
+
+  // Show loading while checking auth status
+  if (loading) {
     return (
       <div className="min-h-screen bg-[var(--scholar-black)] flex items-center justify-center">
         <div className="text-white text-lg">Loading...</div>
@@ -56,8 +71,8 @@ function Router() {
     );
   }
 
-  // If skipping auth or user is authenticated, show the main app
-  if (skipAuth || user) {
+  // If user is authenticated, show the main app
+  if (user) {
     return <AuthenticatedApp />;
   }
 

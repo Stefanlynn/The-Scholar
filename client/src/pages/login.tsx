@@ -98,15 +98,17 @@ export default function Login() {
           </form>
           
           <div className="text-center space-y-4">
-            <Link href="/?skip=true">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-              >
-                Skip Auth (Dev Mode)
-              </Button>
-            </Link>
+            <Button
+              type="button"
+              onClick={() => {
+                localStorage.setItem('skipAuth', 'true');
+                window.location.href = '/';
+              }}
+              variant="outline"
+              className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
+            >
+              Skip Auth (Dev Mode)
+            </Button>
             
             <p className="text-gray-400 text-sm">
               Don't have an account?{" "}
