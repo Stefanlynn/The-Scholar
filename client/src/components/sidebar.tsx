@@ -35,7 +35,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">The Scholar</h1>
-            <p className="text-xs text-gray-400">Spirit-Led Study Companion</p>
+            <p className="text-xs text-gray-400">Biblical Study Tool</p>
           </div>
         </div>
       </div>
