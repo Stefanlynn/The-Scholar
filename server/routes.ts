@@ -128,6 +128,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Study tools endpoint for Bible analysis requests
+  app.post("/api/chat/send", async (req, res) => {
+    try {
+      const { message } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const messageData = insertChatMessageSchema.parse({
+        message: message,
+        userId: DEMO_USER_ID
+      });
+      
+      // Generate AI response using the same system as chat
+      const aiResponse = await generateAIResponse(messageData.message);
+      messageData.response = aiResponse;
+      
+      // Store the study tool request and response
+      const chatMessage = await storage.createChatMessage(messageData);
+      res.json({ 
+        success: true, 
+        message: chatMessage,
+        response: aiResponse 
+      });
+    } catch (error) {
+      console.error("Study tools API error:", error);
+      res.status(500).json({ error: "Failed to process study request" });
+    }
+  });
+
   // Notes
   app.get("/api/notes", async (req, res) => {
     try {
