@@ -221,8 +221,8 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Chat Input Box - Always Visible */}
-      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-4 flex-shrink-0" style={{ minHeight: '100px' }}>
+      {/* Chat Input Box - Always Visible, with mobile spacing */}
+      <div className="border-t border-gray-800 bg-[var(--scholar-black)] p-4 pb-20 md:pb-4 flex-shrink-0" style={{ minHeight: '100px' }}>
         <form onSubmit={handleSubmit} className="flex items-end space-x-4">
           <div className="flex-1">
             <div className="relative">
