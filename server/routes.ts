@@ -824,7 +824,7 @@ Always close challenging conversations with hope, grace, and a reminder that Jes
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `${systemPrompt}\n\nUser Question: ${message}${biblicalContext}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart. If relevant scripture is provided above, reference it directly in your response.`
+            text: `${systemPrompt}\n\nUser Question: ${message}${biblicalContext}\n\nPlease respond as The Scholar, incorporating your Protestant theological framework and pastoral heart. If relevant scripture is provided above, reference it directly in your response. Format your response in clean, readable text without asterisks (*) or markdown formatting. Use simple paragraphs and natural language.`
           }]
         }],
         generationConfig: {

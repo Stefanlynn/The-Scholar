@@ -80,6 +80,9 @@ export default function Bible() {
   const [highlights, setHighlights] = useState<Record<string, string>>({});
   const [verseNotes, setVerseNotes] = useState<Record<string, string>>({});
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
+  const [scholarResponse, setScholarResponse] = useState<string>("");
+  const [showScholarDialog, setShowScholarDialog] = useState(false);
+  const [scholarLoading, setScholarLoading] = useState(false);
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -135,6 +138,7 @@ export default function Bible() {
 
   const scholarMutation = useMutation({
     mutationFn: async (query: string) => {
+      setScholarLoading(true);
       const response = await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -148,17 +152,12 @@ export default function Bible() {
       return response.json();
     },
     onSuccess: (data) => {
-      toast({ 
-        title: "Analysis Complete", 
-        description: "The Scholar has analyzed your verse. Navigate to chat to see the full response.",
-        duration: 5000
-      });
-      // Navigate to chat page after a brief delay
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
+      setScholarLoading(false);
+      setScholarResponse(data.response || "The Scholar's response is ready.");
+      setShowScholarDialog(true);
     },
     onError: (error) => {
+      setScholarLoading(false);
       toast({ 
         title: "Connection Error", 
         description: "Unable to connect to The Scholar. Please try again.",
@@ -244,13 +243,6 @@ export default function Bible() {
     }
     
     if (query) {
-      // Show immediate feedback
-      toast({ 
-        title: "Analyzing verse...", 
-        description: "Connecting to biblical resources and AI analysis",
-        duration: 3000
-      });
-      
       scholarMutation.mutate(query);
       setSelectedVerse(null);
     }
@@ -1016,6 +1008,45 @@ export default function Bible() {
                 </div>
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Scholar Response Dialog */}
+        <Dialog open={showScholarDialog} onOpenChange={setShowScholarDialog}>
+          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center">
+                <GraduationCap className="h-6 w-6 mr-2" />
+                The Scholar's Analysis
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-6">
+              {scholarLoading ? (
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 text-[var(--scholar-gold)]">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[var(--scholar-gold)]"></div>
+                    <span>Analyzing Scripture and connecting to biblical resources...</span>
+                  </div>
+                  <Skeleton className="h-4 w-full bg-gray-700" />
+                  <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                  <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                </div>
+              ) : (
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-gray-100 leading-relaxed whitespace-pre-wrap text-base">
+                    {scholarResponse}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end mt-6 pt-4 border-t border-gray-700">
+              <Button
+                onClick={() => setShowScholarDialog(false)}
+                className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90"
+              >
+                Close
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
 
