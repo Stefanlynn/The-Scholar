@@ -1,8 +1,8 @@
 import { Link, useLocation } from "wouter";
-import { BookOpen, Book, Library, FileText, MessageSquare, User } from "lucide-react";
+import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap } from "lucide-react";
 
 const navigation = [
-  { name: "Scholar", href: "/", icon: MessageSquare },
+  { name: "Scholar", href: "/", icon: GraduationCap },
   { name: "Bible", href: "/bible", icon: Book },
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
