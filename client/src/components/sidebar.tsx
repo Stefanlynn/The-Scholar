@@ -66,10 +66,7 @@ export default function Sidebar() {
               <p className="text-xs text-gray-400">Premium Member</p>
             </div>
           </div>
-          <button className="w-full text-xs text-gray-400 hover:text-white transition-colors flex items-center">
-            <Settings className="mr-2 h-3 w-3" />
-            Settings
-          </button>
+
         </div>
       </div>
     </div>
