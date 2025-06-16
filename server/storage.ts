@@ -84,6 +84,20 @@ export class MemStorage implements IStorage {
     this.currentSermonId = 1;
     this.currentBookmarkId = 1;
     this.currentLibraryItemId = 1;
+
+    // Initialize with demo user
+    this.initializeData();
+  }
+
+  private initializeData() {
+    // Create demo user who hasn't completed onboarding
+    const demoUser: User = {
+      id: 1,
+      username: "demo",
+      password: "demo",
+      hasCompletedOnboarding: false
+    };
+    this.users.set(1, demoUser);
   }
 
   // Users

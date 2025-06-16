@@ -60,6 +60,7 @@ export const libraryItems = pgTable("library_items", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  hasCompletedOnboarding: true,
 });
 
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({
