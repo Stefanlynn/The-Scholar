@@ -186,6 +186,12 @@ Changelog:
   * Updated Library, Notes, and Sermon Prep pages with responsive bottom padding
   * Ensured content is fully scrollable and visible above mobile navigation bar
   * Applied pb-20 for mobile (80px) and md:pb-6 for desktop (24px) padding
+- June 16, 2025: Implemented comprehensive user profile system with site-wide data integration
+  * Created profile button icon in header for easy access across all pages
+  * Built UserPreferencesContext to manage user settings and propagate changes
+  * Enhanced profile page to invalidate all user-related queries when preferences update
+  * Integrated Supabase authentication tokens in API requests for proper user data access
+  * Ensured profile changes (Bible translation, dark mode, etc.) update throughout entire application
 ```
 
 ## User Preferences
