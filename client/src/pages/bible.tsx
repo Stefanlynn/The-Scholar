@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getBibleChapter } from "@/lib/api";
 import { 
   Search, 
   ChevronLeft, 
@@ -315,7 +316,7 @@ export default function Bible() {
                     size="sm"
                     onClick={handlePreviousChapter}
                     disabled={selectedChapter <= 1}
-                    className="border-gray-600 text-white hover:bg-gray-700 px-2"
+                    className="border-gray-600 text-white hover:bg-gray-700 p-2"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -323,7 +324,7 @@ export default function Bible() {
                     variant="outline"
                     size="sm"
                     onClick={handleNextChapter}
-                    className="border-gray-600 text-white hover:bg-gray-700 px-2"
+                    className="border-gray-600 text-white hover:bg-gray-700 p-2"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
@@ -449,18 +450,16 @@ export default function Bible() {
                       size="sm"
                       onClick={handlePreviousChapter}
                       disabled={selectedChapter <= 1}
-                      className="border-gray-600 text-white hover:bg-gray-700"
+                      className="border-gray-600 text-white hover:bg-gray-700 p-2"
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Previous
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleNextChapter}
-                      className="border-gray-600 text-white hover:bg-gray-700"
+                      className="border-gray-600 text-white hover:bg-gray-700 p-2"
                     >
-                      Next
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
