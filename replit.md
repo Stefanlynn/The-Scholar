@@ -196,6 +196,7 @@ Changelog:
   * Fixed account settings section with improved dark theme styling and readability
   * Replaced white button boxes with properly styled transparent buttons
   * Added graduation cap hat icon next to "The Scholar" logo in golden color for scholarly branding
+  * Removed profile icon from header for cleaner design (profile still accessible via sidebar and mobile navigation)
 ```
 
 ## User Preferences

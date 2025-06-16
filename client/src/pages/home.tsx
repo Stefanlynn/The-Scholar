@@ -50,15 +50,6 @@ export default function Home() {
                 <span className="hidden md:block text-sm text-gray-300">
                   {user?.user_metadata?.full_name || user?.email}
                 </span>
-                <Link href="/profile">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-300 hover:text-[var(--scholar-gold)] hover:bg-gray-700"
-                  >
-                    <User className="h-4 w-4" />
-                  </Button>
-                </Link>
                 <Button 
                   onClick={handleSignOut}
                   className="bg-gray-700 text-white hover:bg-gray-600 p-2 rounded-full"
