@@ -346,7 +346,7 @@ Format as a clear, structured outline for preaching.`;
           let stylePrompt = "";
           switch (style) {
             case "prophetic":
-              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using PROPHETIC STYLE (Inspired by Kris Vallotton):
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using PROPHETIC STYLE:
 
 - Language: Bold, Spirit-led, revelatory, identity-focused
 - Emphasizes: Destiny, breakthrough, and what God is saying now
@@ -365,7 +365,7 @@ Expand into a full-length sermon including:
 - Optional: Illustration, prayer, or call to reflection`;
               break;
             case "teaching":
-              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using TEACHING STYLE (Inspired by John Piper):
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using TEACHING STYLE:
 
 - Language: Exegetical, theological, and Scripture-saturated
 - Structure: Logical, rooted in the biblical text, with Greek/Hebrew if needed
@@ -384,7 +384,7 @@ Expand into a full-length sermon including:
 - Optional: Illustration, prayer, or call to reflection`;
               break;
             case "evangelistic":
-              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using EVANGELISTIC STYLE (Inspired by global crusade preaching):
+              stylePrompt = `Take the user's sermon notes and rewrite it into a complete sermon using EVANGELISTIC STYLE:
 
 - Language: Passionate, invitational, simple and urgent
 - Structure: Highlights sin, redemption, and grace

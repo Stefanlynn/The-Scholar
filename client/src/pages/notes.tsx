@@ -724,8 +724,8 @@ ${sermonMode === 'outline' ? 'Use headers and bullet points for key ideas' :
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {[
-                        { value: "prophetic", label: "Prophetic", desc: "Like Kris Vallotton - empowering, identity-focused" },
-                        { value: "teaching", label: "Teaching", desc: "Like John Piper - deep, theological exposition" },
+                        { value: "prophetic", label: "Prophetic", desc: "Bold, Spirit-led, empowering, identity-focused" },
+                        { value: "teaching", label: "Teaching", desc: "Deep theological exposition and exegesis" },
                         { value: "evangelistic", label: "Evangelistic", desc: "Focused on salvation and outreach" },
                         { value: "youth", label: "Youth/Modern", desc: "Contemporary, relatable language" },
                         { value: "devotional", label: "Devotional", desc: "Personal, intimate, reflective" }

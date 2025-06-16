@@ -203,9 +203,12 @@ Changelog:
   * Created three writing modes: Outline, Full Manuscript, and Bullets with mode-specific guidance
   * Added AI enhancement buttons: Expand Point, Rewrite Clearly, Add Supporting Verse, Add Illustration
   * Built Preaching Outline Builder with structured format (Title, Text, Theme, 3 Points, Call to Action, Closing)
-  * Integrated Voice & Style Selector with 5 preaching styles: Prophetic (Kris Vallotton), Teaching, Evangelistic, Youth/Modern, Devotional
+  * Integrated Voice & Style Selector with 5 preaching styles: Prophetic, Teaching, Evangelistic, Youth/Modern, Devotional
   * Added "Convert my notes to outline format" and "Rewrite in selected style" AI functionality
   * Designed responsive layout with main editor and sidebar for AI tools and outline builder
+  * Added comprehensive copy and download functionality for sermon content including individual section copying
+  * Integrated detailed style guide for complete sermon rewriting with authentic voice characteristics
+  * Created backend API endpoint `/api/chat/enhance` with detailed prompts for each preaching style
 ```
 
 ## User Preferences
