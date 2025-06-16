@@ -99,7 +99,7 @@ async function searchByKeywords(query: string) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Temporary user ID for demo (in real app would come from authentication)
-  const DEMO_USER_ID = 1;
+  const DEMO_USER_ID = "demo-user";
 
   // Users
   app.get("/api/users/current", async (req, res) => {
@@ -524,17 +524,14 @@ Pull Scripture text from Bible knowledge if specific verses are mentioned. Do no
 
   app.post("/api/notes", async (req, res) => {
     try {
-      console.log("Received note data:", req.body);
       const noteData = insertNoteSchema.parse({
         ...req.body,
         userId: DEMO_USER_ID
       });
-      console.log("Parsed note data:", noteData);
       const note = await storage.createNote(noteData);
       res.json(note);
     } catch (error) {
-      console.error("Note creation error:", error);
-      res.status(400).json({ message: "Invalid note data", error: error.message });
+      res.status(400).json({ message: "Invalid note data" });
     }
   });
 
