@@ -225,7 +225,7 @@ export default function ChatInterface() {
                       <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4">
                         <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm md:text-base">{msg.response}</p>
                         
-                        <div className="mt-3 md:mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                        <div className="mt-3 md:mt-4 flex">
                           <Button
                             size="sm"
                             variant="ghost"
@@ -241,24 +241,6 @@ export default function ChatInterface() {
                               <>
                                 <Save className="mr-1 h-3 w-3" />
                                 Save to Notes
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleSaveAction(msg.id + 1000, "Add to Sermon")}
-                            className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs"
-                          >
-                            {savedButtons.has(msg.id + 1000) ? (
-                              <>
-                                <Check className="mr-1 h-3 w-3" />
-                                Added!
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="mr-1 h-3 w-3" />
-                                Add to Sermon
                               </>
                             )}
                           </Button>
