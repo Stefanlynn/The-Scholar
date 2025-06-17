@@ -303,6 +303,7 @@ Changelog:
   * Added help button (question mark) to mobile Bible page header for accessing study instructions
   * Repositioned help buttons next to page titles on both Bible and Notes pages for consistent layout
   * Moved plus button to right side of Notes page header alongside search functionality
+  * Enhanced mobile tab formatting on Notes page with stacked icons and responsive text sizing
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
 ```
 
