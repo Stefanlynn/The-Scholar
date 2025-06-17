@@ -89,8 +89,16 @@ export default function ChatInterface() {
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setMessage(transcript);
-          // Use a separate function to avoid dependency issues
-          handleVoiceMessage(transcript);
+          // Create a synthetic form submission event to trigger existing flow
+          setTimeout(() => {
+            if (transcript.trim()) {
+              const form = document.querySelector('form');
+              if (form) {
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                form.dispatchEvent(submitEvent);
+              }
+            }
+          }, 100);
         };
         
         recognitionRef.current = recognition;
