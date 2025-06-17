@@ -376,6 +376,14 @@ Changelog:
   * Tutorial now provides thorough education on Chat modes, Bible tools, Notes workspace, Sermon preparation, Library resources, and Settings
   * Fixed mobile responsiveness with proper scrolling and content visibility across all devices
   * Positioned chat input box directly above mobile navigation bar for optimal user experience
+- June 17, 2025: Added comprehensive forgot password functionality with Supabase integration
+  * Created forgot password page with email submission form and Scholar-themed styling
+  * Built password reset page with secure password update functionality
+  * Integrated Supabase's resetPasswordForEmail API with proper redirect handling
+  * Added forgot password link to login page with clean navigation flow
+  * Implemented password strength validation and confirmation matching
+  * Added success states with automatic redirect to login after password update
+  * All pages follow Scholar design system with consistent branding and user experience
 ```
 
 ## User Preferences
