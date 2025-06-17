@@ -62,6 +62,8 @@ export default function ChatInterface() {
     setShowWelcomeMessage(conversation.length === 0);
   }, [conversation.length]);
 
+
+
   // Initialize speech recognition and synthesis
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -87,8 +89,8 @@ export default function ChatInterface() {
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setMessage(transcript);
-          // Trigger send message directly
-          sendMessageMutation.mutate(transcript);
+          // Use a separate function to avoid dependency issues
+          handleVoiceMessage(transcript);
         };
         
         recognitionRef.current = recognition;
@@ -236,6 +238,12 @@ export default function ChatInterface() {
       setIsThinking(false);
       setMessage("");
       adjustTextareaHeight();
+      
+      // Speak the response if in voice mode
+      if (isVoiceMode && data.response) {
+        speakResponse(data.response);
+      }
+      
       // Update profile stats for chat activity
       queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
     },
@@ -557,21 +565,93 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Voice Mode Visual Indicator */}
+      {isVoiceMode && (
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 pointer-events-none z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(245,200,66,0.1),transparent_70%)]" />
+          {isListening && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-32 h-32 rounded-full bg-[var(--scholar-gold)]/20 animate-pulse flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-[var(--scholar-gold)]/40 animate-ping flex items-center justify-center">
+                  <Mic className="w-10 h-10 text-[var(--scholar-gold)]" />
+                </div>
+              </div>
+              <p className="text-center mt-4 text-[var(--scholar-gold)] font-medium">Listening...</p>
+            </div>
+          )}
+          {isSpeaking && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-32 h-32 rounded-full bg-[var(--scholar-gold)]/20 animate-pulse flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-[var(--scholar-gold)]/40 animate-ping flex items-center justify-center">
+                  <Volume2 className="w-10 h-10 text-[var(--scholar-gold)]" />
+                </div>
+              </div>
+              <p className="text-center mt-4 text-[var(--scholar-gold)] font-medium">The Scholar is speaking...</p>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Chat Input */}
       <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6 flex-shrink-0 border-t border-gray-800">
+        {/* Voice Mode Controls */}
+        <div className="flex justify-center mb-4 space-x-4">
+          <Button
+            onClick={toggleVoiceMode}
+            variant={isVoiceMode ? "default" : "outline"}
+            className={`${
+              isVoiceMode 
+                ? "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500" 
+                : "border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black"
+            } px-4 py-2`}
+          >
+            {isVoiceMode ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
+            {isVoiceMode ? "Exit Voice Mode" : "Voice Mode"}
+          </Button>
+          
+          {isVoiceMode && isSpeaking && (
+            <Button
+              onClick={stopSpeaking}
+              variant="destructive"
+              className="px-4 py-2"
+            >
+              <Volume2 className="mr-2 h-4 w-4" />
+              Stop Speaking
+            </Button>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
                 ref={textareaRef}
-                placeholder="Ask The Scholar about Scripture..."
+                placeholder={isVoiceMode ? "Voice mode active - use microphone or type..." : "Ask The Scholar about Scripture..."}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-3 sm:px-4 lg:px-5 py-3 sm:py-4 pr-12 sm:pr-14 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] max-h-32 text-sm sm:text-base lg:text-lg"
+                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-3 sm:px-4 lg:px-5 py-3 sm:py-4 pr-20 sm:pr-24 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] max-h-32 text-sm sm:text-base lg:text-lg"
                 rows={1}
                 disabled={sendMessageMutation.isPending}
               />
+              
+              {/* Voice Input Button */}
+              {isVoiceMode && (
+                <Button
+                  type="button"
+                  onClick={isListening ? stopListening : startListening}
+                  disabled={sendMessageMutation.isPending}
+                  className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full ${
+                    isListening 
+                      ? "bg-red-500 hover:bg-red-600 text-white animate-pulse" 
+                      : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                  }`}
+                >
+                  {isListening ? <MicOff className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <Mic className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
+                </Button>
+              )}
+              
+              {/* Send Button */}
               <Button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
