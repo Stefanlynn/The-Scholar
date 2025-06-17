@@ -315,211 +315,108 @@ export default function Bible() {
     
     switch (toolType) {
       case 'greek-hebrew':
-        query = `Provide a comprehensive Greek/Hebrew word study analysis for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Provide a Greek/Hebrew word study analysis for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Greek/Hebrew Breakdown**
-- Include Strong's numbers, original words, pronunciation, transliteration, definitions
+**Greek/Hebrew Breakdown**
+- *"[word/phrase]"* = **[original Hebrew/Greek]** (*transliteration*): [Strong's number if available] - [definition and theological significance]
+- *"[word/phrase]"* = **[original Hebrew/Greek]** (*transliteration*): [Strong's number if available] - [definition and theological significance]
 
-**2. Cross References**
-- Related verses using these same words
-
-**3. Scholar's Take**
-- Theological significance and meaning
-
-**4. Cultural Context**
-- How these words were understood in biblical times
-
-**5. Topical Tags**
-- Key themes and topics
-
-**6. Sermon Tools**
-- Preaching applications and illustrations
-
-**7. Literary Structure**
-- How these words function in the passage structure
-
-Format with bold section titles, italicized original language words, bullet points, and short scannable paragraphs.`;
+Continue for each key word. Format with bold section titles, italicized original language words, bullet points, and short scannable paragraphs. Focus only on the original language analysis.`;
         break;
         
       case 'cross-references':
-        query = `Provide comprehensive cross-references for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Provide cross-references for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Thematic Cross-References**
-- Related verses by main themes
+**Cross References**
+- **[Reference]** — [Brief description of thematic connection]
+- **[Reference]** — [Brief description of keyword connection]
+- **[Reference]** — [Brief description of theological connection]
 
-**2. Cross References**
-- Old Testament connections
-- New Testament fulfillments
-- Keyword connections
-
-**3. Scholar's Take**
-- How these connections deepen understanding
-
-**4. Cultural Context**
-- Historical connections between passages
-
-**5. Topical Tags**
-- Connecting themes
-
-**6. Sermon Tools**
-- How to use these references in preaching
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Group by themes when helpful. Focus only on related Scripture passages that illuminate this verse.`;
         break;
         
       case 'commentary':
-        query = `Provide theological and practical commentary for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Provide theological commentary for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Textual Analysis**
-- Key words and their significance
+**Scholar's Commentary**
+- [Theological interpretation and significance]
+- [Key insights about the meaning and application]
+- [Important doctrinal or practical points]
+- [How this verse fits into the broader biblical narrative]
 
-**2. Cross References**
-- Supporting passages
-
-**3. Scholar's Take**
-- Protestant theological perspective with practical application
-
-**4. Cultural Context**
-- Historical and cultural background
-
-**5. Topical Tags**
-- Major theological themes
-
-**6. Sermon Tools**
-- Preaching outline, illustrations, applications
-
-**7. Literary Structure**
-- How this verse fits in the broader passage
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Focus only on scholarly interpretation and commentary. Keep explanations clear and accessible.`;
         break;
         
       case 'cultural-context':
-        query = `Explain the cultural and historical context for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Explain the cultural and historical context for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Historical Setting**
-- Time period, author, audience
+**Cultural Context**
+- **Historical Setting**: [Time period, author, audience context]
+- **Ancient Customs**: [Relevant cultural practices and traditions]
+- **Social Context**: [Social structures, worldview, and daily life]
+- **Modern Application**: [How understanding the culture affects interpretation today]
 
-**2. Cross References**
-- Related cultural passages
-
-**3. Scholar's Take**
-- How cultural understanding impacts interpretation
-
-**4. Cultural Context**
-- Ancient customs, worldview, social structures
-
-**5. Topical Tags**
-- Cultural and historical themes
-
-**6. Sermon Tools**
-- How to communicate ancient culture to modern audiences
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Focus only on cultural and historical background information.`;
         break;
         
       case 'topical-tags':
-        query = `Identify major theological themes for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Identify major theological themes for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Primary Themes**
-- Main theological concepts
+**Topical Tags**
+- **#[Theme]** — [Brief explanation of this theme in the verse]
+- **#[Theme]** — [Brief explanation of this theme in the verse]
+- **#[Theme]** — [Brief explanation of this theme in the verse]
 
-**2. Cross References**
-- Verses sharing these themes
-
-**3. Scholar's Take**
-- Theological significance of these themes
-
-**4. Cultural Context**
-- How themes were understood historically
-
-**5. Topical Tags**
-- Comprehensive theme list with hashtags
-
-**6. Sermon Tools**
-- How to preach these themes effectively
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Focus only on identifying and explaining the major themes present in this verse.`;
         break;
         
       case 'sermon-tools':
-        query = `Create comprehensive sermon tools for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Create sermon tools for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Key Concepts**
-- Main ideas to communicate
+**Sermon Tools**
+- **Hook**: [Attention-getting opening illustration or question]
+- **Main Point**: [Central message of the verse]
+- **3 Sub-Points**: 
+  - [Point 1 with brief explanation]
+  - [Point 2 with brief explanation] 
+  - [Point 3 with brief explanation]
+- **Illustration**: [Story or example that makes the truth memorable]
+- **Application**: [How listeners can apply this truth in their lives]
 
-**2. Cross References**
-- Supporting verses for the sermon
-
-**3. Scholar's Take**
-- Core theological message
-
-**4. Cultural Context**
-- Background for illustration
-
-**5. Topical Tags**
-- Sermon themes
-
-**6. Sermon Tools**
-- Complete outline with 3 points
-- Memorable illustrations
-- Practical applications
-- Attention-grabbing hook
-
-**7. Literary Structure**
-- How the text flows for preaching
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Focus only on practical preaching tools and structure.`;
         break;
         
       case 'structural-patterns':
-        query = `Analyze literary structure for "${verseText}" (${verseRef}). Use the structured format with:
+        query = `Analyze literary structure for "${verseText}" (${verseRef}). Use this exact format:
 
 📖 **Verse**: ${verseRef}
 "${verseText}"
 
-**1. Immediate Structure**
-- Word patterns and literary devices
+**Literary Structure**
+- **Word Patterns**: [Repetition, parallelism, or word arrangement]
+- **Literary Devices**: [Metaphor, chiasm, or other literary techniques]
+- **Passage Context**: [How this verse fits within the broader section]
+- **Structural Significance**: [What the structure reveals about the meaning]
 
-**2. Cross References**
-- Similar structural patterns
-
-**3. Scholar's Take**
-- What the structure reveals about meaning
-
-**4. Cultural Context**
-- Ancient literary conventions
-
-**5. Topical Tags**
-- Structural and literary themes
-
-**6. Sermon Tools**
-- How to use structure in preaching
-
-**7. Literary Structure**
-- Detailed structural analysis
-- Chiasms, repetition, poetic elements
-- Broader passage context
-
-Format with bold section titles, bullet points, and short scannable paragraphs.`;
+Focus only on literary and structural analysis.`;
         break;
         
       case 'devotional':
