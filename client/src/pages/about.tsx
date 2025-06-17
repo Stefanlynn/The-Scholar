@@ -45,7 +45,7 @@ export default function About() {
                   <p className="text-gray-300 leading-relaxed mb-4">
                     Through intuitive technology and thoughtful design, The Scholar empowers users to:
                   </p>
-                  <ul className="text-gray-300 space-y-3 ml-6">
+                  <ul className="text-gray-300 space-y-3 ml-6 list-none">
                     <li>        •       Explore Scripture with AI-powered insight and biblical accuracy</li>
                     <li>        •       Dive deeper through original language studies, cultural context, and cross-references</li>
                     <li>        •       Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</li>
