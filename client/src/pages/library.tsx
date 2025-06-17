@@ -37,24 +37,24 @@ export default function Library() {
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Hero Header */}
-        <div className="bg-gradient-to-br from-[var(--scholar-dark)] via-[var(--scholar-darker)] to-black px-6 py-8 border-b border-gray-800">
+        {/* Mobile-Optimized Hero Header */}
+        <div className="bg-gradient-to-br from-[var(--scholar-dark)] via-[var(--scholar-darker)] to-black px-4 md:px-6 py-6 md:py-8 border-b border-gray-800">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-bold text-white">Your Library</h1>
-                <p className="text-xl text-gray-300">Continue your spiritual journey</p>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
+              <div className="space-y-1 md:space-y-2">
+                <h1 className="text-2xl md:text-4xl font-bold text-white">Your Library</h1>
+                <p className="text-lg md:text-xl text-gray-300">Continue your spiritual journey</p>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="relative">
+                <div className="relative w-full max-w-xs">
                   <Input
                     type="text"
-                    placeholder="Search your library..."
+                    placeholder="Search library..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-[var(--scholar-darker)]/50 border-gray-600 text-white pl-12 w-80 h-12 text-lg focus:border-[var(--scholar-gold)]"
+                    className="bg-[var(--scholar-darker)]/50 border-gray-600 text-white pl-10 md:pl-12 w-full h-10 md:h-12 text-sm md:text-lg focus:border-[var(--scholar-gold)]"
                   />
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 md:h-5 md:w-5" />
                 </div>
               </div>
             </div>
@@ -63,12 +63,12 @@ export default function Library() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-6 py-8 pb-20 md:pb-8 space-y-12">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 pb-20 md:pb-8 space-y-8 md:space-y-12">
             
             {/* Quick Access */}
             <section>
-              <h2 className="text-2xl font-bold text-white mb-6">Quick Access</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Quick Access</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                 {/* Content will be added here */}
                 <div className="col-span-full text-center py-12 text-gray-400">
                   <Book className="h-12 w-12 mx-auto mb-4 opacity-50" />

@@ -176,26 +176,26 @@ export default function Profile() {
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-6 py-4">
+        {/* Mobile-Optimized Header */}
+        <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h2 className="text-xl font-semibold text-white">Profile</h2>
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <h2 className="text-lg md:text-xl font-semibold text-white">Profile</h2>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
               {!isEditing ? (
                 <Button
                   onClick={() => setIsEditing(true)}
-                  className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                  className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 px-3 md:px-4"
                 >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Profile
+                  <Edit className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Edit Profile</span>
                 </Button>
               ) : (
                 <Button
                   onClick={() => setIsEditing(false)}
                   variant="outline"
-                  className="border-gray-600 text-white hover:bg-gray-700"
+                  className="border-gray-600 text-white hover:bg-gray-700 px-3 md:px-4"
                 >
                   Cancel
                 </Button>
@@ -205,7 +205,7 @@ export default function Profile() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
           
           {/* User Info Section */}
           <Card className="bg-[var(--scholar-dark)] border-gray-700">
