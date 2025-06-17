@@ -613,7 +613,9 @@ Format with bold section titles, blockquote prompts, and short encouraging parag
   const handleScholarQuestion = () => {
     if (selectedVerse && scholarQuery.trim()) {
       const verseRef = `${selectedBook} ${selectedChapter}:${selectedVerse.verse}`;
-      const fullQuery = `Regarding "${selectedVerse.text}" (${verseRef}): ${scholarQuery}`;
+      const fullQuery = `Answer this specific question about "${selectedVerse.text}" (${verseRef}): ${scholarQuery}
+
+Please provide a direct, conversational answer to the user's question. Do not use the structured format with sections like Greek/Hebrew breakdown, cross-references, etc. Just answer the specific question they asked in a helpful, scholarly way.`;
       inlineScholarMutation.mutate(fullQuery);
       setScholarQuery(""); // Clear the question after asking
     }
