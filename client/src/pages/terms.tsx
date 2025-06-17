@@ -1,13 +1,17 @@
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Sidebar from "@/components/sidebar";
 import { ChevronLeft, FileText } from "lucide-react";
 
 export default function Terms() {
   return (
-    <div className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Header */}
+    <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
+      <Sidebar />
+      
+      <div className="flex-1 p-4 md:p-6 pb-6 overflow-y-auto">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Header */}
         <div className="flex items-center space-x-4 mb-6">
           <Link href="/settings">
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
@@ -76,6 +80,7 @@ export default function Terms() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
