@@ -107,7 +107,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <MobileTabBar />
+      <MobileNavMenu />
     </div>
   );
 }
