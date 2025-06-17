@@ -323,15 +323,15 @@ export default function ChatInterface() {
 
             {/* Conversation Messages */}
             {conversation.map((msg) => (
-              <div key={msg.id} className="space-y-4">
+              <div key={msg.id} className="space-y-4 sm:space-y-5 lg:space-y-6">
                 {/* User Message */}
                 <div className="flex justify-end">
-                  <div className="flex items-start space-x-3 max-w-xs md:max-w-2xl">
-                    <div className="gradient-gold text-black rounded-2xl rounded-tr-none p-3 md:p-4">
-                      <p className="text-sm md:text-base">{msg.message}</p>
+                  <div className="flex items-start space-x-2 sm:space-x-3 lg:space-x-4 max-w-xs sm:max-w-md lg:max-w-2xl xl:max-w-3xl">
+                    <div className="gradient-gold text-black rounded-2xl rounded-tr-none p-3 sm:p-4 lg:p-5">
+                      <p className="text-sm sm:text-base lg:text-lg leading-relaxed">{msg.message}</p>
                     </div>
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="text-white text-sm md:text-base" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="text-white w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                     </div>
                   </div>
                 </div>
@@ -339,29 +339,31 @@ export default function ChatInterface() {
                 {/* AI Response */}
                 {msg.response && (
                   <div className="flex justify-start">
-                    <div className="flex items-start space-x-3 max-w-xs md:max-w-2xl">
-                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="flex items-start space-x-2 sm:space-x-3 lg:space-x-4 max-w-full">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                         <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
                       </div>
-                      <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4">
-                        <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm md:text-base">{msg.response}</p>
+                      <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4 lg:p-5 flex-1 min-w-0">
+                        <p className="text-gray-200 leading-relaxed whitespace-pre-line text-sm sm:text-base lg:text-lg">{msg.response}</p>
                         
-                        <div className="mt-3 md:mt-4 flex">
+                        <div className="mt-3 sm:mt-4 lg:mt-5 flex">
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => handleSaveAction(msg.id, "Save to Notes")}
-                            className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs"
+                            className="bg-[var(--scholar-darker)] text-[var(--scholar-gold)] hover:bg-gray-800 text-xs sm:text-sm"
                           >
                             {savedButtons.has(msg.id) ? (
                               <>
-                                <Check className="mr-1 h-3 w-3" />
-                                Saved!
+                                <Check className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Saved!</span>
+                                <span className="sm:hidden">✓</span>
                               </>
                             ) : (
                               <>
-                                <Save className="mr-1 h-3 w-3" />
-                                Save to Notes
+                                <Save className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Save to Notes</span>
+                                <span className="sm:hidden">Save</span>
                               </>
                             )}
                           </Button>
