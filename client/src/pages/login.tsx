@@ -98,7 +98,7 @@ export default function Login() {
                 className="border-gray-600 data-[state=checked]:bg-[var(--scholar-gold)] data-[state=checked]:border-[var(--scholar-gold)]"
               />
               <Label htmlFor="remember-me" className="text-gray-300 text-sm cursor-pointer">
-                Remember me for 30 days
+                Remember me
               </Label>
             </div>
             
