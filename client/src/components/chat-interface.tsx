@@ -277,7 +277,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 pt-4 sm:pt-6 pb-4 space-y-3 sm:space-y-4 lg:space-y-5 min-h-0">
+      <div className="flex-1 overflow-y-auto scroll-smooth px-3 sm:px-4 lg:px-6 pt-4 sm:pt-6 pb-4 space-y-3 sm:space-y-4 lg:space-y-5 min-h-0">
         {isLoading ? (
           <div className="text-center text-gray-400">Loading conversation...</div>
         ) : (

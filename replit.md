@@ -328,6 +328,8 @@ Changelog:
   * Removed "Spirit-led" from The Scholar's welcome message for more direct introduction
   * Fixed chat page layout to prevent unwanted scrolling and ensure chat input stays above mobile navigation bar
   * Added proper height constraints and container structure to maintain positioning on mobile devices
+  * Implemented comprehensive smooth scrolling throughout all scrollable areas including sermon workspace, chat interface, and Bible study
+  * Enhanced scrollbar styling with Scholar-themed golden accents for polished visual experience
 - June 17, 2025: Added comprehensive Settings section with legal pages and support links
   * Added Settings tab to both desktop sidebar and mobile navigation bar
   * Created main Settings page with grid layout of policy and support links
