@@ -1,4 +1,18 @@
 import { useState, useRef, useEffect } from "react";
+
+// Web Speech API types for TypeScript
+interface VoiceSpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onstart: ((event: any) => void) | null;
+  onend: ((event: any) => void) | null;
+  onerror: ((event: any) => void) | null;
+  onresult: ((event: any) => void) | null;
+}
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
@@ -6,7 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Send, User, Save, Plus, Check, RotateCcw } from "lucide-react";
+import { Send, User, Save, Plus, Check, RotateCcw, Mic, MicOff, Volume2 } from "lucide-react";
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 import PageHelp from "@/components/page-help";
@@ -18,8 +32,13 @@ export default function ChatInterface() {
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
   const [scholarMode, setScholarMode] = useState<"study" | "devotional">("study");
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<VoiceSpeechRecognition | null>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -42,6 +61,143 @@ export default function ChatInterface() {
   useEffect(() => {
     setShowWelcomeMessage(conversation.length === 0);
   }, [conversation.length]);
+
+  // Initialize speech recognition and synthesis
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Initialize Speech Recognition
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition() as VoiceSpeechRecognition;
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = (event: any) => {
+          setIsListening(false);
+          toast({
+            title: "Voice Recognition Error",
+            description: "Please try again or check microphone permissions.",
+            variant: "destructive",
+          });
+        };
+        
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          setMessage(transcript);
+          // Trigger send message directly
+          sendMessageMutation.mutate(transcript);
+        };
+        
+        recognitionRef.current = recognition;
+      }
+      
+      // Initialize Speech Synthesis
+      if (window.speechSynthesis) {
+        synthRef.current = window.speechSynthesis;
+      }
+    }
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
+  }, []);
+
+  // Handle speaking response with voice synthesis
+  const speakResponse = (text: string) => {
+    if (!synthRef.current || !isVoiceMode) return;
+    
+    // Cancel any ongoing speech
+    synthRef.current.cancel();
+    
+    // Clean up text for better speech
+    const cleanText = text
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
+      .replace(/#{1,6}\s/g, '') // Remove headers
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to just text
+      .replace(/`([^`]+)`/g, '$1') // Remove code backticks
+      .trim();
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 0.8;
+    
+    // Try to use a more natural voice
+    const voices = synthRef.current.getVoices();
+    const preferredVoice = voices.find(voice => 
+      voice.name.includes('Samantha') || 
+      voice.name.includes('Daniel') || 
+      voice.name.includes('Karen') ||
+      voice.lang.includes('en')
+    );
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+    
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    
+    synthRef.current.speak(utterance);
+  };
+
+  // Stop current speech
+  const stopSpeaking = () => {
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
+  // Start voice input
+  const startListening = () => {
+    if (!recognitionRef.current) {
+      toast({
+        title: "Voice Recognition Not Supported",
+        description: "Your browser doesn't support voice recognition.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setMessage(""); // Clear text input
+    recognitionRef.current.start();
+  };
+
+  // Stop voice input
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  };
+
+  // Toggle voice mode
+  const toggleVoiceMode = () => {
+    const newVoiceMode = !isVoiceMode;
+    setIsVoiceMode(newVoiceMode);
+    
+    if (!newVoiceMode) {
+      // Exiting voice mode - stop any ongoing speech or listening
+      stopSpeaking();
+      stopListening();
+    }
+    
+    toast({
+      title: newVoiceMode ? "Voice Mode Activated" : "Voice Mode Deactivated",
+      description: newVoiceMode 
+        ? "You can now speak to The Scholar and hear responses" 
+        : "Switched back to text mode",
+    });
+  };
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageText: string) => {
