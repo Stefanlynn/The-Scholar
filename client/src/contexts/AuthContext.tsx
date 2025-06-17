@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase, type AuthUser } from '@/lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
+import { setConsentedCookie, getConsentedCookie } from '@/lib/cookies'
 
 interface AuthContextType {
   user: AuthUser | null
@@ -29,8 +30,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check remember me status on app load
     const checkRememberMe = () => {
-      const rememberMe = localStorage.getItem('scholar_remember_me');
-      const expiry = localStorage.getItem('scholar_remember_expiry');
+      const rememberMe = getConsentedCookie('scholar_remember_me', 'necessary');
+      const expiry = getConsentedCookie('scholar_remember_expiry', 'necessary');
       
       if (rememberMe && expiry) {
         const isExpired = Date.now() > parseInt(expiry);

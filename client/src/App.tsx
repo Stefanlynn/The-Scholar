@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { ScrollToTop } from "@/hooks/use-scroll-to-top";
 import LoadingPage from "@/components/loading-page";
+import CookieConsentBanner from "@/components/cookie-consent-banner";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import Library from "@/pages/library";
@@ -96,6 +97,7 @@ function AuthenticatedApp() {
         <Route path="/settings/delete-account" component={DeleteAccount} />
         <Route path="/community" component={CommunityComingSoon} />
       </Switch>
+      <CookieConsentBanner />
     </UserPreferencesProvider>
   );
 }
