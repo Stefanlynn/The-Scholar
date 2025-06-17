@@ -5,15 +5,11 @@ import MobileNavMenu from "@/components/mobile-nav-menu";
 import WeeklyDonationPopup from "@/components/weekly-donation-popup";
 import AppTutorial from "@/components/app-tutorial";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
-import { Search, User, LogOut, GraduationCap } from "lucide-react";
+import { User } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
-  const { user, signOut } = useAuth();
 
   // Check if tutorial should be shown
   useEffect(() => {
@@ -24,9 +20,7 @@ export default function Home() {
     }
   }, []);
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
+
 
   const handleCloseTutorial = () => {
     setShowTutorial(false);
@@ -49,29 +43,15 @@ export default function Home() {
                 <span className="text-sm">Online</span>
               </div>
             </div>
-            <div className="flex items-center space-x-2 md:space-x-4">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-[var(--scholar-darker)] border-gray-700 text-white pl-10 w-32 sm:w-48 md:w-64 focus:border-[var(--scholar-gold)]"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="hidden md:block text-sm text-gray-300">
-                  {user?.user_metadata?.full_name || user?.email}
-                </span>
+            <div className="flex items-center">
+              <Link href="/profile">
                 <Button 
-                  onClick={handleSignOut}
                   className="bg-gray-700 text-white hover:bg-gray-600 p-2 rounded-full"
-                  title="Sign Out"
+                  title="Profile"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <User className="h-4 w-4" />
                 </Button>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
