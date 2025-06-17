@@ -169,7 +169,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] overflow-y-auto">
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${currentTutorialStep.gradient} opacity-10`} />
       
@@ -178,14 +178,14 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         onClick={handleSkip}
         variant="ghost"
         size="sm"
-        className="absolute top-6 right-6 text-gray-400 hover:text-white z-20"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 text-gray-400 hover:text-white z-20"
       >
-        <X className="h-5 w-5" />
+        <X className="h-4 w-4 sm:h-5 sm:w-5" />
       </Button>
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-12">
+      <div className="relative z-10 w-full min-h-screen flex flex-col justify-center px-4 sm:px-6 py-8 sm:py-12">
         {/* Progress Bar */}
-        <div className="flex items-center space-x-2 mb-12">
+        <div className="flex items-center space-x-1 sm:space-x-2 mb-8 sm:mb-12 max-w-4xl mx-auto w-full">
           {tutorialSteps.map((_, index) => (
             <div key={index} className="flex-1 relative">
               <div
@@ -196,53 +196,53 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
                 }`}
               />
               {index <= currentStep && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
+                <div className="absolute -top-1 -right-0.5 w-2 h-2 sm:w-3 sm:h-3 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
               )}
             </div>
           ))}
         </div>
 
         {/* Main Content */}
-        <div className="text-center space-y-8">
+        <div className="text-center space-y-6 sm:space-y-8 max-w-4xl mx-auto w-full">
           {/* Icon */}
           <div className="relative">
-            <div className={`w-24 h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full flex items-center justify-center shadow-2xl`}>
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full flex items-center justify-center shadow-2xl`}>
               {currentTutorialStep.icon}
             </div>
-            <div className={`absolute inset-0 w-24 h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full animate-ping opacity-20`} />
+            <div className={`absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full animate-ping opacity-20`} />
           </div>
 
           {/* Title and Subtitle */}
-          <div className="space-y-3">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+          <div className="space-y-2 sm:space-y-3 px-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white tracking-tight">
               {currentTutorialStep.title}
             </h1>
-            <p className="text-xl text-gray-400 font-medium">
+            <p className="text-sm sm:text-lg lg:text-xl text-gray-400 font-medium">
               {currentTutorialStep.subtitle}
             </p>
           </div>
 
           {/* Highlight Badge */}
-          <div className={`inline-flex items-center px-6 py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-lg shadow-lg`}>
-            <Sparkles className="w-5 h-5 mr-2" />
-            {currentTutorialStep.highlight}
+          <div className={`inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-sm sm:text-lg shadow-lg mx-2`}>
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+            <span className="text-center">{currentTutorialStep.highlight}</span>
           </div>
 
           {/* Content */}
-          <p className="text-gray-300 text-xl leading-relaxed max-w-3xl mx-auto">
+          <p className="text-gray-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto px-2">
             {currentTutorialStep.content}
           </p>
 
           {/* Features Grid */}
           {currentTutorialStep.features && (
-            <div className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-800/50 max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-800/50 max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 gap-3 sm:gap-4">
                 {currentTutorialStep.features.map((feature, index) => (
                   <div key={index} className="flex items-center space-x-3 text-gray-300 group hover:text-white transition-colors">
-                    <div className={`p-2 bg-gradient-to-br ${currentTutorialStep.gradient} rounded-lg group-hover:scale-110 transition-transform`}>
+                    <div className={`p-2 bg-gradient-to-br ${currentTutorialStep.gradient} rounded-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
                       {feature.icon}
                     </div>
-                    <span className="font-medium">{feature.text}</span>
+                    <span className="font-medium text-sm sm:text-base">{feature.text}</span>
                   </div>
                 ))}
               </div>
@@ -250,33 +250,33 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
           )}
 
           {/* Demo Text */}
-          <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-6 border-l-4 border-[var(--scholar-gold)] max-w-2xl mx-auto">
-            <p className="text-[var(--scholar-gold)] font-medium italic text-lg">
+          <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border-l-4 border-[var(--scholar-gold)] max-w-2xl mx-auto">
+            <p className="text-[var(--scholar-gold)] font-medium italic text-sm sm:text-lg">
               "{currentTutorialStep.demoText}"
             </p>
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between pt-8 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-6 sm:pt-8 max-w-2xl mx-auto space-y-4 sm:space-y-0">
             <Button
               onClick={handlePrev}
               disabled={currentStep === 0}
               variant="outline"
               size="lg"
-              className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
+              className={`w-full sm:w-auto border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
                 currentStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
               }`}
             >
-              <ChevronLeft className="w-5 h-5 mr-2" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Previous
             </Button>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <Button
                 onClick={handleSkip}
                 variant="ghost"
                 size="lg"
-                className="text-gray-400 hover:text-white transition-all hover:scale-105"
+                className="w-full sm:w-auto text-gray-400 hover:text-white transition-all hover:scale-105"
               >
                 Skip Tour
               </Button>
@@ -284,20 +284,20 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
               <Button
                 onClick={handleNext}
                 size="lg"
-                className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-8`}
+                className={`w-full sm:w-auto bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-6 sm:px-8`}
               >
                 {currentTutorialStep.action}
                 {currentStep < tutorialSteps.length - 1 ? (
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                 ) : (
-                  <CheckCircle className="w-5 h-5 ml-2" />
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                 )}
               </Button>
             </div>
           </div>
 
           {/* Step Counter */}
-          <div className="flex items-center justify-center space-x-2 pt-6">
+          <div className="flex items-center justify-center space-x-2 pt-6 pb-8">
             <span className="text-sm text-gray-500">Step</span>
             <span className="text-lg font-bold text-[var(--scholar-gold)]">
               {currentStep + 1}
