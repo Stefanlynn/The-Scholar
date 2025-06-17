@@ -3,32 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(35, 100%, 98%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(35, 30%, 95%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(35, 100%, 98%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(35, 20%, 85%);
-  --input: hsl(35, 20%, 92%);
-  --primary: hsl(35, 70%, 40%);
+  --background: hsl(42, 25%, 97%);
+  --foreground: hsl(15, 25%, 15%);
+  --muted: hsl(42, 20%, 92%);
+  --muted-foreground: hsl(15, 15%, 35%);
+  --popover: hsl(42, 25%, 97%);
+  --popover-foreground: hsl(15, 25%, 15%);
+  --card: hsl(42, 40%, 95%);
+  --card-foreground: hsl(15, 25%, 15%);
+  --border: hsl(42, 15%, 80%);
+  --input: hsl(42, 20%, 88%);
+  --primary: hsl(42, 65%, 45%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(35, 30%, 90%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(35, 50%, 92%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --secondary: hsl(42, 15%, 85%);
+  --secondary-foreground: hsl(15, 25%, 15%);
+  --accent: hsl(42, 25%, 90%);
+  --accent-foreground: hsl(15, 25%, 15%);
+  --destructive: hsl(0, 70%, 55%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(42, 65%, 45%);
   --radius: 0.5rem;
   
   /* Scholar App Light Theme Colors */
-  --scholar-black: hsl(20, 14.3%, 4.1%);
-  --scholar-dark: hsl(0, 0%, 100%);
-  --scholar-darker: hsl(35, 30%, 95%);
-  --scholar-gold: hsl(35, 70%, 40%);
+  --scholar-black: hsl(15, 25%, 15%);
+  --scholar-dark: hsl(42, 40%, 95%);
+  --scholar-darker: hsl(42, 25%, 90%);
+  --scholar-gold: hsl(42, 65%, 45%);
   --scholar-gold-foreground: hsl(0, 0%, 100%);
 }
 

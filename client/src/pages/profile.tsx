@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import Sidebar from "@/components/sidebar";
 import MobileTabBar from "@/components/mobile-tab-bar";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ import type { User as UserType, UpdateUserProfile } from "@shared/schema";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);

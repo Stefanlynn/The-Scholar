@@ -95,16 +95,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <ThemeProvider>
           <TooltipProvider>
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-background text-foreground">
               <Toaster />
               <Router />
             </div>
           </TooltipProvider>
-        </AuthProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
