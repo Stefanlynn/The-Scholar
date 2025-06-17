@@ -13,7 +13,7 @@ const navigation = [
   { name: "Bible", href: "/bible", icon: Book },
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
-  { name: "Menu", href: "#", icon: Menu, isMenu: true },
+  { name: "Menu", href: "/menu", icon: Menu },
 ];
 
 const menuItems = [
