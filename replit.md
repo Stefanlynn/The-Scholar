@@ -398,6 +398,13 @@ Changelog:
   * Positioned chat input box fixed above mobile navigation bar
   * Added proper bottom padding to messages container to prevent content being hidden
   * Chat page now maintains stable viewport without vertical scrolling issues
+- June 17, 2025: Enhanced voice recording with automatic speech detection and intuitive controls
+  * Added automatic speech detection that stops recording when you finish speaking
+  * Created full-screen recording interface with live transcript preview
+  * Added manual "Stop Recording" button for user control
+  * Improved speech recognition with interim results showing real-time transcription
+  * Enhanced error handling and state management for consistent voice functionality
+  * Recording now works reliably every time with proper state reset between uses
 ```
 
 ## User Preferences

@@ -74,7 +74,7 @@ export default function ChatInterface() {
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition() as VoiceSpeechRecognition;
         recognition.continuous = false;
-        recognition.interimResults = false;
+        recognition.interimResults = true;
         recognition.lang = 'en-US';
         
         recognition.onstart = () => {
@@ -102,12 +102,26 @@ export default function ChatInterface() {
         };
         
         recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setRecordedTranscript(transcript);
-          // Show controls when we get a result
-          setTimeout(() => {
-            setShowRecordingControls(true);
-          }, 100);
+          let finalTranscript = '';
+          let interimTranscript = '';
+          
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript;
+            } else {
+              interimTranscript += transcript;
+            }
+          }
+          
+          if (finalTranscript) {
+            setRecordedTranscript(finalTranscript);
+            // Auto-stop recording when we get final result
+            recognition.stop();
+          } else {
+            // Show interim results while speaking
+            setRecordedTranscript(interimTranscript);
+          }
         };
         
         recognitionRef.current = recognition;
@@ -629,15 +643,33 @@ export default function ChatInterface() {
 
       {/* Recording Visual Indicator */}
       {isRecording && (
-        <div className="fixed inset-0 bg-gradient-to-br from-red-900/20 to-purple-900/20 pointer-events-none z-10">
+        <div className="fixed inset-0 bg-gradient-to-br from-red-900/20 to-purple-900/20 z-10 flex items-center justify-center">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent_70%)]" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="w-32 h-32 rounded-full bg-red-500/20 animate-pulse flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-32 h-32 rounded-full bg-red-500/20 animate-pulse flex items-center justify-center mx-auto">
               <div className="w-20 h-20 rounded-full bg-red-500/40 animate-ping flex items-center justify-center">
                 <Mic className="w-10 h-10 text-red-500" />
               </div>
             </div>
-            <p className="text-center mt-4 text-red-500 font-medium">Recording...</p>
+            <p className="text-red-500 font-medium mt-4">Recording...</p>
+            <p className="text-gray-400 text-sm mt-2">Speak now, recording will auto-stop when you finish</p>
+            
+            {/* Live transcript preview */}
+            {recordedTranscript && (
+              <div className="mt-4 bg-black/50 rounded-lg p-3 max-w-md mx-auto">
+                <p className="text-white text-sm">{recordedTranscript}</p>
+              </div>
+            )}
+            
+            {/* Manual stop button */}
+            <Button
+              onClick={stopRecording}
+              className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-2"
+            >
+              <MicOff className="mr-2 h-4 w-4" />
+              Stop Recording
+            </Button>
+            
             <div className="flex justify-center mt-4 space-x-2">
               {/* Simulated waveform */}
               <div className="w-1 bg-red-500 animate-pulse" style={{height: '20px', animationDelay: '0s'}}></div>
