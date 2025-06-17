@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Send, User, Save, Plus, Check, RotateCcw } from "lucide-react";
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
+import PageHelp from "@/components/page-help";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -165,6 +166,60 @@ export default function ChatInterface() {
     queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
   };
 
+  const chatHelpContent = {
+    title: "How to Use The Scholar Chat",
+    description: "The Scholar is your AI-powered biblical study assistant. Choose between Study Mode for academic analysis or Devotional Mode for heart-level encouragement, then ask questions about Scripture, theology, or spiritual topics.",
+    features: [
+      {
+        title: "Study Mode vs Devotional Mode",
+        description: "Switch between two distinct conversation styles using the toggle buttons above the chat input.",
+        tips: [
+          "Study Mode: Get scholarly insights, Greek/Hebrew analysis, cross-references, and sermon preparation help",
+          "Devotional Mode: Receive warm encouragement, personal application, and spiritual reflection",
+          "The Scholar adapts its personality completely based on your selected mode"
+        ]
+      },
+      {
+        title: "Expert Voice Adaptation",
+        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical experts.",
+        tips: [
+          "Theology questions get responses like Dr. Frank Turek or John Piper",
+          "Leadership topics channel John Maxwell or Andy Stanley",
+          "Prophetic insights use Kris Vallotton's style",
+          "Inner healing follows Bob Hamp's compassionate approach"
+        ]
+      },
+      {
+        title: "Asking Questions",
+        description: "Type any biblical, theological, or spiritual question in the chat box and press Enter or click Send.",
+        tips: [
+          "Ask about specific verses: 'What does John 3:16 mean?'",
+          "Request word studies: 'What does agape mean in Greek?'",
+          "Seek sermon help: 'Give me an outline for Romans 8:28'",
+          "Personal spiritual questions: 'How do I hear God's voice?'"
+        ]
+      },
+      {
+        title: "Save Responses to Notes",
+        description: "Click 'Save to Notes' below any Scholar response to save it to your personal Notes section.",
+        tips: [
+          "Saved responses include both your question and The Scholar's answer",
+          "Notes are automatically titled with the first part of your question",
+          "Access all saved content in the Notes section"
+        ]
+      },
+      {
+        title: "Managing Conversations",
+        description: "Use conversation controls to manage your chat history and start fresh topics.",
+        tips: [
+          "Click 'New Conversation' to clear the current chat and start fresh",
+          "Your conversation history is automatically saved",
+          "The Scholar remembers context within each conversation"
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Header with New Conversation Button */}
@@ -172,15 +227,18 @@ export default function ChatInterface() {
         <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-4 py-3">
           <div className="flex justify-between items-center">
             <h2 className="text-sm font-medium text-gray-300">Conversation with The Scholar</h2>
-            <Button
-              onClick={clearConversation}
-              variant="outline"
-              size="sm"
-              className="text-xs"
-            >
-              <RotateCcw className="w-3 h-3 mr-1" />
-              New Conversation
-            </Button>
+            <div className="flex items-center space-x-2">
+              <PageHelp pageName="Chat" helpContent={chatHelpContent} />
+              <Button
+                onClick={clearConversation}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                New Conversation
+              </Button>
+            </div>
           </div>
         </div>
       )}

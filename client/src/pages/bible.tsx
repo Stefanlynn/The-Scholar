@@ -39,6 +39,7 @@ import {
   Copy,
   Share
 } from "lucide-react";
+import PageHelp from "@/components/page-help";
 
 const books = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth",
@@ -588,6 +589,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
             <div className="hidden md:flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <h2 className="text-xl font-semibold text-white">Bible Study</h2>
+                <PageHelp pageName="Bible Study" helpContent={bibleHelpContent} />
               </div>
               <div className="flex items-center space-x-4">
                 <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
