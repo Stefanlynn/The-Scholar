@@ -11,6 +11,17 @@ import { Link } from "wouter";
 export default function Home() {
   const [showTutorial, setShowTutorial] = useState(false);
 
+  // Check if tutorial should be shown
+  useEffect(() => {
+    const shouldShowTutorial = localStorage.getItem('show_tutorial');
+    if (shouldShowTutorial === 'true') {
+      setShowTutorial(true);
+      localStorage.removeItem('show_tutorial'); // Remove after showing
+    }
+  }, []);
+
+
+
   const handleCloseTutorial = () => {
     setShowTutorial(false);
   };
