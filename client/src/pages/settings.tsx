@@ -1,6 +1,8 @@
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Sidebar from "@/components/sidebar";
+import MobileTabBar from "@/components/mobile-tab-bar";
 import { 
   Shield, 
   FileText, 
@@ -59,47 +61,53 @@ const settingsItems = [
 
 export default function Settings() {
   return (
-    <div className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center">
-            <SettingsIcon className="text-white w-5 h-5" />
+    <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
+      <Sidebar />
+      
+      <div className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center">
+              <SettingsIcon className="text-white w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white">Settings</h1>
+              <p className="text-gray-400 text-sm">Manage your account and preferences</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Settings</h1>
-            <p className="text-gray-400 text-sm">Manage your account and preferences</p>
-          </div>
-        </div>
 
-        {/* Settings Grid */}
-        <div className="grid md:grid-cols-2 gap-4">
-          {settingsItems.map((item) => {
-            const Icon = item.icon;
-            
-            return (
-              <Link key={item.title} href={item.href}>
-                <Card className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-all duration-200 cursor-pointer group">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-gray-800 group-hover:bg-gray-700 transition-colors`}>
-                          <Icon className={`w-5 h-5 ${item.color}`} />
+          {/* Settings Grid */}
+          <div className="grid md:grid-cols-2 gap-4">
+            {settingsItems.map((item) => {
+              const Icon = item.icon;
+              
+              return (
+                <Link key={item.title} href={item.href}>
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-all duration-200 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-gray-800 group-hover:bg-gray-700 transition-colors`}>
+                            <Icon className={`w-5 h-5 ${item.color}`} />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-white font-medium mb-1">{item.title}</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-white font-medium mb-1">{item.title}</h3>
-                          <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
-                        </div>
+                        <ChevronRight className="text-gray-500 w-5 h-5 group-hover:text-gray-400 transition-colors" />
                       </div>
-                      <ChevronRight className="text-gray-500 w-5 h-5 group-hover:text-gray-400 transition-colors" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
+
+      <MobileTabBar />
     </div>
   );
 }
