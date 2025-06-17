@@ -79,6 +79,8 @@ export default function ChatInterface() {
       setIsThinking(false);
       setMessage("");
       adjustTextareaHeight();
+      // Update profile stats for chat activity
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
     },
     onError: () => {
       setIsThinking(false);
