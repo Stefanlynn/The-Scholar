@@ -221,7 +221,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full max-h-screen overflow-hidden">
       {/* Mode Toggle - Always Visible */}
       <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0">
         <div className="flex justify-between items-center">
@@ -277,7 +277,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 pt-4 sm:pt-6 pb-4 space-y-3 sm:space-y-4 lg:space-y-5">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 pt-4 sm:pt-6 pb-4 space-y-3 sm:space-y-4 lg:space-y-5 min-h-0">
         {isLoading ? (
           <div className="text-center text-gray-400">Loading conversation...</div>
         ) : (
@@ -402,7 +402,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Chat Input */}
-      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6 flex-shrink-0">
+      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6 flex-shrink-0 border-t border-gray-800">
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">

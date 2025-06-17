@@ -27,10 +27,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
+    <div className="flex h-screen max-h-screen overflow-hidden bg-[var(--scholar-black)]">
       <Sidebar />
       
-      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0 max-h-screen">
         {/* Top Bar */}
         <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex-shrink-0">
           <div className="flex items-center justify-between">

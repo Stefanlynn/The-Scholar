@@ -325,6 +325,9 @@ Changelog:
   * Improved conversation message layout throughout chat interface
   * Updated tutorial step 8 to use actual HelpCircle icon matching real help buttons found throughout the app
   * Enhanced visual consistency between tutorial explanations and actual UI elements users will encounter
+  * Removed "Spirit-led" from The Scholar's welcome message for more direct introduction
+  * Fixed chat page layout to prevent unwanted scrolling and ensure chat input stays above mobile navigation bar
+  * Added proper height constraints and container structure to maintain positioning on mobile devices
 - June 17, 2025: Added comprehensive Settings section with legal pages and support links
   * Added Settings tab to both desktop sidebar and mobile navigation bar
   * Created main Settings page with grid layout of policy and support links
