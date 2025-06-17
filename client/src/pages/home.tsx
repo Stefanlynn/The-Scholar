@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/sidebar";
 import ChatInterface from "@/components/chat-interface";
 import MobileTabBar from "@/components/mobile-tab-bar";
 import WeeklyDonationPopup from "@/components/weekly-donation-popup";
+import AppTutorial from "@/components/app-tutorial";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
