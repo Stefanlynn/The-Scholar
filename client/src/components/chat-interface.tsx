@@ -292,7 +292,7 @@ export default function ChatInterface() {
                     </div>
                     <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4 flex-1 min-w-0">
                       <div className="text-gray-200 leading-relaxed text-sm sm:text-base">
-                        <p className="mb-3 sm:mb-4 lg:mb-5">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth.</p>
+                        <p className="mb-3 sm:mb-4 lg:mb-5">Grace and peace! I'm The Scholar, your biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth.</p>
                         
                         <div className="space-y-2 sm:space-y-2.5 lg:space-y-3 mb-3 sm:mb-4 lg:mb-5">
                           <div className="flex items-center space-x-2 sm:space-x-3">
