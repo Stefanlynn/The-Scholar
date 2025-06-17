@@ -42,7 +42,7 @@ export default function Menu() {
         window.open('https://discord.gg/thescholar', '_blank');
         break;
       case 'donate':
-        window.open('https://www.paypal.com/donate/?business=4B4KSV8XQNMYY&no_recurring=0&currency_code=USD', '_blank');
+        window.open('https://buy.stripe.com/bJefZhf0Ab521kr8Mh0ZW00', '_blank');
         break;
       case 'help':
         window.open('mailto:support@thescholar.com?subject=Help%20Request', '_blank');

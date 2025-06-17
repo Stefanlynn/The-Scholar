@@ -34,8 +34,6 @@ export default function About() {
                 The Scholar is a digital companion for those called to rightly divide the Word of truth and lead others in it with clarity, confidence, and conviction.
               </p>
 
-              <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
-
               <div className="space-y-8">
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-4">Our Mission</h3>
@@ -45,15 +43,25 @@ export default function About() {
                   <p className="text-gray-300 leading-relaxed mb-4">
                     Through intuitive technology and thoughtful design, The Scholar empowers users to:
                   </p>
-                  <ul className="text-gray-300 space-y-3 ml-6 list-none">
-                    <li>        •       Explore Scripture with AI-powered insight and biblical accuracy</li>
-                    <li>        •       Dive deeper through original language studies, cultural context, and cross-references</li>
-                    <li>        •       Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</li>
-                    <li>        •       Study and prepare in ways that stir both the mind and the heart</li>
-                  </ul>
+                  <div className="space-y-3 ml-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300">Explore Scripture with AI-powered insight and biblical accuracy</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300">Dive deeper through original language studies, cultural context, and cross-references</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300">Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-300">Study and prepare in ways that stir both the mind and the heart</p>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
 
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-4">Our Vision</h3>
