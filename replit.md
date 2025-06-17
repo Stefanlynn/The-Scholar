@@ -336,6 +336,16 @@ Changelog:
   * Clean mobile-first Scholar page design with simplified header and profile button
   * Full-page menu system matching Bible app design patterns
   * Complete removal of fallback authentication systems
+- June 17, 2025: Implemented "Remember Me" authentication and welcome loading page system
+  * Added "Remember me for 30 days" checkbox to login form with golden Scholar styling
+  * Implemented 30-day persistent session storage using localStorage with automatic expiry cleanup
+  * Created beautiful loading page component with Scholar branding, progress bar, and personalized messaging
+  * Added returning user detection that shows "Welcome Back" vs "Welcome to The Scholar" messaging
+  * Integrated session validation on app startup with automatic cleanup of expired remember me tokens
+  * Updated sign out functionality to clear all remember me data for complete session cleanup
+  * Enhanced onboarding logic to skip tutorial for returning users with valid remember me sessions
+  * Loading page appears on every app entry with smooth transition to main interface
+  * All authentication state properly managed with Supabase integration and local storage persistence
 ```
 
 ## User Preferences

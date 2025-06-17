@@ -30,9 +30,45 @@ import Signup from "@/pages/signup";
 function AuthenticatedApp() {
   const { user } = useAuth();
   const [location] = useLocation();
+  const [showLoadingPage, setShowLoadingPage] = useState(true);
+  const [isReturningUser, setIsReturningUser] = useState(false);
 
-  // Check if user needs onboarding
-  const needsOnboarding = user && !user.user_metadata?.completed_onboarding;
+  useEffect(() => {
+    // Check if user is returning (has remember me set)
+    const rememberMe = localStorage.getItem('scholar_remember_me');
+    const expiry = localStorage.getItem('scholar_remember_expiry');
+    
+    if (rememberMe && expiry) {
+      const isValid = Date.now() < parseInt(expiry);
+      setIsReturningUser(isValid);
+      
+      // Clean up expired remember me
+      if (!isValid) {
+        localStorage.removeItem('scholar_remember_me');
+        localStorage.removeItem('scholar_remember_expiry');
+      }
+    }
+    
+    // Show loading page for a brief moment to check sessions
+    const timer = setTimeout(() => {
+      setShowLoadingPage(false);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading page first
+  if (showLoadingPage) {
+    return (
+      <LoadingPage 
+        onComplete={() => setShowLoadingPage(false)}
+        isReturningUser={isReturningUser}
+      />
+    );
+  }
+
+  // Check if user needs onboarding - only for truly new users
+  const needsOnboarding = user && !user.user_metadata?.completed_onboarding && !isReturningUser;
 
   // Redirect to welcome if needed
   if (needsOnboarding && location !== "/welcome") {

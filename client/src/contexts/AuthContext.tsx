@@ -27,6 +27,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Check remember me status on app load
+    const checkRememberMe = () => {
+      const rememberMe = localStorage.getItem('scholar_remember_me');
+      const expiry = localStorage.getItem('scholar_remember_expiry');
+      
+      if (rememberMe && expiry) {
+        const isExpired = Date.now() > parseInt(expiry);
+        if (isExpired) {
+          // Clean up expired remember me
+          localStorage.removeItem('scholar_remember_me');
+          localStorage.removeItem('scholar_remember_expiry');
+          // Sign out expired sessions
+          supabase.auth.signOut();
+        }
+      }
+    };
+
+    checkRememberMe();
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -95,6 +114,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    // Clear remember me data on sign out
+    localStorage.removeItem('scholar_remember_me');
+    localStorage.removeItem('scholar_remember_expiry');
     await supabase.auth.signOut()
   }
 
