@@ -298,16 +298,12 @@ export default function Profile() {
                   <label className="text-white font-medium">Default Bible Translation</label>
                   <p className="text-gray-400 text-sm">Choose your preferred Bible version</p>
                 </div>
-                <Select defaultValue={profile?.defaultBibleTranslation || "NIV"}>
+                <Select defaultValue={profile?.defaultBibleTranslation || "kjv"}>
                   <SelectTrigger className="w-32 bg-[var(--scholar-darker)] border-gray-600 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                    <SelectItem value="NIV">NIV</SelectItem>
-                    <SelectItem value="ESV">ESV</SelectItem>
-                    <SelectItem value="NASB">NASB</SelectItem>
-                    <SelectItem value="KJV">KJV</SelectItem>
-                    <SelectItem value="NKJV">NKJV</SelectItem>
+                    <SelectItem value="kjv">King James Version</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
