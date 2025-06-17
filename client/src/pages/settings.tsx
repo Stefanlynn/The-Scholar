@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/sidebar";
-import MobileTabBar from "@/components/mobile-tab-bar";
+import MobileNavMenu from "@/components/mobile-nav-menu";
 import { 
   Shield, 
   FileText, 

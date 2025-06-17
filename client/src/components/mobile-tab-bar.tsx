@@ -1,7 +1,10 @@
 import { Link, useLocation } from "wouter";
-import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap, Settings } from "lucide-react";
+import { useState } from "react";
+import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap, Settings, Menu, X, Share, Info, Users, Heart, HelpCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 import type { User as UserType } from "@shared/schema";
 
@@ -10,11 +13,21 @@ const navigation = [
   { name: "Bible", href: "/bible", icon: Book },
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
+  { name: "Menu", href: "#", icon: Menu, isMenu: true },
+];
+
+const menuItems = [
+  { name: "Share The Scholar", icon: Share, action: "share" },
+  { name: "About", href: "/settings/about", icon: Info },
+  { name: "Community", icon: Users, action: "community" },
+  { name: "Donate", icon: Heart, action: "donate" },
+  { name: "Help", icon: HelpCircle, action: "help" },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function MobileTabBar() {
   const [location] = useLocation();
+  const [showMenu, setShowMenu] = useState(false);
   const { user } = useAuth();
   
   const { data: profile } = useQuery<UserType>({

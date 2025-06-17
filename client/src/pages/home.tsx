@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/sidebar";
 import ChatInterface from "@/components/chat-interface";
-import MobileTabBar from "@/components/mobile-tab-bar";
+import MobileNavMenu from "@/components/mobile-nav-menu";
 import WeeklyDonationPopup from "@/components/weekly-donation-popup";
 import AppTutorial from "@/components/app-tutorial";
 import { Button } from "@/components/ui/button";
@@ -80,7 +80,7 @@ export default function Home() {
       </div>
 
       <WeeklyDonationPopup />
-      <MobileTabBar />
+      <MobileNavMenu />
       
       {/* App Tutorial */}
       <AppTutorial isOpen={showTutorial} onClose={handleCloseTutorial} />
