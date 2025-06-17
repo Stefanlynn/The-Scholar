@@ -273,6 +273,13 @@ Changelog:
   * Added verse reference header, topical tags, sermon tools, and devotional builders where appropriate
   * Formatting ensures excellent on-screen reading for pastors and Bible students
   * Maintains expert voice adaptation while delivering content in premium visual structure
+- June 16, 2025: Enhanced Bible study tools with inline Scholar conversation feature
+  * "Ask The Scholar" section now responds directly within the study tools dialog
+  * No separate popup - Scholar responses appear immediately below the question textarea
+  * Added "New Question" button to clear responses and ask follow-up questions
+  * Maintains conversation flow while studying specific verses
+  * Responses can be saved to Notes with question context included
+  * Loading states and error handling integrated for seamless user experience
 ```
 
 ## User Preferences

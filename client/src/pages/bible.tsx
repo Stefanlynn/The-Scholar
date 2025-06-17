@@ -1366,14 +1366,24 @@ Format with bold section titles, blockquote prompts, and short encouraging parag
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="text-[var(--scholar-gold)] font-semibold text-sm">The Scholar's Response</h5>
                           {inlineScholarResponse && (
-                            <Button 
-                              onClick={handleSaveInlineToNotes}
-                              disabled={saveToNotesMutation.isPending}
-                              size="sm"
-                              className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 text-xs"
-                            >
-                              {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
-                            </Button>
+                            <div className="flex items-center space-x-2">
+                              <Button 
+                                onClick={handleClearInlineResponse}
+                                size="sm"
+                                variant="ghost"
+                                className="text-gray-400 hover:text-white text-xs"
+                              >
+                                New Question
+                              </Button>
+                              <Button 
+                                onClick={handleSaveInlineToNotes}
+                                disabled={saveToNotesMutation.isPending}
+                                size="sm"
+                                className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 text-xs"
+                              >
+                                {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
+                              </Button>
+                            </div>
                           )}
                         </div>
                         
