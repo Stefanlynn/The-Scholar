@@ -53,11 +53,7 @@ const books = [
 
 const translations = [
   { value: "kjv", label: "King James Version" },
-  { value: "niv", label: "New International Version" },
-  { value: "esv", label: "English Standard Version" },
-  { value: "nlt", label: "New Living Translation" },
-  { value: "nasb", label: "New American Standard Bible" },
-  { value: "nkjv", label: "New King James Version" }
+  { value: "niv", label: "New International Version" }
 ];
 
 const highlightColors = [
