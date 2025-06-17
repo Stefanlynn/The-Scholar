@@ -1,5 +1,9 @@
 import { Link, useLocation } from "wouter";
 import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
+import type { User as UserType } from "@shared/schema";
 
 const navigation = [
   { name: "Scholar", href: "/", icon: GraduationCap },
@@ -11,6 +15,12 @@ const navigation = [
 
 export default function MobileTabBar() {
   const [location] = useLocation();
+  const { user } = useAuth();
+  
+  const { data: profile } = useQuery<UserType>({
+    queryKey: ["/api/profile"],
+    enabled: !!user,
+  });
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--scholar-dark)] border-t border-gray-800 p-2 z-50">
@@ -25,7 +35,23 @@ export default function MobileTabBar() {
                   isActive ? 'text-[var(--scholar-gold)]' : 'text-gray-400'
                 }`}
               >
-                <item.icon className="text-lg" />
+                {item.name === "Scholar" ? (
+                  <img 
+                    src={scholarLogo} 
+                    alt="The Scholar" 
+                    className="w-5 h-5 object-contain"
+                  />
+                ) : item.name === "Profile" && profile?.profilePicture ? (
+                  <div className="w-5 h-5 rounded-full overflow-hidden">
+                    <img 
+                      src={profile.profilePicture} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <item.icon className="text-lg" />
+                )}
                 <span className="text-xs">{item.name}</span>
               </button>
             </Link>

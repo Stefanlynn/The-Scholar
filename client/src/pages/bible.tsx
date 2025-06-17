@@ -173,6 +173,7 @@ export default function Bible() {
     onSuccess: () => {
       toast({ title: "Bookmark added", description: "Verse saved to your bookmarks" });
       queryClient.invalidateQueries({ queryKey: ['/api/bookmarks'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
     }
   });
 
@@ -191,6 +192,7 @@ export default function Bible() {
     onSuccess: () => {
       toast({ title: "Note saved", description: "Your verse note has been saved" });
       queryClient.invalidateQueries({ queryKey: ['/api/notes'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
     }
   });
 

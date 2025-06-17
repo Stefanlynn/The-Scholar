@@ -191,7 +191,11 @@ export default function Profile() {
                         <User className="h-10 w-10 text-gray-400" />
                       )}
                     </div>
-                    <Button variant="outline" size="sm" className="border-gray-600 text-white">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black bg-transparent"
+                    >
                       <Camera className="h-4 w-4 mr-2" />
                       Change Photo
                     </Button>
@@ -230,14 +234,14 @@ export default function Profile() {
                       <SelectTrigger className="bg-[var(--scholar-darker)] border-gray-600 text-white">
                         <SelectValue placeholder="Select your ministry role" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                        <SelectItem value="pastor">Pastor</SelectItem>
-                        <SelectItem value="teacher">Teacher</SelectItem>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="worship-leader">Worship Leader</SelectItem>
-                        <SelectItem value="youth-pastor">Youth Pastor</SelectItem>
-                        <SelectItem value="evangelist">Evangelist</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                      <SelectContent className="bg-[var(--scholar-darker)] border-gray-600 text-white">
+                        <SelectItem value="pastor" className="text-white hover:bg-gray-700 focus:bg-gray-700">Pastor</SelectItem>
+                        <SelectItem value="teacher" className="text-white hover:bg-gray-700 focus:bg-gray-700">Teacher</SelectItem>
+                        <SelectItem value="student" className="text-white hover:bg-gray-700 focus:bg-gray-700">Student</SelectItem>
+                        <SelectItem value="worship-leader" className="text-white hover:bg-gray-700 focus:bg-gray-700">Worship Leader</SelectItem>
+                        <SelectItem value="youth-pastor" className="text-white hover:bg-gray-700 focus:bg-gray-700">Youth Pastor</SelectItem>
+                        <SelectItem value="evangelist" className="text-white hover:bg-gray-700 focus:bg-gray-700">Evangelist</SelectItem>
+                        <SelectItem value="other" className="text-white hover:bg-gray-700 focus:bg-gray-700">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
