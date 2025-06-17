@@ -306,7 +306,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const messageData = insertChatMessageSchema.parse({
         message: req.body.message,
-        userId: userId
+        userId: user.id
       });
       
       // Generate AI response with mode context
@@ -323,7 +323,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Study tools endpoint for Bible analysis requests
-  app.post("/api/chat/send", async (req, res) => {
+  app.post("/api/chat/send", authenticateUser, async (req, res) => {
     try {
       const { message } = req.body;
       
@@ -331,9 +331,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Message is required" });
       }
 
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
       const messageData = insertChatMessageSchema.parse({
         message: message,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       
       // Generate AI response using the same system as chat
@@ -627,20 +632,28 @@ Convert this into bullet format with:
   });
 
   // Notes
-  app.get("/api/notes", async (req, res) => {
+  app.get("/api/notes", authenticateUser, async (req, res) => {
     try {
-      const notes = await storage.getNotes(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const notes = await storage.getNotes(user.id);
       res.json(notes);
     } catch (error) {
       res.status(500).json({ message: "Failed to get notes" });
     }
   });
 
-  app.post("/api/notes", async (req, res) => {
+  app.post("/api/notes", authenticateUser, async (req, res) => {
     try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
       const noteData = insertNoteSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       const note = await storage.createNote(noteData);
       res.json(note);
@@ -649,7 +662,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.put("/api/notes/:id", async (req, res) => {
+  app.put("/api/notes/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updateData = req.body;
@@ -663,7 +676,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.delete("/api/notes/:id", async (req, res) => {
+  app.delete("/api/notes/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteNote(id);
@@ -677,20 +690,28 @@ Convert this into bullet format with:
   });
 
   // Sermons
-  app.get("/api/sermons", async (req, res) => {
+  app.get("/api/sermons", authenticateUser, async (req, res) => {
     try {
-      const sermons = await storage.getSermons(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const sermons = await storage.getSermons(user.id);
       res.json(sermons);
     } catch (error) {
       res.status(500).json({ message: "Failed to get sermons" });
     }
   });
 
-  app.post("/api/sermons", async (req, res) => {
+  app.post("/api/sermons", authenticateUser, async (req, res) => {
     try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
       const sermonData = insertSermonSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       const sermon = await storage.createSermon(sermonData);
       res.json(sermon);
@@ -699,7 +720,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.put("/api/sermons/:id", async (req, res) => {
+  app.put("/api/sermons/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updateData = req.body;
@@ -713,7 +734,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.delete("/api/sermons/:id", async (req, res) => {
+  app.delete("/api/sermons/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteSermon(id);
@@ -727,20 +748,28 @@ Convert this into bullet format with:
   });
 
   // Bookmarks
-  app.get("/api/bookmarks", async (req, res) => {
+  app.get("/api/bookmarks", authenticateUser, async (req, res) => {
     try {
-      const bookmarks = await storage.getBookmarks(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const bookmarks = await storage.getBookmarks(user.id);
       res.json(bookmarks);
     } catch (error) {
       res.status(500).json({ message: "Failed to get bookmarks" });
     }
   });
 
-  app.post("/api/bookmarks", async (req, res) => {
+  app.post("/api/bookmarks", authenticateUser, async (req, res) => {
     try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
       const bookmarkData = insertBookmarkSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       const bookmark = await storage.createBookmark(bookmarkData);
       res.json(bookmark);
@@ -749,7 +778,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.delete("/api/bookmarks/:id", async (req, res) => {
+  app.delete("/api/bookmarks/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteBookmark(id);
@@ -763,20 +792,28 @@ Convert this into bullet format with:
   });
 
   // Library Items
-  app.get("/api/library", async (req, res) => {
+  app.get("/api/library", authenticateUser, async (req, res) => {
     try {
-      const items = await storage.getLibraryItems(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const items = await storage.getLibraryItems(user.id);
       res.json(items);
     } catch (error) {
       res.status(500).json({ message: "Failed to get library items" });
     }
   });
 
-  app.post("/api/library", async (req, res) => {
+  app.post("/api/library", authenticateUser, async (req, res) => {
     try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
       const itemData = insertLibraryItemSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId: user.id
       });
       const item = await storage.createLibraryItem(itemData);
       res.json(item);
