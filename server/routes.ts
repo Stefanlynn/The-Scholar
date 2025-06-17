@@ -822,7 +822,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.put("/api/library/:id", async (req, res) => {
+  app.put("/api/library/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updateData = req.body;
@@ -836,7 +836,7 @@ Convert this into bullet format with:
     }
   });
 
-  app.delete("/api/library/:id", async (req, res) => {
+  app.delete("/api/library/:id", authenticateUser, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteLibraryItem(id);

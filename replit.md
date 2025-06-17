@@ -312,6 +312,9 @@ Changelog:
   * Added scroll-to-top functionality throughout app for better navigation experience
   * Activated proper Supabase authentication system by removing development bypass
   * Users can now properly sign up, log in, and maintain separate personal data accounts
+  * Converted to fully multiuser app with complete data isolation between user accounts
+  * Updated all API routes to require authentication and filter data by authenticated user ID
+  * Each user has private notes, chat history, bookmarks, sermons, library items, and profile settings
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
 ```
 
