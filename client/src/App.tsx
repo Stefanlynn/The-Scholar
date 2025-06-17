@@ -45,14 +45,6 @@ function AuthenticatedApp() {
 function Router() {
   const [location] = useLocation();
 
-  // Check for development bypass
-  const skipAuth = localStorage.getItem('skipAuth') === 'true';
-
-  // Development bypass - go directly to main app
-  if (skipAuth) {
-    return <AuthenticatedApp />;
-  }
-
   // Try to get auth context, but don't break if it fails
   let user = null;
   let loading = false;
