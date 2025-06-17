@@ -123,7 +123,7 @@ export default function Library() {
                   Articles
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  In-depth biblical studies and insights
+                  Practical how-to guides and helpful resources
                 </CardDescription>
               </CardHeader>
               <CardContent>
