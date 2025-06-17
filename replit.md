@@ -296,6 +296,12 @@ Changelog:
   * Added help button (?) to Notes page with comprehensive usage guides for all three tabs
   * Integrated tutorial system with localStorage preferences for seamless user experience
   * Users can skip tour or take guided walkthrough covering Chat modes, Bible tools, Notes workspace, Library resources, and Profile settings
+- June 17, 2025: Enhanced mobile responsiveness and added help button to Bible page mobile view
+  * Mobile-optimized Library page header with responsive text sizes and search bar
+  * Mobile-optimized Profile page header with responsive buttons and layout
+  * Enhanced content spacing and grid layouts for better mobile viewing
+  * Added help button (question mark) to mobile Bible page header for accessing study instructions
+  * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
 ```
 
 ## User Preferences

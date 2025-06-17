@@ -616,7 +616,10 @@ Please provide a direct, conversational answer to the user's question. Do not us
             {/* Mobile Layout */}
             <div className="md:hidden space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">Bible Study</h2>
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-lg font-semibold text-white">Bible Study</h2>
+                  <PageHelp pageName="Bible Study" helpContent={bibleHelpContent} />
+                </div>
                 <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
                   <SelectTrigger className="w-20 bg-[var(--scholar-darker)] border-gray-600 text-white text-xs">
                     <SelectValue />
