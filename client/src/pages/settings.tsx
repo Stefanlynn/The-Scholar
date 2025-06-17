@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/sidebar";
 import MobileNavMenu from "@/components/mobile-nav-menu";
+import AppTutorial from "@/components/app-tutorial";
 import { 
   Shield, 
   FileText, 
@@ -11,10 +13,18 @@ import {
   MessageCircle, 
   Trash2,
   ChevronRight,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  GraduationCap
 } from "lucide-react";
 
 const settingsItems = [
+  {
+    title: "App Tutorial",
+    description: "Take the guided tour to learn all features",
+    icon: GraduationCap,
+    action: "tutorial",
+    color: "text-[var(--scholar-gold)]"
+  },
   {
     title: "Privacy Policy",
     description: "How we collect, use, and protect your personal information",
@@ -60,6 +70,18 @@ const settingsItems = [
 ];
 
 export default function Settings() {
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  const handleItemClick = (item: any) => {
+    if (item.action === "tutorial") {
+      setShowTutorial(true);
+    }
+  };
+
+  const handleCloseTutorial = () => {
+    setShowTutorial(false);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
       <Sidebar />
@@ -82,9 +104,34 @@ export default function Settings() {
             {settingsItems.map((item) => {
               const Icon = item.icon;
               
-              return (
-                <Link key={item.title} href={item.href}>
-                  <Card className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-all duration-200 cursor-pointer group">
+              if (item.href) {
+                return (
+                  <Link key={item.title} href={item.href}>
+                    <Card className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-all duration-200 cursor-pointer group">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-gray-800 group-hover:bg-gray-700 transition-colors`}>
+                              <Icon className={`w-5 h-5 ${item.color}`} />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-white font-medium mb-1">{item.title}</h3>
+                              <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="text-gray-500 w-5 h-5 group-hover:text-gray-400 transition-colors" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              } else {
+                return (
+                  <Card 
+                    key={item.title} 
+                    className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-all duration-200 cursor-pointer group"
+                    onClick={() => handleItemClick(item)}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
@@ -100,14 +147,17 @@ export default function Settings() {
                       </div>
                     </CardContent>
                   </Card>
-                </Link>
-              );
+                );
+              }
             })}
           </div>
         </div>
       </div>
 
       <MobileNavMenu />
+      
+      {/* App Tutorial */}
+      <AppTutorial isOpen={showTutorial} onClose={handleCloseTutorial} />
     </div>
   );
 }
