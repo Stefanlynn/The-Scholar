@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
@@ -12,13 +12,29 @@ import {
 } from "@shared/schema";
 import { createClient } from '@supabase/supabase-js';
 
+// Extend Express Request type to include authenticated user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        user_metadata?: {
+          full_name?: string;
+          avatar_url?: string;
+        };
+      };
+    }
+  }
+}
+
 // Initialize Supabase client
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Middleware to verify user authentication
-async function authenticateUser(req: any, res: any, next: any) {
+async function authenticateUser(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ error: "No authorization header" });
@@ -98,26 +114,36 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Temporary user ID for demo (in real app would come from authentication)
-  const DEMO_USER_ID = "demo-user";
-
   // Users
-  app.get("/api/users/current", async (req, res) => {
+  app.get("/api/users/current", authenticateUser, async (req, res) => {
     try {
-      const user = await storage.getUser(DEMO_USER_ID);
+      const user = await storage.getUserByEmail(req.user.email);
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        // Create user if they don't exist (first time login)
+        const newUser = await storage.createUser({
+          id: req.user.id,
+          email: req.user.email,
+          fullName: req.user.user_metadata?.full_name || null,
+          bio: null,
+          ministryRole: null,
+          profilePicture: req.user.user_metadata?.avatar_url || null,
+          defaultBibleTranslation: "NIV",
+          darkMode: true,
+          notifications: true,
+          hasCompletedOnboarding: false
+        });
+        return res.json({ id: newUser.id, username: newUser.fullName, hasCompletedOnboarding: newUser.hasCompletedOnboarding });
       }
-      res.json({ id: user.id, username: user.username, hasCompletedOnboarding: user.hasCompletedOnboarding });
+      res.json({ id: user.id, username: user.fullName, hasCompletedOnboarding: user.hasCompletedOnboarding });
     } catch (error) {
       console.error("Error fetching current user:", error);
       res.status(500).json({ error: "Failed to fetch user" });
     }
   });
 
-  app.post("/api/users/complete-onboarding", async (req, res) => {
+  app.post("/api/users/complete-onboarding", authenticateUser, async (req, res) => {
     try {
-      const updatedUser = await storage.updateUser(DEMO_USER_ID, { hasCompletedOnboarding: true });
+      const updatedUser = await storage.updateUser(req.user.id, { hasCompletedOnboarding: true });
       if (!updatedUser) {
         return res.status(404).json({ error: "User not found" });
       }
@@ -155,31 +181,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/profile", async (req, res) => {
+  app.put("/api/profile", authenticateUser, async (req, res) => {
     try {
       const updateData = updateUserProfileSchema.parse(req.body);
       
-      // Try to get authenticated user first, fallback to demo user
-      let userId = DEMO_USER_ID;
-      const authHeader = req.headers.authorization;
-      
-      if (authHeader) {
-        try {
-          const token = authHeader.replace('Bearer ', '');
-          const { data: { user }, error } = await supabase.auth.getUser(token);
-          if (!error && user) {
-            const authenticatedUser = await storage.getUserByEmail(user.email);
-            if (authenticatedUser) {
-              userId = authenticatedUser.id;
-            }
-          }
-        } catch (authError) {
-          // Continue with demo user if auth fails
-          console.log("Auth failed, using demo user");
-        }
-      }
-      
-      const updatedUser = await storage.updateUser(userId, updateData);
+      const updatedUser = await storage.updateUser(req.user.id, updateData);
       if (!updatedUser) {
         return res.status(404).json({ error: "Failed to update user" });
       }
@@ -291,26 +297,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", async (req, res) => {
+  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
-      // Always allow chat messages, using demo user as fallback
-      let userId = DEMO_USER_ID;
-      
-      const authHeader = req.headers.authorization;
-      if (authHeader) {
-        try {
-          const token = authHeader.replace('Bearer ', '');
-          const { data: { user }, error } = await supabase.auth.getUser(token);
-          if (!error && user) {
-            const dbUser = await storage.getUserByEmail(user.email);
-            if (dbUser) {
-              userId = dbUser.id;
-            }
-          }
-        } catch (authError) {
-          // Continue with demo user
-          console.log('Using demo user for chat');
-        }
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
       }
 
       const messageData = insertChatMessageSchema.parse({
