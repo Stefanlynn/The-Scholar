@@ -318,6 +318,17 @@ Changelog:
   * Removed "Skip Auth" development bypass button from login page to enforce proper authentication
   * Redesigned mobile navigation bar with modern glass morphism effect, smaller footprint, and subtle animations
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
+- June 17, 2025: Added comprehensive Settings section with legal pages and support links
+  * Added Settings tab to both desktop sidebar and mobile navigation bar
+  * Created main Settings page with grid layout of policy and support links
+  * Built Privacy Policy page with complete data collection and usage information
+  * Created Terms of Use page with app guidelines and content ownership policies
+  * Added Cookies Policy page explaining cookie usage and management
+  * Built About The Scholar page detailing mission, vision, and features
+  * Created Contact Support page with direct email link to support@thescholar.com
+  * Added Delete My Account page with step-by-step account deletion instructions
+  * All settings pages include proper navigation with back buttons and consistent styling
+  * Settings accessible from both desktop and mobile with automatic scroll-to-top functionality
 ```
 
 ## User Preferences
