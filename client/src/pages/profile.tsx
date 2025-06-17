@@ -110,8 +110,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      // Redirect to login page after successful sign out
-      window.location.href = '/login';
+      // Authentication system will handle redirect automatically
     } catch (error) {
       toast({ title: "Failed to sign out", variant: "destructive" });
     }
