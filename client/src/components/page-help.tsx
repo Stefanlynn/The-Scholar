@@ -34,19 +34,9 @@ export default function PageHelp({ pageName, helpContent }: PageHelpProps) {
       <Dialog open={showHelp} onOpenChange={setShowHelp}>
         <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center justify-between">
-              <div className="flex items-center">
-                <HelpCircle className="h-6 w-6 mr-2" />
-                {helpContent.title}
-              </div>
-              <Button
-                onClick={() => setShowHelp(false)}
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+            <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center">
+              <HelpCircle className="h-6 w-6 mr-2" />
+              {helpContent.title}
             </DialogTitle>
           </DialogHeader>
 
