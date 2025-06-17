@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
@@ -36,6 +36,8 @@ export default function Profile() {
   const { user, signOut } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const { data: profile, isLoading } = useQuery<UserType>({
@@ -83,6 +85,7 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
       toast({ title: "Profile updated successfully" });
       setIsEditing(false);
+      setUploadingPhoto(false);
     },
     onError: () => {
       toast({ title: "Failed to update profile", variant: "destructive" });
@@ -118,6 +121,42 @@ export default function Profile() {
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({ title: "Please select an image file", variant: "destructive" });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Image must be smaller than 5MB", variant: "destructive" });
+      return;
+    }
+
+    setUploadingPhoto(true);
+
+    try {
+      // Convert to base64 for simple storage
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        updateProfileMutation.mutate({ profilePicture: base64String });
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast({ title: "Failed to upload photo", variant: "destructive" });
+      setUploadingPhoto(false);
+    }
+  };
+
+  const triggerPhotoUpload = () => {
+    fileInputRef.current?.click();
   };
 
   if (isLoading) {
@@ -192,13 +231,23 @@ export default function Profile() {
                       )}
                     </div>
                     <Button 
+                      type="button"
                       variant="outline" 
                       size="sm" 
                       className="border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black bg-transparent"
+                      onClick={triggerPhotoUpload}
+                      disabled={uploadingPhoto}
                     >
                       <Camera className="h-4 w-4 mr-2" />
-                      Change Photo
+                      {uploadingPhoto ? "Uploading..." : "Change Photo"}
                     </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
