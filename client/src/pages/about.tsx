@@ -28,29 +28,45 @@ export default function About() {
 
         {/* Content */}
         <Card className="bg-[var(--scholar-dark)] border-gray-700">
-          <CardContent className="p-6 md:p-8 space-y-6">
+          <CardContent className="p-6 md:p-8 space-y-8">
             <div className="prose prose-invert max-w-none">
-              <p className="text-gray-300 leading-relaxed">
-                The Scholar is a digital tool for those called to rightly divide the Word of truth.
+              <p className="text-gray-300 leading-relaxed text-lg">
+                The Scholar is a digital companion for those called to rightly divide the Word of truth and lead others in it with clarity, confidence, and conviction.
               </p>
 
-              <div className="space-y-6">
+              <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
+
+              <div className="space-y-8">
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Our Mission</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    Built for pastors, teachers, students, and spiritual leaders, The Scholar offers:
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <span className="mr-3">🔥</span> Our Mission
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    To equip pastors, teachers, students, and spiritual leaders with powerful tools that make deep biblical study accessible, engaging, and Spirit-led.
                   </p>
-                  <ul className="text-gray-300 space-y-2 mt-3">
-                    <li>• AI-powered study and interpretation tools</li>
-                    <li>• Deep-dive features like Greek/Hebrew word studies, sermon builders, and cultural context</li>
-                    <li>• Devotional and teaching resources curated for impact</li>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    Through intuitive technology and thoughtful design, The Scholar empowers users to:
+                  </p>
+                  <ul className="text-gray-300 space-y-3 ml-6">
+                    <li>• Explore Scripture with AI-powered insight and biblical accuracy</li>
+                    <li>• Dive deeper through original language studies, cultural context, and cross-references</li>
+                    <li>• Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</li>
+                    <li>• Study and prepare in ways that stir both the mind and the heart</li>
                   </ul>
                 </div>
 
+                <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
+
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Our Vision</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    We believe that combining timeless truth with modern tools can transform how we engage Scripture.
+                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <span className="mr-3">🌍</span> Our Vision
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    We believe that timeless truth deserves modern tools.
+                    The Scholar exists to bridge the gap between revelation and preparation—so that those called to teach, preach, and disciple can do so with excellence, depth, and a prophetic edge.
+                  </p>
+                  <p className="text-gray-300 leading-relaxed font-medium">
+                    This isn't just about learning the Bible. It's about becoming transformed by it—and helping others do the same.
                   </p>
                 </div>
               </div>
