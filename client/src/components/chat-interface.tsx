@@ -650,9 +650,9 @@ export default function ChatInterface() {
 
       {/* Recording Visual Indicator */}
       {isRecording && (
-        <div className="fixed inset-0 bg-gradient-to-br from-red-900/20 to-purple-900/20 z-10 flex items-center justify-center">
+        <div className="fixed inset-0 bg-gradient-to-br from-red-900/20 to-purple-900/20 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent_70%)]" />
-          <div className="text-center">
+          <div className="text-center relative z-60">
             <div className="w-32 h-32 rounded-full bg-red-500/20 animate-pulse flex items-center justify-center mx-auto">
               <div className="w-20 h-20 rounded-full bg-red-500/40 animate-ping flex items-center justify-center">
                 <Mic className="w-10 h-10 text-red-500" />
@@ -671,7 +671,8 @@ export default function ChatInterface() {
             {/* Manual stop button */}
             <Button
               onClick={stopRecording}
-              className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-2"
+              className="mt-6 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-6 py-3 relative cursor-pointer font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              style={{ zIndex: 9999, position: 'relative' }}
             >
               <MicOff className="mr-2 h-4 w-4" />
               Stop Recording
