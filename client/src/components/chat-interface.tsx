@@ -290,8 +290,8 @@ export default function ChatInterface() {
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                       <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
                     </div>
-                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4 lg:p-6 flex-1 min-w-0">
-                      <div className="text-gray-200 leading-relaxed text-sm sm:text-base lg:text-lg">
+                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4 flex-1 min-w-0">
+                      <div className="text-gray-200 leading-relaxed text-sm sm:text-base">
                         <p className="mb-3 sm:mb-4 lg:mb-5">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth.</p>
                         
                         <div className="space-y-2 sm:space-y-2.5 lg:space-y-3 mb-3 sm:mb-4 lg:mb-5">
@@ -378,18 +378,18 @@ export default function ChatInterface() {
             {/* Thinking indicator */}
             {isThinking && (
               <div className="flex justify-start">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-4">
+                  <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4">
                     <div className="flex items-center space-x-2">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[var(--scholar-gold)] rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                       </div>
-                      <span className="text-gray-400 text-sm">The Scholar is thinking...</span>
+                      <span className="text-gray-400 text-xs sm:text-sm">The Scholar is thinking...</span>
                     </div>
                   </div>
                 </div>
