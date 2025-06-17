@@ -38,9 +38,7 @@ export default function About() {
 
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                    <span className="mr-3">🔥</span> Our Mission
-                  </h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">Our Mission</h3>
                   <p className="text-gray-300 leading-relaxed mb-4">
                     To equip pastors, teachers, students, and spiritual leaders with powerful tools that make deep biblical study accessible, engaging, and Spirit-led.
                   </p>
@@ -48,19 +46,15 @@ export default function About() {
                     Through intuitive technology and thoughtful design, The Scholar empowers users to:
                   </p>
                   <ul className="text-gray-300 space-y-3 ml-6">
-                    <li>• Explore Scripture with AI-powered insight and biblical accuracy</li>
-                    <li>• Dive deeper through original language studies, cultural context, and cross-references</li>
-                    <li>• Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</li>
-                    <li>• Study and prepare in ways that stir both the mind and the heart</li>
+                    <li>        •       Explore Scripture with AI-powered insight and biblical accuracy</li>
+                    <li>        •       Dive deeper through original language studies, cultural context, and cross-references</li>
+                    <li>        •       Build full sermons and devotionals with outlines, illustrations, and teaching frameworks</li>
+                    <li>        •       Study and prepare in ways that stir both the mind and the heart</li>
                   </ul>
                 </div>
 
-                <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
-
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-                    <span className="mr-3">🌍</span> Our Vision
-                  </h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">Our Vision</h3>
                   <p className="text-gray-300 leading-relaxed mb-4">
                     We believe that timeless truth deserves modern tools.
                     The Scholar exists to bridge the gap between revelation and preparation—so that those called to teach, preach, and disciple can do so with excellence, depth, and a prophetic edge.
