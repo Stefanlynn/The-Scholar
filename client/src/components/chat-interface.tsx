@@ -42,6 +42,7 @@ export default function ChatInterface() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<VoiceSpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  const currentTranscriptRef = useRef<string>("");
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -85,10 +86,12 @@ export default function ChatInterface() {
         
         recognition.onend = () => {
           setIsRecording(false);
-          // Only show controls if we have a transcript
-          if (recordedTranscript.trim()) {
-            setShowRecordingControls(true);
-          }
+          // Show controls if we have any transcript
+          setTimeout(() => {
+            if (currentTranscriptRef.current.trim()) {
+              setShowRecordingControls(true);
+            }
+          }, 100);
         };
         
         recognition.onerror = (event: any) => {
@@ -117,11 +120,14 @@ export default function ChatInterface() {
           
           if (finalTranscript) {
             setRecordedTranscript(finalTranscript);
+            currentTranscriptRef.current = finalTranscript;
             // Auto-stop recording when we get final result
             recognition.stop();
           } else {
             // Show interim results while speaking
-            setRecordedTranscript(interimTranscript);
+            const currentText = interimTranscript;
+            setRecordedTranscript(currentText);
+            currentTranscriptRef.current = currentText;
           }
         };
         
@@ -232,10 +238,23 @@ export default function ChatInterface() {
     if (recognitionRef.current && isRecording) {
       try {
         recognitionRef.current.stop();
+        // Manually trigger the same flow as automatic stop
+        setIsRecording(false);
+        setTimeout(() => {
+          if (currentTranscriptRef.current.trim()) {
+            setShowRecordingControls(true);
+          }
+        }, 100);
       } catch (e) {
         // If stop fails, try abort
         try {
           recognitionRef.current.abort();
+          setIsRecording(false);
+          setTimeout(() => {
+            if (currentTranscriptRef.current.trim()) {
+              setShowRecordingControls(true);
+            }
+          }, 100);
         } catch (abortError) {
           // Force reset states if both fail
           setIsRecording(false);
@@ -264,6 +283,7 @@ export default function ChatInterface() {
       sendMessageMutation.mutate(recordedTranscript);
       setShowRecordingControls(false);
       setRecordedTranscript("");
+      currentTranscriptRef.current = "";
       setIsRecording(false);
       // Reset speech recognition state
       if (recognitionRef.current) {
@@ -275,6 +295,7 @@ export default function ChatInterface() {
   // Delete recording
   const deleteRecording = () => {
     setRecordedTranscript("");
+    currentTranscriptRef.current = "";
     setShowRecordingControls(false);
     setIsRecording(false);
     // Reset speech recognition state
