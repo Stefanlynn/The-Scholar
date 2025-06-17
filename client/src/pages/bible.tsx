@@ -28,6 +28,7 @@ import {
   X,
   Languages,
   BookOpen,
+  ArrowLeft,
   Clock,
   Target,
   FileText,
@@ -1310,9 +1311,25 @@ Please provide a direct, conversational answer to the user's question. Do not us
         <Dialog open={showScholarDialog} onOpenChange={setShowScholarDialog}>
           <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center">
-                <GraduationCap className="h-6 w-6 mr-2" />
-                {currentStudyTool ? getStudyToolTitle(currentStudyTool) : "The Scholar's Analysis"}
+              <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center justify-between">
+                <div className="flex items-center">
+                  <GraduationCap className="h-6 w-6 mr-2" />
+                  {currentStudyTool ? getStudyToolTitle(currentStudyTool) : "The Scholar's Analysis"}
+                </div>
+                <Button
+                  onClick={() => {
+                    setShowScholarDialog(false);
+                    setScholarResponse("");
+                    setCurrentStudyTool(null);
+                    // Keep the main study tools dialog open by not clearing selectedVerse
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/30 text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10 hover:border-[var(--scholar-gold)]/50"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  Back to Tools
+                </Button>
               </DialogTitle>
             </DialogHeader>
             
