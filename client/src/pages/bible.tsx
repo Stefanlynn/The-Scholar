@@ -1269,8 +1269,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
                               <Button 
                                 onClick={handleClearInlineResponse}
                                 size="sm"
-                                variant="ghost"
-                                className="text-gray-400 hover:text-white text-xs"
+                                className="bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-xs border-0"
                               >
                                 New Question
                               </Button>
