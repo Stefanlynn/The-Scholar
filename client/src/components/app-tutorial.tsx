@@ -169,7 +169,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] flex items-center justify-center">
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${currentTutorialStep.gradient} opacity-10`} />
       
@@ -178,14 +178,14 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         onClick={handleSkip}
         variant="ghost"
         size="sm"
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 text-gray-400 hover:text-white z-20"
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-white z-20"
       >
-        <X className="h-4 w-4 sm:h-5 sm:w-5" />
+        <X className="h-4 w-4" />
       </Button>
 
-      <div className="relative z-10 w-full min-h-screen flex flex-col justify-center px-4 sm:px-6 py-8 sm:py-12">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-3 sm:px-6 h-screen flex flex-col justify-center">
         {/* Progress Bar */}
-        <div className="flex items-center space-x-1 sm:space-x-2 mb-8 sm:mb-12 max-w-4xl mx-auto w-full">
+        <div className="flex items-center space-x-1 sm:space-x-2 mb-4 sm:mb-6">
           {tutorialSteps.map((_, index) => (
             <div key={index} className="flex-1 relative">
               <div
@@ -196,113 +196,107 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
                 }`}
               />
               {index <= currentStep && (
-                <div className="absolute -top-1 -right-0.5 w-2 h-2 sm:w-3 sm:h-3 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
               )}
             </div>
           ))}
         </div>
 
-        {/* Main Content */}
-        <div className="text-center space-y-6 sm:space-y-8 max-w-4xl mx-auto w-full">
+        {/* Main Content - Compact Layout */}
+        <div className="text-center space-y-3 sm:space-y-4 flex-1 flex flex-col justify-center">
           {/* Icon */}
           <div className="relative">
-            <div className={`w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full flex items-center justify-center shadow-2xl`}>
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full flex items-center justify-center shadow-xl`}>
               {currentTutorialStep.icon}
             </div>
-            <div className={`absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full animate-ping opacity-20`} />
           </div>
 
-          {/* Title and Subtitle */}
-          <div className="space-y-2 sm:space-y-3 px-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white tracking-tight">
+          {/* Title and Subtitle - Compact */}
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">
               {currentTutorialStep.title}
             </h1>
-            <p className="text-sm sm:text-lg lg:text-xl text-gray-400 font-medium">
+            <p className="text-sm sm:text-base lg:text-lg text-gray-400 font-medium">
               {currentTutorialStep.subtitle}
             </p>
           </div>
 
-          {/* Highlight Badge */}
-          <div className={`inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-sm sm:text-lg shadow-lg mx-2`}>
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            <span className="text-center">{currentTutorialStep.highlight}</span>
+          {/* Highlight Badge - Compact */}
+          <div className={`inline-flex items-center px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-xs sm:text-sm shadow-lg`}>
+            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span>{currentTutorialStep.highlight}</span>
           </div>
 
-          {/* Content */}
-          <p className="text-gray-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto px-2">
+          {/* Content - Shorter */}
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto px-2">
             {currentTutorialStep.content}
           </p>
 
-          {/* Features Grid */}
+          {/* Features Grid - Compact */}
           {currentTutorialStep.features && (
-            <div className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-800/50 max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                {currentTutorialStep.features.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-3 text-gray-300 group hover:text-white transition-colors">
-                    <div className={`p-2 bg-gradient-to-br ${currentTutorialStep.gradient} rounded-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
+            <div className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-gray-800/50 max-w-xl mx-auto">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                {currentTutorialStep.features.slice(0, 4).map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-2 text-gray-300">
+                    <div className={`p-1 bg-gradient-to-br ${currentTutorialStep.gradient} rounded flex-shrink-0`}>
                       {feature.icon}
                     </div>
-                    <span className="font-medium text-sm sm:text-base">{feature.text}</span>
+                    <span className="font-medium text-xs sm:text-sm">{feature.text}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Demo Text */}
-          <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border-l-4 border-[var(--scholar-gold)] max-w-2xl mx-auto">
-            <p className="text-[var(--scholar-gold)] font-medium italic text-sm sm:text-lg">
+          {/* Demo Text - Compact */}
+          <div className="bg-[var(--scholar-darker)]/80 rounded-lg p-3 sm:p-4 border-l-4 border-[var(--scholar-gold)] max-w-xl mx-auto">
+            <p className="text-[var(--scholar-gold)] font-medium italic text-xs sm:text-sm">
               "{currentTutorialStep.demoText}"
             </p>
           </div>
+        </div>
 
-          {/* Navigation */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-6 sm:pt-8 max-w-2xl mx-auto space-y-4 sm:space-y-0">
-            <Button
-              onClick={handlePrev}
-              disabled={currentStep === 0}
-              variant="outline"
-              size="lg"
-              className={`w-full sm:w-auto border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
-                currentStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-              Previous
-            </Button>
+        {/* Navigation - Fixed Bottom */}
+        <div className="flex items-center justify-between pt-4 pb-6">
+          <Button
+            onClick={handlePrev}
+            disabled={currentStep === 0}
+            variant="outline"
+            className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all text-xs sm:text-sm ${
+              currentStep === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+            Previous
+          </Button>
 
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-              <Button
-                onClick={handleSkip}
-                variant="ghost"
-                size="lg"
-                className="w-full sm:w-auto text-gray-400 hover:text-white transition-all hover:scale-105"
-              >
-                Skip Tour
-              </Button>
-              
-              <Button
-                onClick={handleNext}
-                size="lg"
-                className={`w-full sm:w-auto bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-6 sm:px-8`}
-              >
-                {currentTutorialStep.action}
-                {currentStep < tutorialSteps.length - 1 ? (
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                ) : (
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                )}
-              </Button>
-            </div>
+          {/* Step Counter - Center */}
+          <div className="flex items-center space-x-1 text-xs sm:text-sm">
+            <span className="text-gray-500">{currentStep + 1}</span>
+            <span className="text-gray-600">/</span>
+            <span className="text-gray-500">{tutorialSteps.length}</span>
           </div>
 
-          {/* Step Counter */}
-          <div className="flex items-center justify-center space-x-2 pt-6 pb-8">
-            <span className="text-sm text-gray-500">Step</span>
-            <span className="text-lg font-bold text-[var(--scholar-gold)]">
-              {currentStep + 1}
-            </span>
-            <span className="text-sm text-gray-500">of {tutorialSteps.length}</span>
+          <div className="flex space-x-2">
+            <Button
+              onClick={handleSkip}
+              variant="ghost"
+              className="text-gray-400 hover:text-white text-xs sm:text-sm"
+            >
+              Skip
+            </Button>
+            
+            <Button
+              onClick={handleNext}
+              className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-lg transition-all font-semibold text-xs sm:text-sm px-4 sm:px-6`}
+            >
+              {currentTutorialStep.action}
+              {currentStep < tutorialSteps.length - 1 ? (
+                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
+              ) : (
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
+              )}
+            </Button>
           </div>
         </div>
       </div>
