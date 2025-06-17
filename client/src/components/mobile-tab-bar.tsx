@@ -36,15 +36,15 @@ export default function MobileTabBar() {
   });
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-gray-800/50 z-50">
-      <div className="flex justify-around items-center px-2 py-1">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-gray-800/50 z-50 safe-area-inset-bottom">
+      <div className="flex justify-around items-center px-2 py-2 sm:py-3">
         {navigation.map((item) => {
           const isActive = location === item.href;
           
           return (
             <Link key={item.name} href={item.href}>
               <button 
-                className={`relative flex flex-col items-center p-2 transition-all duration-200 ${
+                className={`relative flex flex-col items-center p-2 sm:p-3 transition-all duration-200 ${
                   isActive 
                     ? 'text-[var(--scholar-gold)]' 
                     : 'text-gray-500 hover:text-gray-300'

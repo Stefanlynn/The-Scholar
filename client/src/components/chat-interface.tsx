@@ -223,13 +223,13 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-full pb-20 md:pb-0">
       {/* Mode Toggle - Always Visible */}
-      <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-4 py-3 flex-shrink-0">
+      <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="flex bg-gray-800 rounded-lg p-1">
               <button
                 onClick={() => setScholarMode("study")}
-                className={`px-3 py-1.5 text-xs rounded font-medium transition-all ${
+                className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 text-xs sm:text-sm lg:text-base rounded font-medium transition-all ${
                   scholarMode === "study"
                     ? "bg-[var(--scholar-gold)] text-black"
                     : "text-gray-400 hover:text-white"
@@ -239,7 +239,7 @@ export default function ChatInterface() {
               </button>
               <button
                 onClick={() => setScholarMode("devotional")}
-                className={`px-3 py-1.5 text-xs rounded font-medium transition-all ${
+                className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 text-xs sm:text-sm lg:text-base rounded font-medium transition-all ${
                   scholarMode === "devotional"
                     ? "bg-[var(--scholar-gold)] text-black"
                     : "text-gray-400 hover:text-white"
@@ -249,17 +249,27 @@ export default function ChatInterface() {
               </button>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             <PageHelp pageName="Chat" helpContent={chatHelpContent} />
             {conversation.length > 0 && (
               <Button
                 onClick={clearConversation}
                 variant="outline"
                 size="sm"
-                className="text-xs"
+                className="text-xs sm:text-sm hidden sm:flex"
               >
-                <RotateCcw className="w-3 h-3 mr-1" />
-                New
+                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+                <span className="hidden sm:inline">New</span>
+              </Button>
+            )}
+            {conversation.length > 0 && (
+              <Button
+                onClick={clearConversation}
+                variant="outline"
+                size="sm"
+                className="text-xs p-1 sm:hidden"
+              >
+                <RotateCcw className="w-3 h-3" />
               </Button>
             )}
           </div>
@@ -274,36 +284,36 @@ export default function ChatInterface() {
           <>
             {/* The Scholar's Welcome Message */}
             {showWelcomeMessage && (
-              <div className="space-y-4 md:space-y-6 mb-4">
+              <div className="space-y-4 sm:space-y-5 lg:space-y-6 mb-4 sm:mb-6">
                 <div className="flex justify-start">
-                  <div className="flex items-start space-x-2 md:space-x-3 max-w-full">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  <div className="flex items-start space-x-2 sm:space-x-3 lg:space-x-4 max-w-full">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                       <img src={scholarLogo} alt="The Scholar" className="w-full h-full object-cover" />
                     </div>
-                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 md:p-6 flex-1 min-w-0">
-                      <div className="text-gray-200 leading-relaxed text-sm md:text-base">
-                        <p className="mb-3 md:mb-4">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth.</p>
+                    <div className="bg-[var(--scholar-dark)] rounded-2xl rounded-tl-none p-3 sm:p-4 lg:p-6 flex-1 min-w-0">
+                      <div className="text-gray-200 leading-relaxed text-sm sm:text-base lg:text-lg">
+                        <p className="mb-3 sm:mb-4 lg:mb-5">Grace and peace! I'm The Scholar, your Spirit-led biblical study companion. I'm here to help you dive deeper into God's Word with clarity and theological depth.</p>
                         
-                        <div className="space-y-2 mb-3 md:mb-4">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
-                            <span className="text-xs md:text-sm">Scripture interpretation and exegesis</span>
+                        <div className="space-y-2 sm:space-y-2.5 lg:space-y-3 mb-3 sm:mb-4 lg:mb-5">
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-2.5 lg:h-2.5 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
+                            <span className="text-xs sm:text-sm lg:text-base">Scripture interpretation and exegesis</span>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
-                            <span className="text-xs md:text-sm">Sermon preparation and teaching outlines</span>
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-2.5 lg:h-2.5 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
+                            <span className="text-xs sm:text-sm lg:text-base">Sermon preparation and teaching outlines</span>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
-                            <span className="text-xs md:text-sm">Historical and theological context</span>
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-2.5 lg:h-2.5 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
+                            <span className="text-xs sm:text-sm lg:text-base">Historical and theological context</span>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
-                            <span className="text-xs md:text-sm">Cross-references and biblical themes</span>
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-2.5 lg:h-2.5 bg-[var(--scholar-gold)] rounded-full flex-shrink-0"></div>
+                            <span className="text-xs sm:text-sm lg:text-base">Cross-references and biblical themes</span>
                           </div>
                         </div>
                         
-                        <p className="text-sm md:text-base">What passage or topic is the Lord leading you to explore today?</p>
+                        <p className="text-sm sm:text-base lg:text-lg">What passage or topic is the Lord leading you to explore today?</p>
                       </div>
                     </div>
                   </div>
@@ -390,8 +400,8 @@ export default function ChatInterface() {
       </div>
 
       {/* Chat Input */}
-      <div className="bg-[var(--scholar-black)] px-4 pb-20 md:pb-4">
-        <form onSubmit={handleSubmit} className="flex items-end space-x-4">
+      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-24 md:pb-4 lg:pb-6">
+        <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
@@ -400,16 +410,16 @@ export default function ChatInterface() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-4 py-3 pr-12 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] max-h-32 text-base"
+                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-3 sm:px-4 lg:px-5 py-3 sm:py-4 pr-12 sm:pr-14 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] max-h-32 text-sm sm:text-base lg:text-lg"
                 rows={1}
                 disabled={sendMessageMutation.isPending}
               />
               <Button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
-                className="absolute bottom-3 right-3 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-2 h-8 w-8 rounded-full"
+                className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full"
               >
-                <Send className="h-3 w-3" />
+                <Send className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
               </Button>
             </div>
           </div>

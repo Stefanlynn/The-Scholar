@@ -24,19 +24,19 @@ export default function Sidebar() {
   });
 
   return (
-    <div className="w-64 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col hidden md:flex">
-      <div className="p-6 border-b border-gray-800">
+    <div className="w-64 lg:w-72 xl:w-80 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col hidden md:flex">
+      <div className="p-4 lg:p-6 border-b border-gray-800">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 flex items-center justify-center bg-white/10 rounded-lg">
+          <div className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-white/10 rounded-lg">
             <img 
               src={scholarLogo} 
               alt="The Scholar" 
-              className="w-8 h-8 object-contain"
+              className="w-8 h-8 lg:w-10 lg:h-10 object-contain"
             />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">The Scholar</h1>
-            <p className="text-xs text-gray-400">Biblical Study Tool</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-white">The Scholar</h1>
+            <p className="text-xs lg:text-sm text-gray-400">Biblical Study Tool</p>
           </div>
         </div>
       </div>
