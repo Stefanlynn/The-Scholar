@@ -27,6 +27,8 @@ import CommunityComingSoon from "@/pages/community-coming-soon";
 import Welcome from "@/pages/welcome";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetPassword from "@/pages/reset-password";
 
 function AuthenticatedApp() {
   const { user } = useAuth();
@@ -145,6 +147,8 @@ function Router() {
       <Switch>
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
+        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/reset-password" component={ResetPassword} />
         <Route component={Login} /> {/* Default to login */}
       </Switch>
     </>
