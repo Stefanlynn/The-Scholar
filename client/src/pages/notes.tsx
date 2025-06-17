@@ -16,6 +16,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Search, FileText, Edit, Trash2, PenTool, BookOpen, Mic, Lightbulb, Quote, Volume2, Wand2, RotateCcw, Download, Copy, MessageSquareText, NotebookPen } from "lucide-react";
 import type { Note } from "@shared/schema";
+import PageHelp from "@/components/page-help";
 
 export default function Notes() {
   const [searchQuery, setSearchQuery] = useState("");

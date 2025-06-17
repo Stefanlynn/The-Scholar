@@ -83,6 +83,63 @@ export default function Bible() {
   const [currentVerseForStudy, setCurrentVerseForStudy] = useState<any>(null);
   const [currentStudyTool, setCurrentStudyTool] = useState<string>("");
   const [inlineScholarResponse, setInlineScholarResponse] = useState<string>("");
+
+  const bibleHelpContent = {
+    title: "How to Use Bible Study Features",
+    description: "Navigate through Scripture, highlight verses, take notes, bookmark important passages, and access The Scholar's comprehensive study tools for deep biblical analysis.",
+    features: [
+      {
+        title: "Bible Navigation",
+        description: "Use the book and chapter selectors to navigate through Scripture. Search for specific verses or topics using the search bar.",
+        tips: [
+          "Click book/chapter dropdowns to select different Bible passages",
+          "Use search to find verses containing specific words or phrases",
+          "Currently supports King James Version (KJV) translation"
+        ]
+      },
+      {
+        title: "Verse Interaction",
+        description: "Click on any verse number to access study tools, highlighting, bookmarking, and note-taking features.",
+        tips: [
+          "Hover over verses to see interactive buttons",
+          "Highlight verses in different colors for visual organization",
+          "Bookmark important verses for quick access later",
+          "Add personal notes to capture your insights"
+        ]
+      },
+      {
+        title: "Scholar Study Tools",
+        description: "Access comprehensive biblical analysis by clicking on any verse to open The Scholar's study tools.",
+        tips: [
+          "Choose from 8 different study focuses: Greek/Hebrew, Cross-References, Scholar's Take, Cultural Context, etc.",
+          "Use 'Back to Tools' button to return to study options without closing the dialog",
+          "Ask The Scholar questions about specific verses using the inline question feature"
+        ]
+      },
+      {
+        title: "Study Tool Options",
+        description: "Each study tool provides different types of biblical analysis and insights.",
+        tips: [
+          "Greek/Hebrew: Original language analysis and Strong's numbers",
+          "Cross-References: Related verses and thematic connections",
+          "Scholar's Take: Theological insights and expert commentary",
+          "Cultural Context: Historical background and setting",
+          "Sermon Tools: Outlines, illustrations, and preaching applications"
+        ]
+      },
+      {
+        title: "Quick Actions",
+        description: "Use the quick action buttons in study tools for immediate verse management.",
+        tips: [
+          "Bookmark: Save verses to your personal bookmark collection",
+          "Copy Verse: Copy the verse text to your clipboard",
+          "Share: Share verses with others",
+          "Quick Note: Add personal thoughts directly to the verse"
+        ]
+      }
+    ]
+  };
+  
   const [inlineScholarLoading, setInlineScholarLoading] = useState(false);
   
   const queryClient = useQueryClient();
