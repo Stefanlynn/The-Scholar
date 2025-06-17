@@ -12,22 +12,22 @@ export default function Cookies() {
       <div className="flex-1 p-4 md:p-6 pb-6 overflow-y-auto">
         <div className="max-w-3xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center space-x-4 mb-6">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Cookie className="text-white w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white">Cookies Policy</h1>
+                <p className="text-orange-400 text-sm font-medium">How we use cookies to improve your experience</p>
+              </div>
+            </div>
             <Link href="/settings">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+              <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white">
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Back
               </Button>
             </Link>
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
-                <Cookie className="text-white w-5 h-5" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white">Cookies Policy</h1>
-                <p className="text-gray-400 text-sm">How we use cookies to improve your experience</p>
-              </div>
-            </div>
           </div>
 
           {/* Content */}

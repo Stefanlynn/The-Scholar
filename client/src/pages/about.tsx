@@ -8,22 +8,22 @@ export default function About() {
     <div className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center space-x-4 mb-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Info className="text-white w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white">About The Scholar</h1>
+              <p className="text-purple-400 text-sm font-medium">Learn more about our mission and features</p>
+            </div>
+          </div>
           <Link href="/settings">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+            <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white">
               <ChevronLeft className="w-4 h-4 mr-1" />
               Back
             </Button>
           </Link>
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-              <Info className="text-white w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white">About The Scholar</h1>
-              <p className="text-gray-400 text-sm">Learn more about our mission and features</p>
-            </div>
-          </div>
         </div>
 
         {/* Content */}
