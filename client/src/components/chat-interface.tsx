@@ -77,14 +77,23 @@ export default function ChatInterface() {
         recognition.interimResults = false;
         recognition.lang = 'en-US';
         
-        recognition.onstart = () => setIsRecording(true);
+        recognition.onstart = () => {
+          setIsRecording(true);
+          setShowRecordingControls(false);
+        };
+        
         recognition.onend = () => {
           setIsRecording(false);
-          setShowRecordingControls(true);
+          // Only show controls if we have a transcript
+          if (recordedTranscript.trim()) {
+            setShowRecordingControls(true);
+          }
         };
+        
         recognition.onerror = (event: any) => {
           setIsRecording(false);
           setShowRecordingControls(false);
+          setRecordedTranscript("");
           toast({
             title: "Voice Recognition Error",
             description: "Please try again or check microphone permissions.",
@@ -95,6 +104,10 @@ export default function ChatInterface() {
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setRecordedTranscript(transcript);
+          // Show controls when we get a result
+          setTimeout(() => {
+            setShowRecordingControls(true);
+          }, 100);
         };
         
         recognitionRef.current = recognition;
@@ -175,15 +188,41 @@ export default function ChatInterface() {
       return;
     }
     
+    // Reset all voice states
     setRecordedTranscript("");
     setShowRecordingControls(false);
-    recognitionRef.current.start();
+    setIsRecording(false);
+    
+    // Ensure previous recognition is stopped
+    try {
+      recognitionRef.current.abort();
+    } catch (e) {
+      // Ignore errors if recognition wasn't running
+    }
+    
+    // Start new recognition after a brief delay
+    setTimeout(() => {
+      if (recognitionRef.current) {
+        recognitionRef.current.start();
+      }
+    }, 100);
   };
 
   // Stop recording
   const stopRecording = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
+    if (recognitionRef.current && isRecording) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        // If stop fails, try abort
+        try {
+          recognitionRef.current.abort();
+        } catch (abortError) {
+          // Force reset states if both fail
+          setIsRecording(false);
+          setShowRecordingControls(false);
+        }
+      }
     }
   };
 
@@ -205,6 +244,11 @@ export default function ChatInterface() {
       sendMessageMutation.mutate(recordedTranscript);
       setShowRecordingControls(false);
       setRecordedTranscript("");
+      setIsRecording(false);
+      // Reset speech recognition state
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
     }
   };
 
@@ -212,6 +256,11 @@ export default function ChatInterface() {
   const deleteRecording = () => {
     setRecordedTranscript("");
     setShowRecordingControls(false);
+    setIsRecording(false);
+    // Reset speech recognition state
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+    }
   };
 
   const sendMessageMutation = useMutation({
