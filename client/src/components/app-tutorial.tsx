@@ -207,6 +207,8 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   const handleNext = () => {
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Scroll to top of next step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       handleSkip();
     }
@@ -215,6 +217,8 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top of previous step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
