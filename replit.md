@@ -318,6 +318,13 @@ Changelog:
   * Removed "Skip Auth" development bypass button from login page to enforce proper authentication
   * Redesigned mobile navigation bar with modern glass morphism effect, smaller footprint, and subtle animations
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
+- June 17, 2025: Enhanced tutorial navigation and visual consistency improvements
+  * Added automatic scroll-to-top functionality when clicking Continue or Previous in tutorial for page-like experience
+  * Optimized chat interface mobile formatting with smaller avatars and reduced spacing for better mobile display
+  * Enhanced thinking indicator with proper mobile sizing and responsive elements
+  * Improved conversation message layout throughout chat interface
+  * Updated tutorial step 8 to use actual HelpCircle icon matching real help buttons found throughout the app
+  * Enhanced visual consistency between tutorial explanations and actual UI elements users will encounter
 - June 17, 2025: Added comprehensive Settings section with legal pages and support links
   * Added Settings tab to both desktop sidebar and mobile navigation bar
   * Created main Settings page with grid layout of policy and support links

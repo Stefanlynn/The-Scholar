@@ -18,7 +18,8 @@ import {
   User,
   Heart,
   Search,
-  Target
+  Target,
+  HelpCircle
 } from "lucide-react";
 import logoPath from "@assets/ZiNRAi-6_1750106841902.png";
 
@@ -188,7 +189,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
       highlight: "Begin your transformed study experience",
       gradient: "from-yellow-500 to-orange-500",
       keyFeatures: [
-        { title: "Help Guides", desc: "? buttons on every page for assistance" },
+        { title: "Help Guides", desc: "Help buttons on every page for assistance", icon: <HelpCircle className="h-4 w-4 text-gray-400" /> },
         { title: "AI Chat", desc: "Ask questions anytime for instant insights" },
         { title: "Progressive Learning", desc: "Features unlock as you explore" },
         { title: "Continuous Updates", desc: "New features and content added regularly" }
@@ -314,7 +315,14 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {currentTutorialStep.keyFeatures.map((feature, index) => (
                     <div key={index} className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-4 border border-gray-800/50 hover:border-gray-700/50 transition-all">
-                      <h4 className="text-base font-semibold text-white mb-2">{feature.title}</h4>
+                      <div className="flex items-center space-x-2 mb-2">
+                        {(feature as any).icon && (
+                          <div className="p-1.5 bg-gray-600/30 rounded-lg">
+                            {(feature as any).icon}
+                          </div>
+                        )}
+                        <h4 className="text-base font-semibold text-white">{feature.title}</h4>
+                      </div>
                       <p className="text-sm text-gray-400">{feature.desc}</p>
                     </div>
                   ))}
