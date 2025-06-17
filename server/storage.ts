@@ -90,22 +90,7 @@ export class MemStorage implements IStorage {
   }
 
   private initializeData() {
-    // Create demo user with proper schema
-    const demoUser: User = {
-      id: "demo-user-id",
-      email: "demo@example.com",
-      fullName: "Demo User",
-      bio: "A passionate student of God's Word",
-      ministryRole: "student",
-      profilePicture: null,
-      defaultBibleTranslation: "NIV",
-      darkMode: true,
-      notifications: true,
-      hasCompletedOnboarding: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.set("demo-user-id", demoUser);
+    // No demo users - fully authenticated app
   }
 
   // Users

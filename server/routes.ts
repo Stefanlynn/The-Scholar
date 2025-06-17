@@ -43,10 +43,14 @@ async function authenticateUser(req: Request, res: Response, next: NextFunction)
   const token = authHeader.replace('Bearer ', '');
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
+    if (error || !user || !user.email) {
       return res.status(401).json({ error: "Invalid token" });
     }
-    req.user = user;
+    req.user = {
+      id: user.id,
+      email: user.email,
+      user_metadata: user.user_metadata
+    };
     next();
   } catch (error) {
     return res.status(401).json({ error: "Authentication failed" });
@@ -297,45 +301,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", async (req, res) => {
+  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
-      let user;
-      
-      // Try to authenticate user first
-      const authHeader = req.headers.authorization;
-      if (authHeader) {
-        const token = authHeader.replace('Bearer ', '');
-        try {
-          const { data: { user: authUser }, error } = await supabase.auth.getUser(token);
-          if (!error && authUser) {
-            user = await storage.getUserByEmail(authUser.email);
-            if (!user) {
-              // Create user if they don't exist (first time login)
-              user = await storage.createUser({
-                id: authUser.id,
-                email: authUser.email,
-                fullName: authUser.user_metadata?.full_name || null,
-                bio: null,
-                ministryRole: null,
-                profilePicture: authUser.user_metadata?.avatar_url || null,
-                defaultBibleTranslation: "NIV",
-                darkMode: true,
-                notifications: true,
-                hasCompletedOnboarding: false
-              });
-            }
-          }
-        } catch (authError) {
-          console.log('Auth failed, falling back to demo user');
-        }
-      }
-      
-      // Fallback to demo user if authentication fails
+      const user = await storage.getUserByEmail(req.user!.email);
       if (!user) {
-        user = await storage.getUser("demo-user");
-        if (!user) {
-          return res.status(500).json({ error: "Demo user not found" });
-        }
+        // Create user if they don't exist (first time login)
+        const newUser = await storage.createUser({
+          id: req.user!.id,
+          email: req.user!.email,
+          fullName: req.user!.user_metadata?.full_name || null,
+          bio: null,
+          ministryRole: null,
+          profilePicture: req.user!.user_metadata?.avatar_url || null,
+          defaultBibleTranslation: "NIV",
+          darkMode: true,
+          notifications: true,
+          hasCompletedOnboarding: false
+        });
+        
+        const messageData = insertChatMessageSchema.parse({
+          message: req.body.message,
+          userId: newUser.id
+        });
+        
+        // Generate AI response with mode context
+        const mode = req.body.mode || "study"; // Default to study mode
+        const aiResponse = await generateAIResponse(messageData.message, mode);
+        messageData.response = aiResponse;
+        
+        const message = await storage.createChatMessage(messageData);
+        res.json(message);
+        return;
       }
 
       const messageData = insertChatMessageSchema.parse({

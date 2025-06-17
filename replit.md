@@ -329,6 +329,13 @@ Changelog:
   * Added Delete My Account page with step-by-step account deletion instructions
   * All settings pages include proper navigation with back buttons and consistent styling
   * Settings accessible from both desktop and mobile with automatic scroll-to-top functionality
+- June 17, 2025: Converted to fully authenticated application with removed demo user system
+  * Removed all demo user functionality to create proper multi-user authenticated app
+  * Enforced Supabase authentication requirement for all API endpoints
+  * Automatic user creation on first Supabase authentication
+  * Clean mobile-first Scholar page design with simplified header and profile button
+  * Full-page menu system matching Bible app design patterns
+  * Complete removal of fallback authentication systems
 ```
 
 ## User Preferences
