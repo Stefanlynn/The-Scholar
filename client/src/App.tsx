@@ -13,6 +13,7 @@ import Notes from "@/pages/notes";
 import SermonPrep from "@/pages/sermon-prep";
 import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
+import Menu from "@/pages/menu";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Cookies from "@/pages/cookies";
@@ -47,6 +48,7 @@ function AuthenticatedApp() {
         <Route path="/sermon-prep" component={SermonPrep} />
         <Route path="/profile" component={Profile} />
         <Route path="/settings" component={Settings} />
+        <Route path="/menu" component={Menu} />
         <Route path="/settings/privacy" component={Privacy} />
         <Route path="/settings/terms" component={Terms} />
         <Route path="/settings/cookies" component={Cookies} />
