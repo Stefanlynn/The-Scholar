@@ -37,6 +37,7 @@ export default function ChatInterface() {
   const [recordedTranscript, setRecordedTranscript] = useState("");
   const [showRecordingControls, setShowRecordingControls] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isVoiceMessage, setIsVoiceMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<VoiceSpeechRecognition | null>(null);
@@ -157,6 +158,10 @@ export default function ChatInterface() {
       .replace(/#{1,6}\s/g, '') // Remove headers
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to just text
       .replace(/`([^`]+)`/g, '$1') // Remove code backticks
+      .replace(/•/g, '') // Remove bullet points
+      .replace(/\n+/g, '. ') // Replace line breaks with pauses
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replace(/\.+/g, '.') // Fix multiple periods
       .trim();
     
     const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -255,6 +260,7 @@ export default function ChatInterface() {
   const sendRecording = () => {
     if (recordedTranscript.trim()) {
       setMessage(recordedTranscript);
+      setIsVoiceMessage(true); // Mark this as a voice message
       sendMessageMutation.mutate(recordedTranscript);
       setShowRecordingControls(false);
       setRecordedTranscript("");
@@ -316,8 +322,9 @@ export default function ChatInterface() {
       adjustTextareaHeight();
       
       // Always speak the response when it comes from voice input
-      if (data.response && message === recordedTranscript && recordedTranscript) {
+      if (data.response && isVoiceMessage) {
         speakResponse(data.response);
+        setIsVoiceMessage(false); // Reset voice message flag
       }
       
       // Update profile stats for chat activity
