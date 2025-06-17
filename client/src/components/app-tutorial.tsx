@@ -1,31 +1,25 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  MessageSquare, 
-  BookOpen, 
-  FileText, 
-  Library, 
-  User,
-  ChevronRight, 
-  ChevronLeft,
-  X,
-  Target,
-  Lightbulb,
-  Search,
-  PenTool,
-  Mic,
-  Heart,
-  Play,
-  CheckCircle,
-  Sparkles,
-  BookMarked,
-  Edit3,
-  Settings,
-  ArrowRight
-} from "lucide-react";
+import { useState } from "react";
 import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { 
+  X, 
+  ArrowRight, 
+  ChevronLeft, 
+  CheckCircle, 
+  Sparkles,
+  MessageSquare,
+  BookOpen,
+  PenTool,
+  Edit3,
+  Mic,
+  Library,
+  BookMarked,
+  Settings,
+  User,
+  Heart,
+  Search,
+  Target
+} from "lucide-react";
 import logoPath from "@assets/ZiNRAi-6_1750106841902.png";
 
 interface AppTutorialProps {
@@ -41,7 +35,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Welcome to The Scholar",
       subtitle: "Your AI-powered biblical study companion",
-      icon: <div className="relative"><img src={logoPath} alt="The Scholar" className="w-16 h-16" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><Sparkles className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="w-12 h-12 text-[var(--scholar-gold)]"><img src={logoPath} alt="The Scholar" className="w-full h-full object-contain filter brightness-0 invert opacity-90" /></div>,
       content: "The Scholar combines cutting-edge AI with deep theological scholarship to revolutionize your Bible study. Whether you're preparing sermons, leading studies, or growing personally, our platform adapts to your unique ministry needs with expert biblical insights.",
       highlight: "AI meets Biblical Scholarship",
       gradient: "from-blue-600 to-purple-600",
@@ -57,7 +51,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Chat with The Scholar",
       subtitle: "AI conversations that adapt to your study goals",
-      icon: <div className="relative"><MessageSquare className="w-16 h-16 text-blue-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center"><Target className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center"><MessageSquare className="w-7 h-7 text-blue-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><Sparkles className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Experience two distinct AI personalities designed for different study needs. Study Mode provides academic theological analysis with Greek/Hebrew insights, while Devotional Mode offers warm, encouraging personal application.",
       highlight: "Two AI modes for every study need",
       gradient: "from-blue-500 to-cyan-500",
@@ -79,7 +73,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Bible Study Tools",
       subtitle: "Professional biblical analysis at your fingertips",
-      icon: <div className="relative"><BookOpen className="w-16 h-16 text-green-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center"><Search className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center"><BookOpen className="w-7 h-7 text-green-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"><Search className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Transform any verse into a comprehensive study session. Click on any verse to access Greek/Hebrew analysis, cross-references, commentary, cultural context, and more. It's like having a seminary library in your pocket.",
       highlight: "Seminary-level tools for every verse",
       gradient: "from-green-500 to-emerald-500",
@@ -101,7 +95,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Notes & Journaling",
       subtitle: "Organize your thoughts and spiritual insights",
-      icon: <div className="relative"><FileText className="w-16 h-16 text-purple-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"><Edit3 className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center"><PenTool className="w-7 h-7 text-purple-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center"><Edit3 className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Capture and organize your biblical insights with our comprehensive note-taking system. Create study notes, write daily journal entries, and develop sermon outlines all in one organized workspace.",
       highlight: "Three powerful writing tools in one place",
       gradient: "from-purple-500 to-pink-500",
@@ -123,7 +117,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Sermon Preparation",
       subtitle: "From outline to pulpit with AI assistance",
-      icon: <div className="relative"><Mic className="w-16 h-16 text-orange-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center"><Sparkles className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center"><Mic className="w-7 h-7 text-orange-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center"><Sparkles className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Transform your study into powerful sermons using our AI-enhanced sermon workspace. Choose from different preaching styles, expand key points, add supporting scriptures, and create compelling illustrations - all with intelligent assistance.",
       highlight: "AI-powered sermon development",
       gradient: "from-orange-500 to-red-500",
@@ -145,7 +139,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Digital Library",
       subtitle: "Curated resources for spiritual growth",
-      icon: <div className="relative"><Library className="w-16 h-16 text-rose-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center"><BookMarked className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-rose-500/20 rounded-xl flex items-center justify-center"><Library className="w-7 h-7 text-rose-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center"><BookMarked className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Access a carefully curated collection of spiritual resources designed for your growth and ministry effectiveness. From daily devotionals to theology courses, everything is organized for easy discovery and application.",
       highlight: "Endless learning opportunities",
       gradient: "from-rose-500 to-pink-500",
@@ -167,7 +161,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Settings & Customization",
       subtitle: "Make The Scholar truly yours",
-      icon: <div className="relative"><Settings className="w-16 h-16 text-teal-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center"><User className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center"><Settings className="w-7 h-7 text-teal-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center"><User className="w-2.5 h-2.5 text-white" /></div></div>,
       content: "Personalize your study environment to match your preferences and ministry context. Set your preferred Bible translation, customize the interface, and configure features to support your unique study style.",
       highlight: "Tailored to your preferences",
       gradient: "from-teal-500 to-cyan-500",
@@ -189,7 +183,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "You're Ready to Begin",
       subtitle: "Start your enhanced Bible study journey",
-      icon: <div className="relative"><CheckCircle className="w-16 h-16 text-[var(--scholar-gold)]" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center"><Heart className="w-3 h-3 text-white" /></div></div>,
+      icon: <div className="relative"><div className="w-12 h-12 bg-[var(--scholar-gold)]/20 rounded-xl flex items-center justify-center"><CheckCircle className="w-7 h-7 text-[var(--scholar-gold)]" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--scholar-gold)] rounded-full flex items-center justify-center"><Heart className="w-2.5 h-2.5 text-black" /></div></div>,
       content: "Congratulations! You now have the knowledge to harness The Scholar's full potential for your biblical study and ministry preparation. Remember, help guides (?) are available throughout the app, and every feature is designed to deepen your understanding of God's Word.",
       highlight: "Begin your transformed study experience",
       gradient: "from-yellow-500 to-orange-500",
@@ -214,7 +208,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      onClose();
+      handleSkip();
     }
   };
 
@@ -225,6 +219,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   };
 
   const handleSkip = () => {
+    localStorage.setItem('scholarTutorialCompleted', 'true');
     onClose();
   };
 
@@ -233,7 +228,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] overflow-hidden">
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${currentTutorialStep.gradient} opacity-10`} />
       
@@ -242,14 +237,14 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         onClick={handleSkip}
         variant="ghost"
         size="sm"
-        className="fixed top-4 right-4 text-gray-400 hover:text-white z-20 bg-black/20 backdrop-blur-sm"
+        className="fixed top-4 right-4 text-gray-400 hover:text-white z-20 bg-black/40 backdrop-blur-sm rounded-full w-10 h-10 p-0"
       >
         <X className="h-4 w-4" />
       </Button>
 
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 h-full flex flex-col">
         {/* Progress Bar - Fixed at top */}
-        <div className="sticky top-0 bg-[var(--scholar-black)]/80 backdrop-blur-sm border-b border-gray-800/50 px-4 sm:px-6 py-4">
+        <div className="flex-shrink-0 bg-[var(--scholar-black)]/90 backdrop-blur-sm border-b border-gray-800/50 px-4 sm:px-6 py-4">
           <div className="flex items-center space-x-1 sm:space-x-2 max-w-6xl mx-auto">
             {tutorialSteps.map((_, index) => (
               <div key={index} className="flex-1 relative">
@@ -271,101 +266,103 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
           </div>
         </div>
 
-        {/* Main Content - Scrollable */}
-        <div className="flex-1 px-4 sm:px-6 py-8 max-w-6xl mx-auto w-full">
-          {/* Header Section */}
-          <div className="text-center mb-8">
-            {/* Icon with enhanced styling */}
-            <div className="mb-6">
-              <div className={`w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-2xl flex items-center justify-center shadow-2xl relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-                {currentTutorialStep.icon}
+        {/* Main Content - Scrollable with touch optimization */}
+        <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="px-4 sm:px-6 py-6 max-w-5xl mx-auto">
+            {/* Header Section */}
+            <div className="text-center mb-6">
+              {/* Icon with enhanced styling */}
+              <div className="mb-4">
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-2xl flex items-center justify-center shadow-2xl relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                  {currentTutorialStep.icon}
+                </div>
+              </div>
+
+              {/* Title and Subtitle */}
+              <div className="space-y-2 mb-4">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
+                  {currentTutorialStep.title}
+                </h1>
+                <p className="text-base sm:text-lg text-gray-400 font-medium">
+                  {currentTutorialStep.subtitle}
+                </p>
+              </div>
+
+              {/* Highlight Badge */}
+              <div className={`inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-sm sm:text-base shadow-lg mb-6`}>
+                <Sparkles className="w-4 h-4 mr-2" />
+                <span>{currentTutorialStep.highlight}</span>
               </div>
             </div>
 
-            {/* Title and Subtitle */}
-            <div className="space-y-3 mb-6">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-                {currentTutorialStep.title}
-              </h1>
-              <p className="text-lg sm:text-xl text-gray-400 font-medium">
-                {currentTutorialStep.subtitle}
+            {/* Content Description */}
+            <div className="max-w-4xl mx-auto mb-8">
+              <p className="text-gray-300 text-base sm:text-lg leading-relaxed text-center">
+                {currentTutorialStep.content}
               </p>
             </div>
 
-            {/* Highlight Badge */}
-            <div className={`inline-flex items-center px-6 py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-lg shadow-lg mb-8`}>
-              <Sparkles className="w-5 h-5 mr-2" />
-              <span>{currentTutorialStep.highlight}</span>
-            </div>
-          </div>
+            {/* Key Features Grid */}
+            {currentTutorialStep.keyFeatures && (
+              <div className="max-w-4xl mx-auto mb-8">
+                <h3 className="text-lg font-semibold text-white mb-4 text-center">Key Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {currentTutorialStep.keyFeatures.map((feature, index) => (
+                    <div key={index} className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-4 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+                      <h4 className="text-base font-semibold text-white mb-2">{feature.title}</h4>
+                      <p className="text-sm text-gray-400">{feature.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* Content Description */}
-          <div className="max-w-4xl mx-auto mb-10">
-            <p className="text-gray-300 text-lg sm:text-xl leading-relaxed text-center">
-              {currentTutorialStep.content}
-            </p>
-          </div>
-
-          {/* Key Features Grid */}
-          {currentTutorialStep.keyFeatures && (
-            <div className="max-w-5xl mx-auto mb-10">
-              <h3 className="text-xl font-semibold text-white mb-6 text-center">Key Features</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {currentTutorialStep.keyFeatures.map((feature, index) => (
-                  <div key={index} className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all">
-                    <h4 className="text-lg font-semibold text-white mb-2">{feature.title}</h4>
-                    <p className="text-gray-400">{feature.desc}</p>
+            {/* Instructions */}
+            {currentTutorialStep.instructions && (
+              <div className="max-w-4xl mx-auto mb-8">
+                <h3 className="text-lg font-semibold text-white mb-4 text-center">How to Use</h3>
+                <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-4 border border-gray-800/50">
+                  <div className="space-y-3">
+                    {currentTutorialStep.instructions.map((instruction, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className={`w-5 h-5 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                          {index + 1}
+                        </div>
+                        <p className="text-sm text-gray-300">{instruction}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Instructions */}
-          {currentTutorialStep.instructions && (
-            <div className="max-w-4xl mx-auto mb-10">
-              <h3 className="text-xl font-semibold text-white mb-6 text-center">How to Use</h3>
-              <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50">
-                <div className="space-y-4">
-                  {currentTutorialStep.instructions.map((instruction, index) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className={`w-6 h-6 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
-                        {index + 1}
-                      </div>
-                      <p className="text-gray-300">{instruction}</p>
-                    </div>
-                  ))}
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Quick Start (for final step) */}
-          {currentTutorialStep.quickStart && (
-            <div className="max-w-4xl mx-auto mb-10">
-              <h3 className="text-xl font-semibold text-white mb-6 text-center">Quick Start Guide</h3>
-              <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {currentTutorialStep.quickStart.map((tip, index) => (
-                    <div key={index} className="flex items-center space-x-3 text-gray-300">
-                      <div className={`p-2 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-lg flex-shrink-0`}>
-                        <CheckCircle className="w-4 h-4 text-white" />
+            {/* Quick Start (for final step) */}
+            {currentTutorialStep.quickStart && (
+              <div className="max-w-4xl mx-auto mb-8">
+                <h3 className="text-lg font-semibold text-white mb-4 text-center">Quick Start Guide</h3>
+                <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-4 border border-gray-800/50">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentTutorialStep.quickStart.map((tip, index) => (
+                      <div key={index} className="flex items-center space-x-3 text-gray-300">
+                        <div className={`p-1.5 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-lg flex-shrink-0`}>
+                          <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-xs sm:text-sm">{tip}</span>
                       </div>
-                      <span className="text-sm">{tip}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Demo Text */}
-          <div className="max-w-3xl mx-auto mb-10">
-            <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-6 border-l-4 border-[var(--scholar-gold)] text-center">
-              <p className="text-[var(--scholar-gold)] font-medium italic text-lg">
-                "{currentTutorialStep.demoText}"
-              </p>
+            {/* Demo Text */}
+            <div className="max-w-3xl mx-auto mb-6">
+              <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-4 border-l-4 border-[var(--scholar-gold)] text-center">
+                <p className="text-[var(--scholar-gold)] font-medium italic text-sm sm:text-base">
+                  "{currentTutorialStep.demoText}"
+                </p>
+              </div>
             </div>
           </div>
         </div>
