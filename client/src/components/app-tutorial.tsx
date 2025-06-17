@@ -368,35 +368,38 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         </div>
 
         {/* Navigation - Fixed at bottom */}
-        <div className="sticky bottom-0 bg-[var(--scholar-black)]/90 backdrop-blur-sm border-t border-gray-800/50 px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <Button
-              onClick={handlePrev}
-              disabled={currentStep === 0}
-              variant="outline"
-              size="lg"
-              className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
-                currentStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-
-            <div className="flex space-x-4">
-              <Button
-                onClick={handleSkip}
-                variant="ghost"
-                size="lg"
-                className="text-gray-400 hover:text-white transition-all hover:scale-105"
-              >
-                Skip Tour
-              </Button>
+        <div className="sticky bottom-0 bg-[var(--scholar-black)]/90 backdrop-blur-sm border-t border-gray-800/50 px-3 sm:px-6 py-3 sm:py-4">
+          <div className="max-w-6xl mx-auto">
+            {/* Mobile Layout - Stacked */}
+            <div className="flex flex-col space-y-3 sm:hidden">
+              <div className="flex items-center justify-between">
+                <Button
+                  onClick={handlePrev}
+                  disabled={currentStep === 0}
+                  variant="outline"
+                  size="sm"
+                  className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
+                    currentStep === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  <ChevronLeft className="w-3 h-3 mr-1" />
+                  Previous
+                </Button>
+                
+                <Button
+                  onClick={handleSkip}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-400 hover:text-white transition-all"
+                >
+                  Skip
+                </Button>
+              </div>
               
               <Button
                 onClick={handleNext}
                 size="lg"
-                className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-8`}
+                className={`w-full bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all font-semibold`}
               >
                 {currentTutorialStep.action}
                 {currentStep < tutorialSteps.length - 1 ? (
@@ -405,6 +408,46 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
                   <CheckCircle className="w-4 h-4 ml-2" />
                 )}
               </Button>
+            </div>
+
+            {/* Desktop Layout - Horizontal */}
+            <div className="hidden sm:flex items-center justify-between">
+              <Button
+                onClick={handlePrev}
+                disabled={currentStep === 0}
+                variant="outline"
+                size="lg"
+                className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
+                  currentStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                }`}
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+
+              <div className="flex space-x-4">
+                <Button
+                  onClick={handleSkip}
+                  variant="ghost"
+                  size="lg"
+                  className="text-gray-400 hover:text-white transition-all hover:scale-105"
+                >
+                  Skip Tour
+                </Button>
+                
+                <Button
+                  onClick={handleNext}
+                  size="lg"
+                  className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-8`}
+                >
+                  {currentTutorialStep.action}
+                  {currentStep < tutorialSteps.length - 1 ? (
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4 ml-2" />
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
