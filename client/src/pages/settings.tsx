@@ -64,7 +64,7 @@ export default function Settings() {
     <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
       <Sidebar />
       
-      <div className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+      <div className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-y-auto">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center space-x-3 mb-6">

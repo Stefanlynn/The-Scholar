@@ -53,6 +53,8 @@ export default function About() {
                   </ul>
                 </div>
 
+                <div className="text-center text-gray-500 text-xl font-light my-8">⸻</div>
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-4">Our Vision</h3>
                   <p className="text-gray-300 leading-relaxed mb-4">
