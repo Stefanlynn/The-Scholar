@@ -307,6 +307,9 @@ Changelog:
   * Completely redesigned Library page with consistent app styling and organized content sections
   * Added Featured Content section and four main categories: Podcasts, Articles, Devotionals, Sermons
   * Removed search functionality from Library page for cleaner, more focused design
+  * Implemented proper sign out functionality with redirect to login page
+  * Removed delete account section from Profile page for simplified account management
+  * Added scroll-to-top functionality throughout app for better navigation experience
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
 ```
 

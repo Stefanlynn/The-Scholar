@@ -25,7 +25,6 @@ import {
   FileText, 
   MessageSquare,
   LogOut,
-  Trash2,
   Shield,
   Heart,
   ExternalLink
@@ -35,7 +34,7 @@ import type { User as UserType, UpdateUserProfile } from "@shared/schema";
 export default function Profile() {
   const { user, signOut } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -92,18 +91,7 @@ export default function Profile() {
     },
   });
 
-  const deleteAccountMutation = useMutation({
-    mutationFn: async () => {
-      return apiRequest("DELETE", "/api/profile");
-    },
-    onSuccess: () => {
-      toast({ title: "Account deleted successfully" });
-      signOut();
-    },
-    onError: () => {
-      toast({ title: "Failed to delete account", variant: "destructive" });
-    },
-  });
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,7 +108,13 @@ export default function Profile() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      await signOut();
+      // Redirect to login page after successful sign out
+      window.location.href = '/login';
+    } catch (error) {
+      toast({ title: "Failed to sign out", variant: "destructive" });
+    }
   };
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -587,54 +581,7 @@ export default function Profile() {
                   </Button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-[var(--scholar-darker)] border border-red-900/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <Trash2 className="h-5 w-5 text-red-400" />
-                    <div>
-                      <div className="text-white font-medium">Delete Account</div>
-                      <div className="text-gray-400 text-sm">Permanently remove your account and all data</div>
-                    </div>
-                  </div>
-                  <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-red-600 text-red-400 hover:bg-red-900/20 bg-transparent"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white">
-                      <DialogHeader>
-                        <DialogTitle className="text-red-400">Delete Account</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <p className="text-gray-300">
-                          This action cannot be undone. This will permanently delete your account 
-                          and remove all your data including notes, sermons, and bookmarks.
-                        </p>
-                        <div className="flex space-x-3">
-                          <Button
-                            onClick={() => setShowDeleteDialog(false)}
-                            variant="outline"
-                            className="flex-1 border-gray-600 text-white hover:bg-gray-700 bg-transparent"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => deleteAccountMutation.mutate()}
-                            className="flex-1 bg-red-600 text-white hover:bg-red-700"
-                            disabled={deleteAccountMutation.isPending}
-                          >
-                            Delete Forever
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
+
               </div>
             </CardContent>
           </Card>
