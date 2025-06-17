@@ -12,10 +12,24 @@ import { Link } from "wouter";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showTutorial, setShowTutorial] = useState(false);
   const { user, signOut } = useAuth();
+
+  // Check if tutorial should be shown
+  useEffect(() => {
+    const shouldShowTutorial = localStorage.getItem('show_tutorial');
+    if (shouldShowTutorial === 'true') {
+      setShowTutorial(true);
+      localStorage.removeItem('show_tutorial'); // Remove after showing
+    }
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handleCloseTutorial = () => {
+    setShowTutorial(false);
   };
 
   return (
@@ -67,6 +81,9 @@ export default function Home() {
 
       <WeeklyDonationPopup />
       <MobileTabBar />
+      
+      {/* App Tutorial */}
+      <AppTutorial isOpen={showTutorial} onClose={handleCloseTutorial} />
     </div>
   );
 }

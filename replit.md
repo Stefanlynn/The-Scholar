@@ -286,6 +286,16 @@ Changelog:
   * Removed "Add to Sermon" button from Bible study tools quick actions for cleaner interface
   * Chat now responds conversationally with expert voice adaptation based on selected mode
   * Bible study tools maintain verse context when navigating between different analysis options
+- June 17, 2025: Completely redesigned onboarding and created interactive app tutorial system
+  * Rebuilt three welcome pages with modern, engaging introduction to The Scholar's features and benefits
+  * Page 1: Welcome with AI-powered study companion overview and key feature highlights
+  * Page 2: Comprehensive feature showcase with six major sections (Chat, Bible Study, Notes, Sermon Prep, Library, Profile)
+  * Page 3: User choice between guided tour or jumping directly into the app
+  * Created interactive AppTutorial component with step-by-step walkthrough of every major feature
+  * Tutorial includes progress tracking, feature explanations, and direct navigation to each section
+  * Added help button (?) to Notes page with comprehensive usage guides for all three tabs
+  * Integrated tutorial system with localStorage preferences for seamless user experience
+  * Users can skip tour or take guided walkthrough covering Chat modes, Bible tools, Notes workspace, Library resources, and Profile settings
 ```
 
 ## User Preferences

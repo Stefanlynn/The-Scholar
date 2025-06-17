@@ -19,8 +19,13 @@ function AuthenticatedApp() {
   const { user } = useAuth();
   const [location] = useLocation();
 
-  // For now, skip onboarding and go straight to the app
-  // const needsOnboarding = user && !user.user_metadata?.completed_onboarding;
+  // Check if user needs onboarding
+  const needsOnboarding = user && !user.user_metadata?.completed_onboarding;
+
+  // Redirect to welcome if needed
+  if (needsOnboarding && location !== "/welcome") {
+    return <Welcome />;
+  }
 
   return (
     <UserPreferencesProvider>
