@@ -890,17 +890,27 @@ Convert this into bullet format with:
 
               if (response.ok) {
                 const data = await response.json();
-                if (data && data.text && data.text.trim()) {
-                  verses.push({
-                    verse: verseNum,
-                    text: data.text
-                  });
-                  verseNum++;
+                // NIV API returns data in format: {"Text":{"21809":"verse text"}}
+                if (data && data.Text) {
+                  const textValues = Object.values(data.Text);
+                  if (textValues.length > 0 && textValues[0]) {
+                    verses.push({
+                      verse: verseNum,
+                      text: textValues[0] as string
+                    });
+                    verseNum++;
+                  } else {
+                    hasMoreVerses = false;
+                  }
                 } else {
                   hasMoreVerses = false;
                 }
               } else {
-                console.log(`NIV API error for verse ${verseNum}: ${response.status}`);
+                if (response.status === 429) {
+                  console.log(`NIV API rate limit exceeded`);
+                } else {
+                  console.log(`NIV API error for verse ${verseNum}: ${response.status}`);
+                }
                 hasMoreVerses = false;
               }
             } catch (error) {
@@ -991,11 +1001,12 @@ Convert this into bullet format with:
         }
       }
       
-      // If NIV was requested but failed, return error
+      // If NIV was requested but failed, return error with specific reason
       if (translation === 'niv') {
-        return res.status(500).json({ 
-          error: 'NIV translation temporarily unavailable',
-          message: 'Please try KJV or check back later' 
+        return res.status(503).json({ 
+          error: 'NIV translation quota exceeded',
+          message: 'API rate limit reached. Please use KJV translation.',
+          fallback: 'kjv'
         });
       }
 

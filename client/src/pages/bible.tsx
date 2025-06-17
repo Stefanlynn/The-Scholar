@@ -52,8 +52,7 @@ const books = [
 ];
 
 const translations = [
-  { value: "kjv", label: "King James Version" },
-  { value: "niv", label: "New International Version" }
+  { value: "kjv", label: "King James Version" }
 ];
 
 const highlightColors = [
