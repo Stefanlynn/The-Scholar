@@ -73,7 +73,11 @@ export default function Library() {
           <section>
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <h2 className="text-xl md:text-2xl font-bold text-white">Featured Content</h2>
-              <Button variant="ghost" className="text-[var(--scholar-gold)] hover:text-yellow-300 text-sm">
+              <Button 
+                variant="ghost" 
+                className="text-[var(--scholar-gold)] hover:text-yellow-300 text-sm"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
                 View All <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>

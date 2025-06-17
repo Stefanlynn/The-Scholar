@@ -34,6 +34,7 @@ export default function MobileTabBar() {
                 className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
                   isActive ? 'text-[var(--scholar-gold)]' : 'text-gray-400'
                 }`}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 {item.name === "Scholar" ? (
                   <img 

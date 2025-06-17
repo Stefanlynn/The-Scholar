@@ -47,7 +47,10 @@ export default function Sidebar() {
           
           return (
             <Link key={item.name} href={item.href}>
-              <div className={`scholar-sidebar-item ${isActive ? 'active' : ''}`}>
+              <div 
+                className={`scholar-sidebar-item ${isActive ? 'active' : ''}`}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
                 {item.name === "The Scholar" ? (
                   <img 
                     src={scholarLogo} 
