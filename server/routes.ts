@@ -872,6 +872,7 @@ Convert this into bullet format with:
       // Try NIV Bible API for NIV translation
       if (translation === 'niv' && RAPIDAPI_KEY) {
         try {
+          console.log(`Fetching NIV for ${book} ${chapter}`);
           // Get all verses for the chapter using NIV Bible API
           const verses = [];
           let verseNum = 1;
@@ -899,28 +900,34 @@ Convert this into bullet format with:
                   hasMoreVerses = false;
                 }
               } else {
+                console.log(`NIV API error for verse ${verseNum}: ${response.status}`);
                 hasMoreVerses = false;
               }
             } catch (error) {
+              console.log(`NIV API exception for verse ${verseNum}:`, error);
               hasMoreVerses = false;
             }
           }
 
           if (verses.length > 0) {
+            console.log(`Successfully fetched ${verses.length} NIV verses`);
             return res.json({
               book: book,
               chapter: parseInt(chapter),
               verses: verses
             });
+          } else {
+            console.log('No NIV verses found, falling back to other APIs');
           }
         } catch (error) {
-          console.log('NIV Bible API unavailable, trying Bible Search API');
+          console.log('NIV Bible API error:', error);
         }
       }
 
-      // Try Bible Search API for other translations
-      if (RAPIDAPI_KEY) {
+      // Only use fallback APIs for KJV or when NIV fails completely
+      if (RAPIDAPI_KEY && (translation === 'kjv' || translation !== 'niv')) {
         try {
+          console.log(`Trying Bible Search API for ${translation}`);
           const response = await fetch(`https://bible-search.p.rapidapi.com/books-by-name?bookName=${encodeURIComponent(book)}`, {
             method: 'GET',
             headers: {
@@ -934,6 +941,7 @@ Convert this into bullet format with:
           if (data && data.chapters && data.chapters[parseInt(chapter) - 1]) {
             const chapterData = data.chapters[parseInt(chapter) - 1];
             if (chapterData.verses) {
+              console.log(`Successfully fetched ${chapterData.verses.length} verses from Bible Search API`);
               return res.json({
                 book: book,
                 chapter: parseInt(chapter),
@@ -950,10 +958,11 @@ Convert this into bullet format with:
         }
       }
       
-      // Try IQ Bible API as fallback
+      // Try IQ Bible API as fallback for KJV only
       const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
-      if (IQ_BIBLE_API_KEY) {
+      if (IQ_BIBLE_API_KEY && translation === 'kjv') {
         try {
+          console.log(`Trying IQ Bible API for KJV`);
           const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
             method: 'GET',
             headers: {
@@ -965,6 +974,7 @@ Convert this into bullet format with:
           if (response.ok) {
             const data = await response.json();
             if (data && !data.message && Array.isArray(data)) {
+              console.log(`Successfully fetched ${data.length} verses from IQ Bible API`);
               const chapterData = {
                 book: book,
                 chapter: parseInt(chapter),
@@ -979,6 +989,14 @@ Convert this into bullet format with:
         } catch (error) {
           console.log('IQ Bible API unavailable for chapter, using search fallback');
         }
+      }
+      
+      // If NIV was requested but failed, return error
+      if (translation === 'niv') {
+        return res.status(500).json({ 
+          error: 'NIV translation temporarily unavailable',
+          message: 'Please try KJV or check back later' 
+        });
       }
 
       // Final fallback to search-based results
