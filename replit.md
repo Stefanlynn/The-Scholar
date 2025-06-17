@@ -393,6 +393,11 @@ Changelog:
   * Built seamless voice workflow: record → preview transcript → listen back → send/delete
   * Voice responses maintain same expert voice adaptation and AI parameters as text chat
   * Optimized speech synthesis with markdown cleanup for natural voice delivery
+- June 17, 2025: Fixed chat page layout for better mobile experience
+  * Made chat interface completely fixed to prevent unwanted scrolling
+  * Positioned chat input box fixed above mobile navigation bar
+  * Added proper bottom padding to messages container to prevent content being hidden
+  * Chat page now maintains stable viewport without vertical scrolling issues
 ```
 
 ## User Preferences
