@@ -18,7 +18,7 @@ const menuItems = [
   { name: "Profile", icon: User, href: "/profile" },
   { name: "Share The Scholar", icon: Share, action: "share" },
   { name: "About", href: "/settings/about", icon: Info },
-  { name: "Community", icon: Users, action: "community" },
+  { name: "Community", icon: Users, href: "/community" },
   { name: "Donate", icon: Heart, action: "donate" },
   { name: "Help", icon: HelpCircle, action: "help" },
   { name: "Settings", href: "/settings", icon: Settings }

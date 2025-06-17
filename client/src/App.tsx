@@ -20,6 +20,7 @@ import Cookies from "@/pages/cookies";
 import About from "@/pages/about";
 import Support from "@/pages/support";
 import DeleteAccount from "@/pages/delete-account";
+import CommunityComingSoon from "@/pages/community-coming-soon";
 import Welcome from "@/pages/welcome";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -55,6 +56,7 @@ function AuthenticatedApp() {
         <Route path="/settings/about" component={About} />
         <Route path="/settings/support" component={Support} />
         <Route path="/settings/delete-account" component={DeleteAccount} />
+        <Route path="/community" component={CommunityComingSoon} />
       </Switch>
     </UserPreferencesProvider>
   );
