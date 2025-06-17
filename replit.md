@@ -315,6 +315,7 @@ Changelog:
   * Converted to fully multiuser app with complete data isolation between user accounts
   * Updated all API routes to require authentication and filter data by authenticated user ID
   * Each user has private notes, chat history, bookmarks, sermons, library items, and profile settings
+  * Removed "Skip Auth" development bypass button from login page to enforce proper authentication
   * Comprehensive mobile optimization across all major pages with proper spacing and touch-friendly elements
 ```
 

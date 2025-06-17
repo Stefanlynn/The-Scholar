@@ -97,19 +97,7 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="text-center space-y-4">
-            <Button
-              type="button"
-              onClick={() => {
-                localStorage.setItem('skipAuth', 'true');
-                window.location.href = '/';
-              }}
-              variant="outline"
-              className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-            >
-              Skip Auth (Dev Mode)
-            </Button>
-            
+          <div className="text-center">
             <p className="text-gray-400 text-sm">
               Don't have an account?{" "}
               <Link href="/signup" className="text-[var(--scholar-gold)] hover:underline">
