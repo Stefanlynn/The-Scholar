@@ -280,6 +280,12 @@ Changelog:
   * Maintains conversation flow while studying specific verses
   * Responses can be saved to Notes with question context included
   * Loading states and error handling integrated for seamless user experience
+- June 17, 2025: Fixed chat AI response system and enhanced Bible study tools navigation
+  * Restored proper Study Mode and Devotional Mode conversation format instead of structured Bible tools format
+  * Added "Back to Tools" button in Scholar Response Dialog to return to main study tools grid
+  * Removed "Add to Sermon" button from Bible study tools quick actions for cleaner interface
+  * Chat now responds conversationally with expert voice adaptation based on selected mode
+  * Bible study tools maintain verse context when navigating between different analysis options
 ```
 
 ## User Preferences
