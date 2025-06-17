@@ -85,6 +85,8 @@ export default function Bible() {
   const [scholarLoading, setScholarLoading] = useState(false);
   const [currentVerseForStudy, setCurrentVerseForStudy] = useState<any>(null);
   const [currentStudyTool, setCurrentStudyTool] = useState<string>("");
+  const [inlineScholarResponse, setInlineScholarResponse] = useState<string>("");
+  const [inlineScholarLoading, setInlineScholarLoading] = useState(false);
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -128,6 +130,21 @@ export default function Bible() {
       content: scholarResponse,
       scripture: currentVerseForStudy.reference,
       tags: [currentStudyTool, 'study-tool']
+    };
+    
+    saveToNotesMutation.mutate(noteData);
+  };
+
+  // Handle saving inline Scholar response to notes
+  const handleSaveInlineToNotes = () => {
+    if (!inlineScholarResponse || !selectedVerse) return;
+    
+    const verseRef = `${selectedBook} ${selectedChapter}:${selectedVerse.verse}`;
+    const noteData = {
+      title: `Scholar Response - ${verseRef}`,
+      content: `Question: ${scholarQuery}\n\n${inlineScholarResponse}`,
+      scripture: verseRef,
+      tags: ['scholar-question', 'study-tool']
     };
     
     saveToNotesMutation.mutate(noteData);
@@ -204,6 +221,36 @@ export default function Bible() {
     },
     onError: (error) => {
       setScholarLoading(false);
+      toast({ 
+        title: "Connection Error", 
+        description: "Unable to connect to The Scholar. Please try again.",
+        variant: "destructive" 
+      });
+    }
+  });
+
+  // Inline Scholar mutation for direct responses in study tools dialog
+  const inlineScholarMutation = useMutation({
+    mutationFn: async (query: string) => {
+      setInlineScholarLoading(true);
+      const response = await fetch('/api/chat/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: query, mode: "study" })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setInlineScholarLoading(false);
+      setInlineScholarResponse(data.response || "The Scholar's response is ready.");
+    },
+    onError: (error) => {
+      setInlineScholarLoading(false);
       toast({ 
         title: "Connection Error", 
         description: "Unable to connect to The Scholar. Please try again.",
@@ -567,10 +614,14 @@ Format with bold section titles, blockquote prompts, and short encouraging parag
     if (selectedVerse && scholarQuery.trim()) {
       const verseRef = `${selectedBook} ${selectedChapter}:${selectedVerse.verse}`;
       const fullQuery = `Regarding "${selectedVerse.text}" (${verseRef}): ${scholarQuery}`;
-      scholarMutation.mutate(fullQuery);
-      setScholarQuery("");
-      setSelectedVerse(null);
+      inlineScholarMutation.mutate(fullQuery);
+      setScholarQuery(""); // Clear the question after asking
     }
+  };
+
+  const handleClearInlineResponse = () => {
+    setInlineScholarResponse("");
+    setScholarQuery("");
   };
 
   const handleAddNote = () => {
@@ -1303,11 +1354,46 @@ Format with bold section titles, blockquote prompts, and short encouraging parag
                     />
                     <Button 
                       onClick={handleScholarQuestion}
-                      disabled={!scholarQuery.trim() || scholarMutation.isPending}
+                      disabled={!scholarQuery.trim() || inlineScholarMutation.isPending}
                       className="w-full bg-blue-600 hover:bg-blue-700 font-medium"
                     >
-                      {scholarMutation.isPending ? 'Asking...' : 'Ask The Scholar'}
+                      {inlineScholarMutation.isPending ? 'Asking...' : 'Ask The Scholar'}
                     </Button>
+                    
+                    {/* Inline Scholar Response */}
+                    {(inlineScholarLoading || inlineScholarResponse) && (
+                      <div className="mt-6 p-4 bg-[var(--scholar-darker)] border border-[var(--scholar-gold)]/20 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-[var(--scholar-gold)] font-semibold text-sm">The Scholar's Response</h5>
+                          {inlineScholarResponse && (
+                            <Button 
+                              onClick={handleSaveInlineToNotes}
+                              disabled={saveToNotesMutation.isPending}
+                              size="sm"
+                              className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 text-xs"
+                            >
+                              {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
+                            </Button>
+                          )}
+                        </div>
+                        
+                        {inlineScholarLoading ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2 text-[var(--scholar-gold)] text-sm">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--scholar-gold)]"></div>
+                              <span>The Scholar is analyzing your question...</span>
+                            </div>
+                            <Skeleton className="h-3 w-full bg-gray-600" />
+                            <Skeleton className="h-3 w-3/4 bg-gray-600" />
+                            <Skeleton className="h-3 w-1/2 bg-gray-600" />
+                          </div>
+                        ) : (
+                          <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                            {inlineScholarResponse}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
