@@ -43,7 +43,27 @@ export default function Profile() {
     enabled: !!user,
   });
 
-  const { data: stats } = useQuery<{notes: number, sermons: number, bookmarks: number}>({
+  const { data: stats } = useQuery<{
+    notes: number, 
+    sermons: number, 
+    bookmarks: number,
+    chatSessions: number,
+    libraryItems: number,
+    recentActivity: {
+      notes: number,
+      sermons: number,
+      bookmarks: number,
+      chatSessions: number,
+      libraryItems: number,
+      total: number
+    },
+    lastActivity: {
+      note: string | null,
+      sermon: string | null,
+      bookmark: string | null,
+      chat: string | null
+    }
+  }>({
     queryKey: ["/api/profile/stats"],
     enabled: !!user,
   });
@@ -337,28 +357,114 @@ export default function Profile() {
           {/* Activity Overview */}
           <Card className="bg-[var(--scholar-dark)] border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Your Activity</CardTitle>
+              <CardTitle className="text-white flex items-center justify-between">
+                Your Activity
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-green-400">
+                    {stats?.recentActivity?.total ?? 0} this week
+                  </span>
+                </div>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg relative">
                   <FileText className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
                   <div className="text-2xl font-bold text-white">{stats?.notes ?? 0}</div>
                   <div className="text-gray-400 text-sm">Study Notes</div>
+                  {stats?.recentActivity && stats.recentActivity.notes > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {stats.recentActivity.notes}
+                    </div>
+                  )}
                 </div>
                 
-                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
+                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg relative">
                   <MessageSquare className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
                   <div className="text-2xl font-bold text-white">{stats?.sermons ?? 0}</div>
-                  <div className="text-gray-400 text-sm">Sermon Drafts</div>
+                  <div className="text-gray-400 text-sm">Sermons</div>
+                  {stats?.recentActivity && stats.recentActivity.sermons > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {stats.recentActivity.sermons}
+                    </div>
+                  )}
                 </div>
                 
-                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg">
+                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg relative">
                   <BookOpen className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
                   <div className="text-2xl font-bold text-white">{stats?.bookmarks ?? 0}</div>
                   <div className="text-gray-400 text-sm">Bookmarks</div>
+                  {stats?.recentActivity && stats.recentActivity.bookmarks > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {stats.recentActivity.bookmarks}
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg relative">
+                  <MessageSquare className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">{stats?.chatSessions ?? 0}</div>
+                  <div className="text-gray-400 text-sm">Chat Messages</div>
+                  {stats?.recentActivity && stats.recentActivity.chatSessions > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {stats.recentActivity.chatSessions}
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-center p-4 bg-[var(--scholar-darker)] rounded-lg relative">
+                  <BookOpen className="h-8 w-8 text-[var(--scholar-gold)] mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-white">{stats?.libraryItems ?? 0}</div>
+                  <div className="text-gray-400 text-sm">Library Items</div>
+                  {stats?.recentActivity && stats.recentActivity.libraryItems > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {stats.recentActivity.libraryItems}
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Recent Activity Timeline */}
+              {stats?.lastActivity && (
+                <div className="mt-6 pt-4 border-t border-gray-700">
+                  <h4 className="text-sm font-medium text-gray-300 mb-3">Recent Activity</h4>
+                  <div className="space-y-2">
+                    {stats.lastActivity.chat && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Last chat session</span>
+                        <span className="text-gray-300">
+                          {new Date(stats.lastActivity.chat).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                    {stats.lastActivity.note && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Last note created</span>
+                        <span className="text-gray-300">
+                          {new Date(stats.lastActivity.note).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                    {stats.lastActivity.sermon && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Last sermon worked on</span>
+                        <span className="text-gray-300">
+                          {new Date(stats.lastActivity.sermon).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                    {stats.lastActivity.bookmark && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Last bookmark saved</span>
+                        <span className="text-gray-300">
+                          {new Date(stats.lastActivity.bookmark).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

@@ -181,16 +181,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const [notes, sermons, bookmarks] = await Promise.all([
+      const [notes, sermons, bookmarks, chatMessages, libraryItems] = await Promise.all([
         storage.getNotes(user.id),
         storage.getSermons(user.id),
-        storage.getBookmarks(user.id)
+        storage.getBookmarks(user.id),
+        storage.getChatMessages(user.id),
+        storage.getLibraryItems(user.id)
       ]);
 
+      // Calculate recent activity (last 7 days)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const recentNotes = notes.filter(note => new Date(note.createdAt) > sevenDaysAgo);
+      const recentSermons = sermons.filter(sermon => new Date(sermon.createdAt) > sevenDaysAgo);
+      const recentBookmarks = bookmarks.filter(bookmark => new Date(bookmark.createdAt) > sevenDaysAgo);
+      const recentChats = chatMessages.filter(msg => new Date(msg.timestamp) > sevenDaysAgo);
+      const recentLibrary = libraryItems.filter(item => new Date(item.createdAt) > sevenDaysAgo);
+
+      // Get most recent activity for each type
+      const lastNoteDate = notes.length > 0 ? Math.max(...notes.map(n => new Date(n.createdAt).getTime())) : null;
+      const lastSermonDate = sermons.length > 0 ? Math.max(...sermons.map(s => new Date(s.createdAt).getTime())) : null;
+      const lastBookmarkDate = bookmarks.length > 0 ? Math.max(...bookmarks.map(b => new Date(b.createdAt).getTime())) : null;
+      const lastChatDate = chatMessages.length > 0 ? Math.max(...chatMessages.map(m => new Date(m.timestamp).getTime())) : null;
+
       res.json({
+        // Total counts
         notes: notes.length,
         sermons: sermons.length,
-        bookmarks: bookmarks.length
+        bookmarks: bookmarks.length,
+        chatSessions: chatMessages.length,
+        libraryItems: libraryItems.length,
+        
+        // Recent activity (last 7 days)
+        recentActivity: {
+          notes: recentNotes.length,
+          sermons: recentSermons.length,
+          bookmarks: recentBookmarks.length,
+          chatSessions: recentChats.length,
+          libraryItems: recentLibrary.length,
+          total: recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length + recentLibrary.length
+        },
+
+        // Last activity timestamps
+        lastActivity: {
+          note: lastNoteDate ? new Date(lastNoteDate).toISOString() : null,
+          sermon: lastSermonDate ? new Date(lastSermonDate).toISOString() : null,
+          bookmark: lastBookmarkDate ? new Date(lastBookmarkDate).toISOString() : null,
+          chat: lastChatDate ? new Date(lastChatDate).toISOString() : null
+        }
       });
     } catch (error) {
       console.error("Error fetching profile stats:", error);
