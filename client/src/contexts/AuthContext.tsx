@@ -6,7 +6,7 @@ interface AuthContextType {
   user: AuthUser | null
   session: Session | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error?: string }>
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error?: string }>
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
 }
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe: boolean = false) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -62,6 +62,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     if (error) {
       return { error: error.message }
+    }
+    
+    // Set localStorage flag for remember me
+    if (rememberMe) {
+      localStorage.setItem('scholar_remember_me', 'true')
+      localStorage.setItem('scholar_remember_expiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString()) // 30 days
+    } else {
+      localStorage.removeItem('scholar_remember_me')
+      localStorage.removeItem('scholar_remember_expiry')
     }
     
     return {}

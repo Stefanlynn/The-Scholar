@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { GraduationCap, Eye, EyeOff } from "lucide-react";
 
@@ -12,6 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
@@ -21,7 +23,7 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(email, password, rememberMe);
     
     if (error) {
       setError(error);
@@ -86,6 +88,18 @@ export default function Login() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="remember-me"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                className="border-gray-600 data-[state=checked]:bg-[var(--scholar-gold)] data-[state=checked]:border-[var(--scholar-gold)]"
+              />
+              <Label htmlFor="remember-me" className="text-gray-300 text-sm cursor-pointer">
+                Remember me for 30 days
+              </Label>
             </div>
             
             <Button
