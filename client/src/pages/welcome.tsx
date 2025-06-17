@@ -193,133 +193,86 @@ export default function Welcome() {
             </Card>
           </div>
         );
-            </div>
-
-            <div className="flex justify-center items-center space-x-4 pt-6">
-              <Button 
-                onClick={handlePrev}
-                variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-gray-700 px-6 py-3"
-              >
-                <ChevronLeft className="w-5 h-5 mr-2" />
-                Back
-              </Button>
-              <Button 
-                onClick={handleNext}
-                className="bg-green-600 text-white hover:bg-green-700 font-medium px-8 py-3 text-lg"
-              >
-                See How It Works
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </div>
-        );
 
       case 3:
         return (
-          <div className="space-y-8">
-            <div className="text-center mb-8">
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[var(--scholar-gold)] to-yellow-600 rounded-full flex items-center justify-center mb-6">
-                <Play className="text-black w-10 h-10" />
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Ready to Begin Your Journey?
-              </h1>
-              <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-                Start exploring The Scholar with an interactive guided tour, or jump right into the experience.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Guided Tour Option */}
-              <div className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-[var(--scholar-gold)]/10 rounded-xl p-8 border border-[var(--scholar-gold)]/30 text-center">
-                <div className="w-16 h-16 bg-[var(--scholar-gold)] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Target className="text-black w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-semibold text-white mb-4">Take the Guided Tour</h3>
-                <p className="text-gray-300 mb-6">
-                  Get a step-by-step walkthrough of every feature. Perfect for first-time users who want to see everything The Scholar offers.
-                </p>
-                <div className="space-y-3 text-sm text-gray-400 mb-6">
-                  <div className="flex items-center justify-center space-x-2">
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Chat & AI Modes</span>
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <Card className="w-full max-w-md bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl">
+              <CardContent className="p-6 space-y-6">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-[var(--scholar-gold)] to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <Play className="text-black w-8 h-8" />
                   </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <BookOpen className="w-4 h-4" />
-                    <span>Bible Study Tools</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <FileText className="w-4 h-4" />
-                    <span>Notes & Sermon Prep</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Library className="w-4 h-4" />
-                    <span>Digital Library</span>
+                  <div className="space-y-2">
+                    <h2 className="text-xl md:text-2xl font-bold text-white">Ready to Begin?</h2>
+                    <p className="text-gray-300 text-sm">Choose how you'd like to start</p>
                   </div>
                 </div>
-                <Button 
-                  onClick={() => {
-                    setLoading(true);
-                    // Mark to show tutorial
-                    localStorage.setItem('show_tutorial', 'true');
-                    handleNext();
-                  }}
-                  disabled={loading}
-                  className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium py-3"
-                >
-                  {loading ? "Starting Tour..." : "Start Guided Tour"}
-                  <Target className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-
-              {/* Skip to App Option */}
-              <div className="bg-[var(--scholar-darker)] rounded-xl p-8 border border-gray-600 text-center">
-                <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Zap className="text-white w-8 h-8" />
+                
+                <div className="space-y-4">
+                  {/* Guided Tour Option */}
+                  <div className="bg-gradient-to-r from-[var(--scholar-gold)]/20 to-[var(--scholar-gold)]/5 rounded-lg p-4 border border-[var(--scholar-gold)]/20">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-[var(--scholar-gold)]/20 rounded-lg flex items-center justify-center">
+                        <Target className="text-[var(--scholar-gold)] w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-medium text-sm">Guided Tour</h3>
+                        <p className="text-gray-400 text-xs">Step-by-step walkthrough of all features</p>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setLoading(true);
+                        localStorage.setItem('show_tutorial', 'true');
+                        handleNext();
+                      }}
+                      disabled={loading}
+                      className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium py-2 text-sm"
+                    >
+                      {loading ? "Starting Tour..." : "Start Guided Tour"}
+                    </Button>
+                  </div>
+                  
+                  {/* Jump In Option */}
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                        <Zap className="text-gray-300 w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-medium text-sm">Jump Right In</h3>
+                        <p className="text-gray-400 text-xs">Start exploring immediately with help guides</p>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => {
+                        setLoading(true);
+                        localStorage.setItem('show_tutorial', 'false');
+                        handleNext();
+                      }}
+                      disabled={loading}
+                      variant="outline"
+                      className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 font-medium py-2 text-sm"
+                    >
+                      {loading ? "Starting..." : "Start Exploring"}
+                    </Button>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-white mb-4">Jump Right In</h3>
-                <p className="text-gray-300 mb-6">
-                  Skip the tour and start using The Scholar immediately. You can always access help guides from any page.
-                </p>
-                <div className="space-y-3 text-sm text-gray-400 mb-6">
-                  <div className="flex items-center justify-center space-x-2">
-                    <span>✓ Help guides on every page</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <span>✓ Context-sensitive tips</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <span>✓ Quick start suggestions</span>
-                  </div>
+                
+                <div className="flex justify-center">
+                  <Button 
+                    onClick={handlePrev}
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    Back
+                  </Button>
                 </div>
-                <Button 
-                  onClick={() => {
-                    setLoading(true);
-                    // Don't show tutorial
-                    localStorage.setItem('show_tutorial', 'false');
-                    handleNext();
-                  }}
-                  disabled={loading}
-                  variant="outline"
-                  className="w-full border-gray-500 text-gray-300 hover:bg-gray-700 font-medium py-3"
-                >
-                  {loading ? "Loading..." : "Skip to App"}
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <Button 
-                onClick={handlePrev}
-                variant="ghost"
-                className="text-gray-400 hover:text-white"
-              >
-                <ChevronLeft className="w-5 h-5 mr-2" />
-                Back to Features
-              </Button>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         );
 
@@ -329,32 +282,30 @@ export default function Welcome() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--scholar-black)] flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl bg-[var(--scholar-dark)] border-gray-800">
-        <CardContent className="p-8 md:p-12">
-          {renderStep()}
-          
-          {/* Progress Indicator */}
-          <div className="flex justify-center mt-12 space-x-2">
-            {[1, 2, 3].map((step) => (
-              <div
-                key={step}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  step === currentStep
-                    ? currentStep === 1 
-                      ? "bg-[var(--scholar-gold)]"
-                      : currentStep === 2
-                      ? "bg-green-600"
-                      : "bg-blue-600"
-                    : step < currentStep
-                    ? "bg-gray-500"
-                    : "bg-gray-700"
-                }`}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gradient-to-br from-[var(--scholar-black)] via-gray-900 to-[var(--scholar-black)] relative">
+      {/* Background overlay */}
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-3xl"></div>
+      
+      {/* Content */}
+      <div className="relative z-10">
+        {renderStep()}
+        
+        {/* Progress Indicator */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-black/40 backdrop-blur-xl rounded-full px-4 py-2 border border-white/10">
+          {[1, 2, 3].map((step) => (
+            <div
+              key={step}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                step === currentStep
+                  ? "bg-[var(--scholar-gold)] scale-125"
+                  : step < currentStep
+                  ? "bg-gray-400"
+                  : "bg-gray-600"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

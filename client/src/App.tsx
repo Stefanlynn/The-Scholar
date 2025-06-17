@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
+import { ScrollToTop } from "@/hooks/use-scroll-to-top";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import Library from "@/pages/library";
@@ -29,6 +30,7 @@ function AuthenticatedApp() {
 
   return (
     <UserPreferencesProvider>
+      <ScrollToTop />
       <Switch>
         <Route path="/welcome" component={Welcome} />
         <Route path="/" component={Home} />
@@ -80,11 +82,14 @@ function Router() {
 
   // If user is not authenticated, show auth pages
   return (
-    <Switch>
-      <Route path="/signup" component={Signup} />
-      <Route path="/login" component={Login} />
-      <Route component={Login} /> {/* Default to login */}
-    </Switch>
+    <>
+      <ScrollToTop />
+      <Switch>
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
+        <Route component={Login} /> {/* Default to login */}
+      </Switch>
+    </>
   );
 }
 
