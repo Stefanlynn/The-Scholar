@@ -41,105 +41,169 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
     {
       title: "Welcome to The Scholar",
       subtitle: "Your AI-powered biblical study companion",
-      icon: <img src={logoPath} alt="The Scholar" className="w-12 h-12" />,
-      content: "Discover a revolutionary way to study Scripture with AI-powered insights, expert theological voices, and comprehensive study tools designed for pastors, teachers, and Bible students.",
-      highlight: "Transform your Bible study experience",
+      icon: <div className="relative"><img src={logoPath} alt="The Scholar" className="w-16 h-16" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><Sparkles className="w-3 h-3 text-white" /></div></div>,
+      content: "The Scholar combines cutting-edge AI with deep theological scholarship to revolutionize your Bible study. Whether you're preparing sermons, leading studies, or growing personally, our platform adapts to your unique ministry needs with expert biblical insights.",
+      highlight: "AI meets Biblical Scholarship",
       gradient: "from-blue-600 to-purple-600",
       action: "Begin Tour",
+      keyFeatures: [
+        { title: "AI-Powered Insights", desc: "Get expert theological analysis instantly" },
+        { title: "Professional Tools", desc: "Seminary-level study features at your fingertips" },
+        { title: "Sermon Preparation", desc: "Transform notes into powerful messages" },
+        { title: "Personal Growth", desc: "Devotional insights for spiritual development" }
+      ],
       demoText: "Ready to explore God's Word like never before?"
     },
     {
-      title: "AI-Powered Chat",
-      subtitle: "Two modes for every study need",
-      icon: <MessageSquare className="w-12 h-12 text-blue-400" />,
-      content: "Experience biblical insights through Study Mode for deep theological analysis and Devotional Mode for personal spiritual encouragement. Switch modes instantly based on your study goals.",
-      highlight: "Expert voices adapt to your questions",
+      title: "Chat with The Scholar",
+      subtitle: "AI conversations that adapt to your study goals",
+      icon: <div className="relative"><MessageSquare className="w-16 h-16 text-blue-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center"><Target className="w-3 h-3 text-white" /></div></div>,
+      content: "Experience two distinct AI personalities designed for different study needs. Study Mode provides academic theological analysis with Greek/Hebrew insights, while Devotional Mode offers warm, encouraging personal application.",
+      highlight: "Two AI modes for every study need",
       gradient: "from-blue-500 to-cyan-500",
-      features: [
-        { icon: <Sparkles className="w-4 h-4" />, text: "Expert theological voices" },
-        { icon: <BookMarked className="w-4 h-4" />, text: "Greek/Hebrew word studies" },
-        { icon: <Target className="w-4 h-4" />, text: "Cross-references & commentary" },
-        { icon: <Heart className="w-4 h-4" />, text: "Personal application insights" }
+      keyFeatures: [
+        { title: "Study Mode", desc: "Deep theological analysis and academic insights" },
+        { title: "Devotional Mode", desc: "Heart-level encouragement and personal application" },
+        { title: "Expert Voices", desc: "AI channels different theological scholars" },
+        { title: "Save Responses", desc: "Keep important insights in your notes" }
+      ],
+      instructions: [
+        "Click the mode toggle at the top to switch between Study and Devotional",
+        "Ask any biblical question - from doctrine to daily application",
+        "Use 'Save to Notes' to keep important responses",
+        "Start new conversations with the 'New' button"
       ],
       action: "Continue Tour",
       demoText: "Ask anything about Scripture - from deep theology to daily application"
     },
     {
-      title: "Professional Bible Tools",
-      subtitle: "Seminary-level study features",
-      icon: <BookOpen className="w-12 h-12 text-green-400" />,
-      content: "Access the same tools used in seminaries and by biblical scholars. Get original language analysis, historical context, cross-references, and commentary for every verse in Scripture.",
-      highlight: "Professional study tools at your fingertips",
+      title: "Bible Study Tools",
+      subtitle: "Professional biblical analysis at your fingertips",
+      icon: <div className="relative"><BookOpen className="w-16 h-16 text-green-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center"><Search className="w-3 h-3 text-white" /></div></div>,
+      content: "Transform any verse into a comprehensive study session. Click on any verse to access Greek/Hebrew analysis, cross-references, commentary, cultural context, and more. It's like having a seminary library in your pocket.",
+      highlight: "Seminary-level tools for every verse",
       gradient: "from-green-500 to-emerald-500",
-      features: [
-        { icon: <Search className="w-4 h-4" />, text: "Original language analysis" },
-        { icon: <Target className="w-4 h-4" />, text: "Cross-reference networks" },
-        { icon: <BookMarked className="w-4 h-4" />, text: "Historical & cultural context" },
-        { icon: <MessageSquare className="w-4 h-4" />, text: "Verse-by-verse commentary" }
+      keyFeatures: [
+        { title: "Greek & Hebrew Analysis", desc: "Original language word studies with definitions" },
+        { title: "Cross-References", desc: "Related verses and thematic connections" },
+        { title: "Historical Context", desc: "Cultural background and historical setting" },
+        { title: "Ask The Scholar", desc: "Get AI insights about specific verses" }
+      ],
+      instructions: [
+        "Navigate to any Bible chapter using the book/chapter selector",
+        "Click on any verse number to open the study tools",
+        "Choose from 6 different analysis tools in the popup",
+        "Use 'Ask The Scholar' for specific questions about that verse"
       ],
       action: "Continue Tour",
       demoText: "Click any verse to unlock deep biblical insights"
     },
     {
-      title: "Notes & Sermon Workspace",
-      subtitle: "From notes to pulpit-ready sermons",
-      icon: <Edit3 className="w-12 h-12 text-purple-400" />,
-      content: "Transform your study notes into powerful sermons. Use AI enhancement to expand ideas, rewrite for clarity, add supporting verses, and adapt to different preaching styles.",
-      highlight: "Complete sermon preparation suite",
+      title: "Notes & Journaling",
+      subtitle: "Organize your thoughts and spiritual insights",
+      icon: <div className="relative"><FileText className="w-16 h-16 text-purple-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"><Edit3 className="w-3 h-3 text-white" /></div></div>,
+      content: "Capture and organize your biblical insights with our comprehensive note-taking system. Create study notes, write daily journal entries, and develop sermon outlines all in one organized workspace.",
+      highlight: "Three powerful writing tools in one place",
       gradient: "from-purple-500 to-pink-500",
-      features: [
-        { icon: <FileText className="w-4 h-4" />, text: "Smart note organization" },
-        { icon: <PenTool className="w-4 h-4" />, text: "Daily journal reflections" },
-        { icon: <Sparkles className="w-4 h-4" />, text: "AI-enhanced sermon writing" },
-        { icon: <Mic className="w-4 h-4" />, text: "Multiple preaching styles" }
+      keyFeatures: [
+        { title: "Study Notes", desc: "Organize insights by topic or scripture reference" },
+        { title: "Daily Journal", desc: "Record personal reflections and prayers" },
+        { title: "Sermon Workspace", desc: "Develop full sermons with AI assistance" },
+        { title: "Search & Filter", desc: "Find any note instantly with powerful search" }
+      ],
+      instructions: [
+        "Use the three tabs to switch between Notes, Journal, and Sermons",
+        "Click the + button to create new entries",
+        "Use the search bar to find specific notes quickly",
+        "In Sermon Workspace, highlight text to access AI enhancement tools"
       ],
       action: "Continue Tour",
       demoText: "Write, enhance, and perfect your messages with AI assistance"
     },
     {
+      title: "Sermon Preparation",
+      subtitle: "From outline to pulpit with AI assistance",
+      icon: <div className="relative"><Mic className="w-16 h-16 text-orange-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center"><Sparkles className="w-3 h-3 text-white" /></div></div>,
+      content: "Transform your study into powerful sermons using our AI-enhanced sermon workspace. Choose from different preaching styles, expand key points, add supporting scriptures, and create compelling illustrations - all with intelligent assistance.",
+      highlight: "AI-powered sermon development",
+      gradient: "from-orange-500 to-red-500",
+      keyFeatures: [
+        { title: "Writing Modes", desc: "Outline, Full Manuscript, or Bullet Points" },
+        { title: "AI Enhancement", desc: "Expand ideas, add verses, create illustrations" },
+        { title: "Preaching Styles", desc: "Prophetic, Teaching, Evangelistic, and more" },
+        { title: "Outline Builder", desc: "Structured format with points and applications" }
+      ],
+      instructions: [
+        "Go to Notes > Sermon Workspace tab to access sermon tools",
+        "Choose your writing mode (Outline/Manuscript/Bullets)",
+        "Highlight any text to see AI enhancement options",
+        "Use the Outline Builder sidebar for structured sermon format"
+      ],
+      action: "Continue Tour",
+      demoText: "Create sermons that connect hearts with heaven's truth"
+    },
+    {
       title: "Digital Library",
-      subtitle: "Comprehensive learning resources",
-      icon: <Library className="w-12 h-12 text-rose-400" />,
-      content: "Access a curated collection of devotionals, Bible reading plans, theology courses, and teaching resources. Everything organized for your spiritual growth and ministry preparation.",
+      subtitle: "Curated resources for spiritual growth",
+      icon: <div className="relative"><Library className="w-16 h-16 text-rose-400" /><div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center"><BookMarked className="w-3 h-3 text-white" /></div></div>,
+      content: "Access a carefully curated collection of spiritual resources designed for your growth and ministry effectiveness. From daily devotionals to theology courses, everything is organized for easy discovery and application.",
       highlight: "Endless learning opportunities",
       gradient: "from-rose-500 to-pink-500",
-      features: [
-        { icon: <Heart className="w-4 h-4" />, text: "Daily devotionals" },
-        { icon: <BookOpen className="w-4 h-4" />, text: "Bible reading plans" },
-        { icon: <Lightbulb className="w-4 h-4" />, text: "Theology crash courses" },
-        { icon: <Mic className="w-4 h-4" />, text: "Teaching resources" }
+      keyFeatures: [
+        { title: "Daily Devotionals", desc: "Structured spiritual growth content" },
+        { title: "Reading Plans", desc: "Guided Bible reading with context" },
+        { title: "Theology Courses", desc: "Deep dives into biblical doctrine" },
+        { title: "Teaching Resources", desc: "Ready-to-use materials for ministry" }
+      ],
+      instructions: [
+        "Browse featured content on the Library homepage",
+        "Explore different categories: Podcasts, Articles, Devotionals, Sermons",
+        "Track your progress through reading plans and courses",
+        "Save favorite resources for quick access later"
       ],
       action: "Continue Tour",
       demoText: "Discover resources tailored to your ministry and growth"
     },
     {
-      title: "Personal Profile",
-      subtitle: "Customize your study experience",
-      icon: <Settings className="w-12 h-12 text-teal-400" />,
-      content: "Make The Scholar truly yours. Set your preferred Bible translation, choose themes, configure ministry settings, and personalize your study environment for maximum effectiveness.",
+      title: "Settings & Customization",
+      subtitle: "Make The Scholar truly yours",
+      icon: <div className="relative"><Settings className="w-16 h-16 text-teal-400" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center"><User className="w-3 h-3 text-white" /></div></div>,
+      content: "Personalize your study environment to match your preferences and ministry context. Set your preferred Bible translation, customize the interface, and configure features to support your unique study style.",
       highlight: "Tailored to your preferences",
       gradient: "from-teal-500 to-cyan-500",
-      features: [
-        { icon: <BookOpen className="w-4 h-4" />, text: "Bible translation selection" },
-        { icon: <Settings className="w-4 h-4" />, text: "Theme & appearance" },
-        { icon: <User className="w-4 h-4" />, text: "Ministry role preferences" },
-        { icon: <Target className="w-4 h-4" />, text: "Study preferences" }
+      keyFeatures: [
+        { title: "Bible Translations", desc: "Choose from multiple trusted versions" },
+        { title: "Profile Settings", desc: "Customize your ministry information" },
+        { title: "App Tutorial", desc: "Restart this tour anytime" },
+        { title: "Support & Help", desc: "Access guides and contact support" }
+      ],
+      instructions: [
+        "Access Settings from the sidebar or mobile menu",
+        "Update your profile information and ministry role",
+        "Choose your preferred Bible translation",
+        "Use 'App Tutorial' to restart this guide anytime"
       ],
       action: "Continue Tour",
       demoText: "Personalize every aspect of your study experience"
     },
     {
-      title: "Ready to Begin",
-      subtitle: "Your biblical study journey starts now",
-      icon: <CheckCircle className="w-12 h-12 text-[var(--scholar-gold)]" />,
-      content: "You're now equipped with powerful tools for deep biblical study. Remember, help guides (?) are available on every page, and The Scholar is always ready to assist your spiritual journey.",
+      title: "You're Ready to Begin",
+      subtitle: "Start your enhanced Bible study journey",
+      icon: <div className="relative"><CheckCircle className="w-16 h-16 text-[var(--scholar-gold)]" /><div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center"><Heart className="w-3 h-3 text-white" /></div></div>,
+      content: "Congratulations! You now have the knowledge to harness The Scholar's full potential for your biblical study and ministry preparation. Remember, help guides (?) are available throughout the app, and every feature is designed to deepen your understanding of God's Word.",
       highlight: "Begin your transformed study experience",
       gradient: "from-yellow-500 to-orange-500",
-      features: [
-        { icon: <Target className="w-4 h-4" />, text: "Help guides on every page" },
-        { icon: <Lightbulb className="w-4 h-4" />, text: "Context-sensitive tips" },
-        { icon: <Play className="w-4 h-4" />, text: "Quick start suggestions" },
-        { icon: <MessageSquare className="w-4 h-4" />, text: "Expert AI assistance" }
+      keyFeatures: [
+        { title: "Help Guides", desc: "? buttons on every page for assistance" },
+        { title: "AI Chat", desc: "Ask questions anytime for instant insights" },
+        { title: "Progressive Learning", desc: "Features unlock as you explore" },
+        { title: "Continuous Updates", desc: "New features and content added regularly" }
+      ],
+      quickStart: [
+        "Start with a question in Chat to break the ice",
+        "Browse to your favorite Bible passage and explore the tools",
+        "Create your first note or journal entry",
+        "Check out the Library for devotional content"
       ],
       action: "Start Studying",
       demoText: "The Lord has great things in store for your study time"
@@ -169,7 +233,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-[var(--scholar-black)] overflow-y-auto">
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${currentTutorialStep.gradient} opacity-10`} />
       
@@ -178,125 +242,173 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         onClick={handleSkip}
         variant="ghost"
         size="sm"
-        className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-white z-20"
+        className="fixed top-4 right-4 text-gray-400 hover:text-white z-20 bg-black/20 backdrop-blur-sm"
       >
         <X className="h-4 w-4" />
       </Button>
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-3 sm:px-6 h-screen flex flex-col justify-center">
-        {/* Progress Bar */}
-        <div className="flex items-center space-x-1 sm:space-x-2 mb-4 sm:mb-6">
-          {tutorialSteps.map((_, index) => (
-            <div key={index} className="flex-1 relative">
-              <div
-                className={`h-1 rounded-full transition-all duration-500 ${
-                  index <= currentStep 
-                    ? "bg-[var(--scholar-gold)]"
-                    : "bg-gray-700"
-                }`}
-              />
-              {index <= currentStep && (
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
-              )}
-            </div>
-          ))}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Progress Bar - Fixed at top */}
+        <div className="sticky top-0 bg-[var(--scholar-black)]/80 backdrop-blur-sm border-b border-gray-800/50 px-4 sm:px-6 py-4">
+          <div className="flex items-center space-x-1 sm:space-x-2 max-w-6xl mx-auto">
+            {tutorialSteps.map((_, index) => (
+              <div key={index} className="flex-1 relative">
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    index <= currentStep 
+                      ? "bg-[var(--scholar-gold)]"
+                      : "bg-gray-700"
+                  }`}
+                />
+                {index <= currentStep && (
+                  <div className="absolute -top-1 -right-0.5 w-3 h-3 bg-[var(--scholar-gold)] rounded-full animate-pulse" />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-3">
+            <span className="text-sm text-gray-400">Step {currentStep + 1} of {tutorialSteps.length}</span>
+          </div>
         </div>
 
-        {/* Main Content - Compact Layout */}
-        <div className="text-center space-y-3 sm:space-y-4 flex-1 flex flex-col justify-center">
-          {/* Icon */}
-          <div className="relative">
-            <div className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-full flex items-center justify-center shadow-xl`}>
-              {currentTutorialStep.icon}
+        {/* Main Content - Scrollable */}
+        <div className="flex-1 px-4 sm:px-6 py-8 max-w-6xl mx-auto w-full">
+          {/* Header Section */}
+          <div className="text-center mb-8">
+            {/* Icon with enhanced styling */}
+            <div className="mb-6">
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br ${currentTutorialStep.gradient} rounded-2xl flex items-center justify-center shadow-2xl relative overflow-hidden`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                {currentTutorialStep.icon}
+              </div>
+            </div>
+
+            {/* Title and Subtitle */}
+            <div className="space-y-3 mb-6">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                {currentTutorialStep.title}
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-400 font-medium">
+                {currentTutorialStep.subtitle}
+              </p>
+            </div>
+
+            {/* Highlight Badge */}
+            <div className={`inline-flex items-center px-6 py-3 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-lg shadow-lg mb-8`}>
+              <Sparkles className="w-5 h-5 mr-2" />
+              <span>{currentTutorialStep.highlight}</span>
             </div>
           </div>
 
-          {/* Title and Subtitle - Compact */}
-          <div className="space-y-1 sm:space-y-2">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">
-              {currentTutorialStep.title}
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-400 font-medium">
-              {currentTutorialStep.subtitle}
+          {/* Content Description */}
+          <div className="max-w-4xl mx-auto mb-10">
+            <p className="text-gray-300 text-lg sm:text-xl leading-relaxed text-center">
+              {currentTutorialStep.content}
             </p>
           </div>
 
-          {/* Highlight Badge - Compact */}
-          <div className={`inline-flex items-center px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full text-white font-semibold text-xs sm:text-sm shadow-lg`}>
-            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span>{currentTutorialStep.highlight}</span>
-          </div>
-
-          {/* Content - Shorter */}
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto px-2">
-            {currentTutorialStep.content}
-          </p>
-
-          {/* Features Grid - Compact */}
-          {currentTutorialStep.features && (
-            <div className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-gray-800/50 max-w-xl mx-auto">
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {currentTutorialStep.features.slice(0, 4).map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-2 text-gray-300">
-                    <div className={`p-1 bg-gradient-to-br ${currentTutorialStep.gradient} rounded flex-shrink-0`}>
-                      {feature.icon}
-                    </div>
-                    <span className="font-medium text-xs sm:text-sm">{feature.text}</span>
+          {/* Key Features Grid */}
+          {currentTutorialStep.keyFeatures && (
+            <div className="max-w-5xl mx-auto mb-10">
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">Key Features</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {currentTutorialStep.keyFeatures.map((feature, index) => (
+                  <div key={index} className="bg-[var(--scholar-dark)]/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+                    <h4 className="text-lg font-semibold text-white mb-2">{feature.title}</h4>
+                    <p className="text-gray-400">{feature.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Demo Text - Compact */}
-          <div className="bg-[var(--scholar-darker)]/80 rounded-lg p-3 sm:p-4 border-l-4 border-[var(--scholar-gold)] max-w-xl mx-auto">
-            <p className="text-[var(--scholar-gold)] font-medium italic text-xs sm:text-sm">
-              "{currentTutorialStep.demoText}"
-            </p>
+          {/* Instructions */}
+          {currentTutorialStep.instructions && (
+            <div className="max-w-4xl mx-auto mb-10">
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">How to Use</h3>
+              <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50">
+                <div className="space-y-4">
+                  {currentTutorialStep.instructions.map((instruction, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className={`w-6 h-6 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+                        {index + 1}
+                      </div>
+                      <p className="text-gray-300">{instruction}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Start (for final step) */}
+          {currentTutorialStep.quickStart && (
+            <div className="max-w-4xl mx-auto mb-10">
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">Quick Start Guide</h3>
+              <div className="bg-[var(--scholar-dark)]/30 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {currentTutorialStep.quickStart.map((tip, index) => (
+                    <div key={index} className="flex items-center space-x-3 text-gray-300">
+                      <div className={`p-2 bg-gradient-to-r ${currentTutorialStep.gradient} rounded-lg flex-shrink-0`}>
+                        <CheckCircle className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm">{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Demo Text */}
+          <div className="max-w-3xl mx-auto mb-10">
+            <div className="bg-[var(--scholar-darker)]/80 backdrop-blur-sm rounded-xl p-6 border-l-4 border-[var(--scholar-gold)] text-center">
+              <p className="text-[var(--scholar-gold)] font-medium italic text-lg">
+                "{currentTutorialStep.demoText}"
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Navigation - Fixed Bottom */}
-        <div className="flex items-center justify-between pt-4 pb-6">
-          <Button
-            onClick={handlePrev}
-            disabled={currentStep === 0}
-            variant="outline"
-            className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all text-xs sm:text-sm ${
-              currentStep === 0 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-            Previous
-          </Button>
-
-          {/* Step Counter - Center */}
-          <div className="flex items-center space-x-1 text-xs sm:text-sm">
-            <span className="text-gray-500">{currentStep + 1}</span>
-            <span className="text-gray-600">/</span>
-            <span className="text-gray-500">{tutorialSteps.length}</span>
-          </div>
-
-          <div className="flex space-x-2">
+        {/* Navigation - Fixed at bottom */}
+        <div className="sticky bottom-0 bg-[var(--scholar-black)]/90 backdrop-blur-sm border-t border-gray-800/50 px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
             <Button
-              onClick={handleSkip}
-              variant="ghost"
-              className="text-gray-400 hover:text-white text-xs sm:text-sm"
+              onClick={handlePrev}
+              disabled={currentStep === 0}
+              variant="outline"
+              size="lg"
+              className={`border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all ${
+                currentStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+              }`}
             >
-              Skip
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Previous
             </Button>
-            
-            <Button
-              onClick={handleNext}
-              className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-lg transition-all font-semibold text-xs sm:text-sm px-4 sm:px-6`}
-            >
-              {currentTutorialStep.action}
-              {currentStep < tutorialSteps.length - 1 ? (
-                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
-              ) : (
-                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
-              )}
-            </Button>
+
+            <div className="flex space-x-4">
+              <Button
+                onClick={handleSkip}
+                variant="ghost"
+                size="lg"
+                className="text-gray-400 hover:text-white transition-all hover:scale-105"
+              >
+                Skip Tour
+              </Button>
+              
+              <Button
+                onClick={handleNext}
+                size="lg"
+                className={`bg-gradient-to-r ${currentTutorialStep.gradient} text-white hover:shadow-xl transition-all hover:scale-105 font-semibold px-8`}
+              >
+                {currentTutorialStep.action}
+                {currentStep < tutorialSteps.length - 1 ? (
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 ml-2" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
