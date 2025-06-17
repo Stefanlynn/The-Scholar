@@ -11,6 +11,7 @@ const navigation = [
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
   { name: "Profile", href: "/profile", icon: User },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar() {

@@ -1,0 +1,118 @@
+🔐 Privacy Policy
+
+Effective Date: 2025
+
+Welcome to The Scholar. This Privacy Policy explains how we collect, use, and protect your personal information when you use our app and website.
+
+1. Information We Collect
+	•	Name and email address (when you sign up)
+	•	Notes, study preferences, and saved content
+	•	Chat history with the Scholar assistant
+	•	Device data (IP address, browser type, usage patterns)
+
+2. How We Use Your Data
+	•	To personalize your Bible study and teaching experience
+	•	To improve the app and user interface
+	•	To respond to support requests
+	•	To send optional updates or devotionals
+
+3. AI Interaction
+
+Your interactions with the Scholar are private. We do not store permanent records of chats unless you choose to save them.
+
+4. Sharing Information
+
+We do not sell your personal information. We work only with secure third-party tools (e.g. Supabase, Gemini, Bible APIs) to deliver core features.
+
+5. Your Rights
+
+You may request to view, edit, or delete your data by emailing support@thescholar.com.
+
+6. Changes
+
+We may occasionally update this policy. Continued use implies acceptance of any future revisions.
+
+⸻
+
+📄 Terms of Use
+
+Last Updated: 2025
+
+By using The Scholar, you agree to the following terms:
+
+1. Eligibility
+
+You must be 13 or older to use this app.
+
+2. Usage Guidelines
+
+You agree not to:
+	•	Use the app to spread harmful or false information
+	•	Misuse AI tools for unethical purposes
+	•	Upload illegal, offensive, or plagiarized content
+
+3. Content Ownership
+
+Content generated through The Scholar (e.g., notes, outlines, sermons) is yours to use for educational and ministry purposes. The AI responses are for personal use and not to be resold.
+
+4. Disclaimers
+
+The Scholar is a study tool. It is not a replacement for your own spiritual discernment, pastoral oversight, or theological education.
+
+5. Limitation of Liability
+
+We are not responsible for decisions made based on the information or responses provided by this app.
+
+⸻
+
+🍪 Cookies Policy
+
+The Scholar uses cookies to improve your experience.
+
+What Are Cookies?
+
+Cookies are small files stored on your device that help us:
+	•	Keep you logged in
+	•	Remember your preferences
+	•	Analyze performance and engagement
+
+Managing Cookies
+
+You can disable cookies in your browser settings. This may affect some features of the app.
+
+⸻
+
+ℹ️ About The Scholar
+
+The Scholar is a digital tool for those called to rightly divide the Word of truth.
+
+Built for pastors, teachers, students, and spiritual leaders, The Scholar offers:
+	•	AI-powered study and interpretation tools
+	•	Deep-dive features like Greek/Hebrew word studies, sermon builders, and cultural context
+	•	Devotional and teaching resources curated for impact
+
+We believe that combining timeless truth with modern tools can transform how we engage Scripture.
+
+⸻
+
+📬 Contact Support
+
+Have a question, need help, or want to suggest a feature?
+
+Email us at:
+support@thescholar.com
+
+We typically respond within 1–2 business days.
+
+⸻
+
+🗑️ Delete My Account
+
+We’re sorry to see you go. To delete your account and all associated data:
+	1.	Email support@thescholar.com
+	2.	Use the subject line: Delete My Account
+	3.	Include the email you used to sign up
+
+We’ll confirm and permanently delete your account within 7 days.
+
+Note: This action is irreversible.

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap } from "lucide-react";
+import { BookOpen, Book, Library, FileText, MessageSquare, User, GraduationCap, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
@@ -10,7 +10,7 @@ const navigation = [
   { name: "Bible", href: "/bible", icon: Book },
   { name: "Library", href: "/library", icon: Library },
   { name: "Notes", href: "/notes", icon: FileText },
-  { name: "Profile", href: "/profile", icon: User },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function MobileTabBar() {
