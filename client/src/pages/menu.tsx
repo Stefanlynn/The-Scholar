@@ -4,41 +4,24 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/sidebar";
 import MobileNavMenu from "@/components/mobile-nav-menu";
 import { 
-  Bookmark, 
+  User, 
+  Share, 
+  Info, 
   Users, 
-  Eye, 
-  MapPin, 
-  Sun, 
-  Headphones, 
-  Play, 
-  Award, 
-  Zap, 
+  Heart, 
+  HelpCircle, 
   Settings,
   ArrowLeft
 } from "lucide-react";
 
-const menuSections = [
-  {
-    items: [
-      { name: "Saved", icon: Bookmark, href: "/notes" },
-      { name: "Add Friends", icon: Users, action: "friends" },
-      { name: "Following", icon: Eye, action: "following" },
-      { name: "Events", icon: MapPin, action: "events" }
-    ]
-  },
-  {
-    items: [
-      { name: "Verse of the Day", icon: Sun, action: "verse" },
-      { name: "Prayer", icon: Headphones, action: "prayer" },
-      { name: "Videos", icon: Play, action: "videos" }
-    ]
-  },
-  {
-    items: [
-      { name: "Badges", icon: Award, action: "badges" },
-      { name: "Bible App Activity", icon: Zap, action: "activity" }
-    ]
-  }
+const menuItems = [
+  { name: "Profile", icon: User, href: "/profile" },
+  { name: "Share The Scholar", icon: Share, action: "share" },
+  { name: "About", href: "/settings/about", icon: Info },
+  { name: "Community", icon: Users, action: "community" },
+  { name: "Donate", icon: Heart, action: "donate" },
+  { name: "Help", icon: HelpCircle, action: "help" },
+  { name: "Settings", href: "/settings", icon: Settings }
 ];
 
 export default function Menu() {
@@ -56,13 +39,13 @@ export default function Menu() {
         }
         break;
       case 'community':
-        // Add community action here
+        window.open('https://discord.gg/thescholar', '_blank');
         break;
       case 'donate':
-        // Add donate action here  
+        window.open('https://www.paypal.com/donate/?business=4B4KSV8XQNMYY&no_recurring=0&currency_code=USD', '_blank');
         break;
       case 'help':
-        // Add help action here
+        window.open('mailto:support@thescholar.com?subject=Help%20Request', '_blank');
         break;
     }
   };
@@ -78,60 +61,56 @@ export default function Menu() {
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-6">More</h1>
             
             <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl p-6 mb-6">
-              <h2 className="text-xl font-semibold text-white mb-3">Access the Full Experience</h2>
+              <h2 className="text-xl font-semibold text-white mb-3">Support The Scholar</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Create a free account to add friends, access thousands of 
-                devotionals, sync highlights, and download Bibles to read offline. No 
-                ads, paywalls, or purchases—ever!
+                Your donation helps us keep The Scholar free, build new tools for Bible study and sermon preparation, and empower pastors, teachers, and students around the world.
+                Thank you for sowing into this Kingdom resource.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/settings">
-                  <Button className="bg-white text-black hover:bg-gray-100 font-medium px-6">
-                    Create Account
-                  </Button>
-                </Link>
+                <Button 
+                  className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium px-6"
+                  onClick={() => handleMenuAction('donate')}
+                >
+                  Make a Donation
+                </Button>
                 <Button 
                   variant="ghost" 
                   className="text-white hover:bg-gray-700/50"
-                  onClick={() => handleMenuAction('help')}
+                  onClick={() => handleMenuAction('share')}
                 >
-                  Sign In
+                  Share with Others
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Menu Items */}
-          <div className="space-y-6">
-            {menuSections.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="space-y-1">
-                {section.items.map((item) => {
-                  const Icon = item.icon;
-                  
-                  if (item.href) {
-                    return (
-                      <Link key={item.name} href={item.href}>
-                        <div className="flex items-center space-x-4 p-4 hover:bg-gray-800/50 transition-colors cursor-pointer">
-                          <Icon className="w-6 h-6 text-gray-400" />
-                          <span className="text-white font-medium">{item.name}</span>
-                        </div>
-                      </Link>
-                    );
-                  }
-                  
-                  return (
-                    <div 
-                      key={item.name} 
-                      className="flex items-center space-x-4 p-4 hover:bg-gray-800/50 transition-colors cursor-pointer"
-                      onClick={() => handleMenuAction(item.action!)}
-                    >
+          <div className="space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              
+              if (item.href) {
+                return (
+                  <Link key={item.name} href={item.href}>
+                    <div className="flex items-center space-x-4 p-4 hover:bg-gray-800/50 transition-colors cursor-pointer">
                       <Icon className="w-6 h-6 text-gray-400" />
                       <span className="text-white font-medium">{item.name}</span>
                     </div>
-                  );
-                })}
-              </div>
-            ))}
+                  </Link>
+                );
+              }
+              
+              return (
+                <div 
+                  key={item.name} 
+                  className="flex items-center space-x-4 p-4 hover:bg-gray-800/50 transition-colors cursor-pointer"
+                  onClick={() => handleMenuAction(item.action!)}
+                >
+                  <Icon className="w-6 h-6 text-gray-400" />
+                  <span className="text-white font-medium">{item.name}</span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Back Navigation */}
