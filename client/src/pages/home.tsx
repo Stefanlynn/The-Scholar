@@ -5,7 +5,6 @@ import MobileNavMenu from "@/components/mobile-nav-menu";
 import WeeklyDonationPopup from "@/components/weekly-donation-popup";
 import AppTutorial from "@/components/app-tutorial";
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
@@ -45,12 +44,9 @@ export default function Home() {
             </div>
             <div className="flex items-center">
               <Link href="/profile">
-                <Button 
-                  className="bg-gray-700 text-white hover:bg-gray-600 p-2 rounded-full"
-                  title="Profile"
-                >
-                  <User className="h-4 w-4" />
-                </Button>
+                <div className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center cursor-pointer transition-colors">
+                  <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+                </div>
               </Link>
             </div>
           </div>
