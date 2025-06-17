@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import Library from "@/pages/library";
@@ -94,14 +95,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <div className="bg-[var(--scholar-black)] text-white min-h-screen">
-            <Toaster />
-            <Router />
-          </div>
-        </TooltipProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <div className="min-h-screen">
+              <Toaster />
+              <Router />
+            </div>
+          </TooltipProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
