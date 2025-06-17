@@ -32,8 +32,10 @@ export default function ChatInterface() {
   const [savedButtons, setSavedButtons] = useState<Set<number>>(new Set());
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
   const [scholarMode, setScholarMode] = useState<"study" | "devotional">("study");
-  const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordedTranscript, setRecordedTranscript] = useState("");
+  const [showRecordingControls, setShowRecordingControls] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -75,10 +77,14 @@ export default function ChatInterface() {
         recognition.interimResults = false;
         recognition.lang = 'en-US';
         
-        recognition.onstart = () => setIsListening(true);
-        recognition.onend = () => setIsListening(false);
+        recognition.onstart = () => setIsRecording(true);
+        recognition.onend = () => {
+          setIsRecording(false);
+          setShowRecordingControls(true);
+        };
         recognition.onerror = (event: any) => {
-          setIsListening(false);
+          setIsRecording(false);
+          setShowRecordingControls(false);
           toast({
             title: "Voice Recognition Error",
             description: "Please try again or check microphone permissions.",
@@ -88,17 +94,7 @@ export default function ChatInterface() {
         
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
-          setMessage(transcript);
-          // Create a synthetic form submission event to trigger existing flow
-          setTimeout(() => {
-            if (transcript.trim()) {
-              const form = document.querySelector('form');
-              if (form) {
-                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                form.dispatchEvent(submitEvent);
-              }
-            }
-          }, 100);
+          setRecordedTranscript(transcript);
         };
         
         recognitionRef.current = recognition;
@@ -122,7 +118,7 @@ export default function ChatInterface() {
 
   // Handle speaking response with voice synthesis
   const speakResponse = (text: string) => {
-    if (!synthRef.current || !isVoiceMode) return;
+    if (!synthRef.current) return;
     
     // Cancel any ongoing speech
     synthRef.current.cancel();
@@ -168,8 +164,8 @@ export default function ChatInterface() {
     }
   };
 
-  // Start voice input
-  const startListening = () => {
+  // Start recording voice input
+  const startRecording = () => {
     if (!recognitionRef.current) {
       toast({
         title: "Voice Recognition Not Supported",
@@ -179,34 +175,43 @@ export default function ChatInterface() {
       return;
     }
     
-    setMessage(""); // Clear text input
+    setRecordedTranscript("");
+    setShowRecordingControls(false);
     recognitionRef.current.start();
   };
 
-  // Stop voice input
-  const stopListening = () => {
+  // Stop recording
+  const stopRecording = () => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
   };
 
-  // Toggle voice mode
-  const toggleVoiceMode = () => {
-    const newVoiceMode = !isVoiceMode;
-    setIsVoiceMode(newVoiceMode);
-    
-    if (!newVoiceMode) {
-      // Exiting voice mode - stop any ongoing speech or listening
-      stopSpeaking();
-      stopListening();
+  // Play back recorded audio (simulate with text-to-speech)
+  const playRecording = () => {
+    if (recordedTranscript && synthRef.current) {
+      const utterance = new SpeechSynthesisUtterance(recordedTranscript);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+      synthRef.current.speak(utterance);
     }
-    
-    toast({
-      title: newVoiceMode ? "Voice Mode Activated" : "Voice Mode Deactivated",
-      description: newVoiceMode 
-        ? "You can now speak to The Scholar and hear responses" 
-        : "Switched back to text mode",
-    });
+  };
+
+  // Send recorded message
+  const sendRecording = () => {
+    if (recordedTranscript.trim()) {
+      setMessage(recordedTranscript);
+      sendMessageMutation.mutate(recordedTranscript);
+      setShowRecordingControls(false);
+      setRecordedTranscript("");
+    }
+  };
+
+  // Delete recording
+  const deleteRecording = () => {
+    setRecordedTranscript("");
+    setShowRecordingControls(false);
   };
 
   const sendMessageMutation = useMutation({
@@ -247,8 +252,8 @@ export default function ChatInterface() {
       setMessage("");
       adjustTextareaHeight();
       
-      // Speak the response if in voice mode
-      if (isVoiceMode && data.response) {
+      // Always speak the response when it comes from voice input
+      if (data.response && message === recordedTranscript && recordedTranscript) {
         speakResponse(data.response);
       }
       
@@ -573,68 +578,93 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Voice Mode Visual Indicator */}
-      {isVoiceMode && (
-        <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 pointer-events-none z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(245,200,66,0.1),transparent_70%)]" />
-          {isListening && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-32 h-32 rounded-full bg-[var(--scholar-gold)]/20 animate-pulse flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-[var(--scholar-gold)]/40 animate-ping flex items-center justify-center">
-                  <Mic className="w-10 h-10 text-[var(--scholar-gold)]" />
-                </div>
+      {/* Recording Visual Indicator */}
+      {isRecording && (
+        <div className="fixed inset-0 bg-gradient-to-br from-red-900/20 to-purple-900/20 pointer-events-none z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent_70%)]" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-32 h-32 rounded-full bg-red-500/20 animate-pulse flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-red-500/40 animate-ping flex items-center justify-center">
+                <Mic className="w-10 h-10 text-red-500" />
               </div>
-              <p className="text-center mt-4 text-[var(--scholar-gold)] font-medium">Listening...</p>
             </div>
-          )}
-          {isSpeaking && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-32 h-32 rounded-full bg-[var(--scholar-gold)]/20 animate-pulse flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-[var(--scholar-gold)]/40 animate-ping flex items-center justify-center">
-                  <Volume2 className="w-10 h-10 text-[var(--scholar-gold)]" />
-                </div>
-              </div>
-              <p className="text-center mt-4 text-[var(--scholar-gold)] font-medium">The Scholar is speaking...</p>
+            <p className="text-center mt-4 text-red-500 font-medium">Recording...</p>
+            <div className="flex justify-center mt-4 space-x-2">
+              {/* Simulated waveform */}
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '20px', animationDelay: '0s'}}></div>
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '35px', animationDelay: '0.1s'}}></div>
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '15px', animationDelay: '0.2s'}}></div>
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '40px', animationDelay: '0.3s'}}></div>
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '25px', animationDelay: '0.4s'}}></div>
+              <div className="w-1 bg-red-500 animate-pulse" style={{height: '30px', animationDelay: '0.5s'}}></div>
             </div>
-          )}
+          </div>
+        </div>
+      )}
+
+      {/* Recording Controls */}
+      {showRecordingControls && recordedTranscript && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-20 p-4">
+          <div className="bg-[var(--scholar-dark)] rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-white text-lg font-semibold mb-4">Voice Message</h3>
+            <div className="bg-[var(--scholar-darker)] rounded-lg p-3 mb-4">
+              <p className="text-gray-300 text-sm">{recordedTranscript}</p>
+            </div>
+            <div className="flex justify-center space-x-3">
+              <Button
+                onClick={playRecording}
+                variant="outline"
+                className="border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black px-4 py-2"
+              >
+                <Volume2 className="mr-2 h-4 w-4" />
+                Listen
+              </Button>
+              <Button
+                onClick={sendRecording}
+                className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 px-4 py-2"
+              >
+                <Send className="mr-2 h-4 w-4" />
+                Send
+              </Button>
+              <Button
+                onClick={deleteRecording}
+                variant="destructive"
+                className="px-4 py-2"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Speaking Indicator */}
+      {isSpeaking && (
+        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="bg-[var(--scholar-gold)] text-black px-4 py-2 rounded-full flex items-center space-x-2">
+            <Volume2 className="w-4 h-4 animate-pulse" />
+            <span className="text-sm font-medium">The Scholar is speaking...</span>
+            <Button
+              onClick={stopSpeaking}
+              size="sm"
+              variant="ghost"
+              className="text-black hover:bg-yellow-600 p-1 h-6 w-6"
+            >
+              ×
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Chat Input */}
       <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6 flex-shrink-0 border-t border-gray-800">
-        {/* Voice Mode Controls */}
-        <div className="flex justify-center mb-4 space-x-4">
-          <Button
-            onClick={toggleVoiceMode}
-            variant={isVoiceMode ? "default" : "outline"}
-            className={`${
-              isVoiceMode 
-                ? "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500" 
-                : "border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black"
-            } px-4 py-2`}
-          >
-            {isVoiceMode ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
-            {isVoiceMode ? "Exit Voice Mode" : "Voice Mode"}
-          </Button>
-          
-          {isVoiceMode && isSpeaking && (
-            <Button
-              onClick={stopSpeaking}
-              variant="destructive"
-              className="px-4 py-2"
-            >
-              <Volume2 className="mr-2 h-4 w-4" />
-              Stop Speaking
-            </Button>
-          )}
-        </div>
-
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
                 ref={textareaRef}
-                placeholder={isVoiceMode ? "Voice mode active - use microphone or type..." : "Ask The Scholar about Scripture..."}
+                placeholder="Ask The Scholar about Scripture..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -644,20 +674,18 @@ export default function ChatInterface() {
               />
               
               {/* Voice Input Button */}
-              {isVoiceMode && (
-                <Button
-                  type="button"
-                  onClick={isListening ? stopListening : startListening}
-                  disabled={sendMessageMutation.isPending}
-                  className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full ${
-                    isListening 
-                      ? "bg-red-500 hover:bg-red-600 text-white animate-pulse" 
-                      : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
-                  }`}
-                >
-                  {isListening ? <MicOff className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <Mic className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
-                </Button>
-              )}
+              <Button
+                type="button"
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={sendMessageMutation.isPending}
+                className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full ${
+                  isRecording 
+                    ? "bg-red-500 hover:bg-red-600 text-white animate-pulse" 
+                    : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                }`}
+              >
+                {isRecording ? <MicOff className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <Mic className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
+              </Button>
               
               {/* Send Button */}
               <Button

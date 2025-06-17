@@ -384,15 +384,15 @@ Changelog:
   * Implemented password strength validation and confirmation matching
   * Added success states with automatic redirect to login after password update
   * All pages follow Scholar design system with consistent branding and user experience
-- June 17, 2025: Added comprehensive voice conversation functionality with Siri-like experience
-  * Integrated Web Speech API for speech recognition and synthesis capabilities
-  * Created voice mode toggle with visual indicators and Scholar-themed animations
-  * Added full-screen overlay with pulsing microphone and speaker icons during voice interactions
-  * Implemented automatic speech-to-text transcription with form submission integration
-  * Built text-to-speech synthesis for Scholar responses with markdown cleanup
-  * Added voice control buttons with listening/speaking states and visual feedback
-  * Created seamless voice conversation flow maintaining same AI parameters as text chat
-  * Voice mode supports both Study Mode and Devotional Mode conversation styles
+- June 17, 2025: Redesigned voice conversation interface to match ChatGPT/Siri experience
+  * Replaced complex voice mode with simple microphone button in chat input
+  * Added recording visual indicator with animated waveform and red pulsing microphone
+  * Created voice message preview dialog with Listen, Send, and Delete options
+  * Implemented automatic voice response from The Scholar when using voice input
+  * Added speaking indicator with stop option for interrupting Scholar responses
+  * Built seamless voice workflow: record → preview transcript → listen back → send/delete
+  * Voice responses maintain same expert voice adaptation and AI parameters as text chat
+  * Optimized speech synthesis with markdown cleanup for natural voice delivery
 ```
 
 ## User Preferences
