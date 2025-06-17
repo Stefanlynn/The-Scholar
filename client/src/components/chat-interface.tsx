@@ -402,7 +402,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Chat Input */}
-      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-24 md:pb-4 lg:pb-6">
+      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-16 md:pb-4 lg:pb-6">
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
