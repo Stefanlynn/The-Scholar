@@ -1198,7 +1198,7 @@ Convert this into bullet format with:
 
 // Generate AI response using Google's Generative AI with Bible API integration
 async function generateAIResponse(message: string, mode: string = "study"): Promise<string> {
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+  const GOOGLE_API_KEY = process.env.GOOGLE_AI_API_KEY;
   const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
   
   if (!GOOGLE_API_KEY) {
