@@ -352,7 +352,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
+  // Bible study tools endpoint - separate from main chat to prevent content mixing
+  app.post("/api/bible/study-tools", authenticateUser, async (req, res) => {
+    try {
+      const { message, mode = "study" } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+      
+      // Generate AI response for Bible study tools only (no storage)
+      const aiResponse = await generateAIResponse(message, mode);
+      
+      // Return response without storing in chat history
+      res.json({ response: aiResponse });
+    } catch (error) {
+      console.error('Bible study tools error:', error);
+      res.status(500).json({ error: "Failed to generate study analysis" });
+    }
+  });
 
   // Sermon enhancement endpoint for AI-powered sermon workspace features
   app.post("/api/chat/enhance", async (req, res) => {
