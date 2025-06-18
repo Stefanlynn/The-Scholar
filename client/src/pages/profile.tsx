@@ -88,9 +88,7 @@ export default function Profile() {
       const formData = new FormData();
       formData.append('profilePicture', file);
       
-      const response = await apiRequest("POST", "/api/profile/upload", formData, {
-        headers: {} // Let browser set Content-Type for FormData
-      });
+      const response = await apiRequest("POST", "/api/profile/upload", formData);
       return response.json();
     },
     onSuccess: (data) => {
@@ -224,12 +222,6 @@ export default function Profile() {
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
-                      className="hidden"
-                    />
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
                       className="hidden"
                     />
                   </div>
