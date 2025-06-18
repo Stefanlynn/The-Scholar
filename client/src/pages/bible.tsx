@@ -1098,7 +1098,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Study Tools Dialog */}
         <Dialog open={!!selectedVerse} onOpenChange={() => setSelectedVerse(null)}>
-          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl !w-[calc(100vw-2rem)] sm:!w-[90vw] max-h-[calc(100vh-4rem)] overflow-y-auto !left-4 !right-4 !translate-x-0 sm:!left-1/2 sm:!translate-x-[-50%] top-1/2 !translate-y-[-50%] rounded-xl shadow-2xl [&>button]:hidden">
+          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl max-h-[95vh] overflow-y-auto">
             <DialogHeader className="border-b border-[var(--scholar-gold)]/20 pb-4">
               <DialogTitle className="text-[var(--scholar-gold)] flex items-center text-xl">
                 <GraduationCap className="h-6 w-6 mr-3" />
@@ -1345,7 +1345,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Response Dialog */}
         <Dialog open={showScholarDialog} onOpenChange={setShowScholarDialog}>
-          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-4xl !w-[calc(100vw-2rem)] sm:!w-[90vw] max-h-[calc(100vh-4rem)] overflow-y-auto !left-4 !right-4 !translate-x-0 sm:!left-1/2 sm:!translate-x-[-50%] top-1/2 !translate-y-[-50%] rounded-xl shadow-2xl [&>button]:hidden">
+          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center justify-between">
                 <div className="flex items-center">
