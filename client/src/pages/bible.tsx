@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { getBibleChapter } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Search, 
   ChevronLeft, 
@@ -256,16 +257,7 @@ export default function Bible() {
   const scholarMutation = useMutation({
     mutationFn: async (query: string) => {
       setScholarLoading(true);
-      const response = await fetch('/api/chat/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      const response = await apiRequest("POST", "/api/chat/send", { message: query });
       return response.json();
     },
     onSuccess: (data) => {
@@ -287,16 +279,7 @@ export default function Bible() {
   const inlineScholarMutation = useMutation({
     mutationFn: async (query: string) => {
       setInlineScholarLoading(true);
-      const response = await fetch('/api/chat/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query, mode: "study" })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      const response = await apiRequest("POST", "/api/chat/send", { message: query, mode: "study" });
       return response.json();
     },
     onSuccess: (data) => {
