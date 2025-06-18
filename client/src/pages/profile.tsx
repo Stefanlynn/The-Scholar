@@ -1,389 +1,348 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  User, 
-  Settings, 
-  Mail, 
-  Calendar, 
-  MapPin, 
-  Globe, 
-  Phone, 
-  Edit, 
-  Camera, 
-  BookOpen,
-  Heart,
-  Star,
-  Trophy,
-  Clock,
-  CheckCircle,
-  Upload
-} from "lucide-react";
+import { User, Settings, Mail, Eye, EyeOff, Lock, Bell } from "lucide-react";
 import type { User as UserType } from "@shared/schema";
+import { supabase } from "@/lib/supabase";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const { preferences, updatePreferences } = useUserPreferences();
   const { toast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Password change state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { data: profile, isLoading } = useQuery<UserType>({
     queryKey: ["/api/profile"],
     enabled: !!user,
   });
 
-  const updateProfileMutation = useMutation({
-    mutationFn: async (data: Partial<UserType>) => {
-      const response = await apiRequest("PATCH", "/api/profile", data);
-      return response.json();
+  // Password change mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: async ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) => {
+      // First verify current password by attempting to sign in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user?.email || "",
+        password: currentPassword
+      });
+      
+      if (signInError) {
+        throw new Error("Current password is incorrect");
+      }
+      
+      // Update password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+      
+      return { success: true };
     },
     onSuccess: () => {
-      toast({ title: "Profile updated successfully!" });
-      setIsEditing(false);
-      // Invalidate all user-related queries to update the entire app
-      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/sermons"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bookmarks"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/library"] });
+      toast({ title: "Password updated successfully!" });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowPasswordForm(false);
     },
-    onError: () => {
-      toast({ title: "Failed to update profile", variant: "destructive" });
+    onError: (error: Error) => {
+      toast({ 
+        title: "Failed to update password", 
+        description: error.message,
+        variant: "destructive" 
+      });
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      fullName: formData.get("fullName") as string,
-      email: formData.get("email") as string,
-      bio: formData.get("bio") as string,
-      location: formData.get("location") as string,
-      website: formData.get("website") as string,
-      phone: formData.get("phone") as string,
-      ministryRole: formData.get("ministryRole") as string,
-      defaultBibleTranslation: formData.get("defaultBibleTranslation") as string,
-      darkMode: formData.get("darkMode") === "on",
-      notifications: formData.get("notifications") === "on",
-    };
-    updateProfileMutation.mutate(data);
-  };
-
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
+    
+    if (newPassword !== confirmPassword) {
+      toast({ 
+        title: "Passwords don't match", 
+        description: "Please ensure both password fields match",
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast({ 
+        title: "Password too short", 
+        description: "Password must be at least 6 characters long",
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    changePasswordMutation.mutate({ currentPassword, newPassword });
   };
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-white">Loading profile...</div>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-400">Loading profile...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-3 md:py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 md:space-x-4">
-            <h2 className="text-lg md:text-xl font-semibold text-white">Profile</h2>
-          </div>
-          <div className="flex items-center space-x-2 md:space-x-3">
-            {!isEditing ? (
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 px-3 md:px-4"
-              >
-                <Edit className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Edit Profile</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setIsEditing(false)}
-                variant="outline"
-                className="border-gray-600 text-white hover:bg-gray-700 px-3 md:px-4"
-              >
-                Cancel
-              </Button>
-            )}
+    <div className="min-h-screen bg-[var(--scholar-black)] text-white p-4 pb-20 md:pb-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--scholar-gold)] flex items-center">
+              <User className="h-7 w-7 mr-3" />
+              Profile
+            </h1>
+            <p className="text-gray-400 mt-1">Manage your account settings and preferences</p>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
-        
-        {/* User Info Section */}
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
+        {/* Basic Information */}
+        <Card className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20">
           <CardHeader>
-            <CardTitle className="text-white flex items-center">
+            <CardTitle className="text-[var(--scholar-gold)] flex items-center">
               <User className="h-5 w-5 mr-2" />
-              User Information
+              Account Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                <Input
+                  value={profile?.fullName || ""}
+                  disabled
+                  className="bg-[var(--scholar-dark)] border-gray-600 text-gray-300"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                <div className="flex items-center">
+                  <Mail className="h-4 w-4 text-gray-500 mr-2" />
+                  <Input
+                    value={user?.email || ""}
+                    disabled
+                    className="bg-[var(--scholar-dark)] border-gray-600 text-gray-300"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Password Change Section */}
+        <Card className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20">
+          <CardHeader>
+            <CardTitle className="text-[var(--scholar-gold)] flex items-center justify-between">
+              <div className="flex items-center">
+                <Lock className="h-5 w-5 mr-2" />
+                Password & Security
+              </div>
+              {!showPasswordForm && (
+                <Button
+                  onClick={() => setShowPasswordForm(true)}
+                  variant="outline"
+                  size="sm"
+                  className="border-[var(--scholar-gold)] text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)] hover:text-black"
+                >
+                  Change Password
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {isEditing ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
-                    {profile?.profilePicture ? (
-                      <img 
-                        src={profile.profilePicture} 
-                        alt="Profile" 
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="text-gray-400 text-2xl" />
-                    )}
-                  </div>
-                  <div>
-                    <Button
-                      type="button"
-                      onClick={handleFileUpload}
-                      variant="outline"
-                      className="border-gray-600 text-white hover:bg-gray-700"
-                    >
-                      <Camera className="h-4 w-4 mr-2" />
-                      Change Photo
-                    </Button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Full Name</label>
-                    <Input
-                      name="fullName"
-                      defaultValue={profile?.fullName || user?.user_metadata?.full_name || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Email</label>
-                    <Input
-                      name="email"
-                      type="email"
-                      defaultValue={profile?.email || user?.email || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Phone</label>
-                    <Input
-                      name="phone"
-                      defaultValue={profile?.phone || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Location</label>
-                    <Input
-                      name="location"
-                      defaultValue={profile?.location || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Website</label>
-                    <Input
-                      name="website"
-                      defaultValue={profile?.website || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Ministry Role</label>
-                    <Select name="ministryRole" defaultValue={profile?.ministryRole || ""}>
-                      <SelectTrigger className="bg-[var(--scholar-darker)] border-gray-600 text-white">
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pastor">Pastor</SelectItem>
-                        <SelectItem value="teacher">Teacher</SelectItem>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="leader">Ministry Leader</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
+            {showPasswordForm ? (
+              <form onSubmit={handlePasswordChange} className="space-y-4">
                 <div>
-                  <label className="text-white text-sm font-medium mb-2 block">Bio</label>
-                  <Textarea
-                    name="bio"
-                    defaultValue={profile?.bio || ""}
-                    className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    rows={3}
-                  />
-                </div>
-
-                <Separator className="bg-gray-700" />
-
-                <div className="space-y-4">
-                  <h3 className="text-white font-medium">Preferences</h3>
-                  
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Default Bible Translation</label>
-                    <Select name="defaultBibleTranslation" defaultValue={profile?.defaultBibleTranslation || "NIV"}>
-                      <SelectTrigger className="bg-[var(--scholar-darker)] border-gray-600 text-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="NIV">NIV</SelectItem>
-                        <SelectItem value="ESV">ESV</SelectItem>
-                        <SelectItem value="KJV">KJV</SelectItem>
-                        <SelectItem value="NASB">NASB</SelectItem>
-                        <SelectItem value="NLT">NLT</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <label className="text-white text-sm font-medium">Dark Mode</label>
-                    <Switch name="darkMode" defaultChecked={profile?.darkMode ?? true} />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <label className="text-white text-sm font-medium">Notifications</label>
-                    <Switch name="notifications" defaultChecked={profile?.notifications ?? true} />
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Current Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="bg-[var(--scholar-dark)] border-gray-600 text-white pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    >
+                      {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex justify-end space-x-3 pt-4">
-                  <Button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    variant="outline"
-                    className="border-gray-600 text-white hover:bg-gray-700"
-                  >
-                    Cancel
-                  </Button>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">New Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="bg-[var(--scholar-dark)] border-gray-600 text-white pr-10"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    >
+                      {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Confirm New Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="bg-[var(--scholar-dark)] border-gray-600 text-white pr-10"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3 pt-2">
                   <Button
                     type="submit"
-                    disabled={updateProfileMutation.isPending}
+                    disabled={changePasswordMutation.isPending}
                     className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
                   >
-                    {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+                    {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowPasswordForm(false);
+                      setCurrentPassword("");
+                      setNewPassword("");
+                      setConfirmPassword("");
+                    }}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Cancel
                   </Button>
                 </div>
               </form>
             ) : (
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-700 rounded-full flex items-center justify-center">
-                    {profile?.profilePicture ? (
-                      <img 
-                        src={profile.profilePicture} 
-                        alt="Profile" 
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="text-gray-400 text-xl md:text-2xl" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-white text-lg md:text-xl font-semibold">
-                      {profile?.fullName || user?.user_metadata?.full_name || "User"}
-                    </h3>
-                    <p className="text-gray-400 text-sm md:text-base">
-                      {profile?.ministryRole || "Member"}
-                    </p>
-                    {profile?.isPremiumMember && (
-                      <Badge className="mt-1 bg-[var(--scholar-gold)] text-black">Premium</Badge>
-                    )}
-                  </div>
-                </div>
-
-                {profile?.bio && (
-                  <div>
-                    <h4 className="text-white font-medium mb-2">About</h4>
-                    <p className="text-gray-300 text-sm">{profile.bio}</p>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  {profile?.email && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Mail className="h-4 w-4" />
-                      <span>{profile.email}</span>
-                    </div>
-                  )}
-                  {profile?.phone && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Phone className="h-4 w-4" />
-                      <span>{profile.phone}</span>
-                    </div>
-                  )}
-                  {profile?.location && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <MapPin className="h-4 w-4" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-                  {profile?.website && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Globe className="h-4 w-4" />
-                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--scholar-gold)]">
-                        {profile.website}
-                      </a>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <p className="text-gray-400">Password was last updated recently. Click "Change Password" to update it.</p>
             )}
           </CardContent>
         </Card>
 
         {/* Account Settings */}
-        <Card className="bg-[var(--scholar-dark)] border-gray-700">
+        <Card className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20">
           <CardHeader>
-            <CardTitle className="text-white flex items-center">
+            <CardTitle className="text-[var(--scholar-gold)] flex items-center">
               <Settings className="h-5 w-5 mr-2" />
               Account Settings
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white font-medium">Bible Translation</p>
-                <p className="text-gray-400 text-sm">{profile?.defaultBibleTranslation || "NIV"}</p>
-              </div>
-            </div>
+          <CardContent className="space-y-6">
             
+            {/* Bible Translation */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-medium">Dark Mode</p>
-                <p className="text-gray-400 text-sm">{profile?.darkMode ? "Enabled" : "Disabled"}</p>
+                <h3 className="font-medium text-white">Default Bible Translation</h3>
+                <p className="text-sm text-gray-400">Choose your preferred Bible translation for study</p>
               </div>
+              <Select 
+                value={preferences.defaultBibleTranslation} 
+                onValueChange={(value) => updatePreferences({ defaultBibleTranslation: value })}
+              >
+                <SelectTrigger className="w-32 bg-[var(--scholar-dark)] border-gray-600">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="KJV">KJV</SelectItem>
+                  <SelectItem value="NIV">NIV</SelectItem>
+                  <SelectItem value="ESV">ESV</SelectItem>
+                  <SelectItem value="NASB">NASB</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            
+
+            <Separator className="bg-gray-700" />
+
+            {/* Dark Mode */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-medium">Notifications</p>
-                <p className="text-gray-400 text-sm">{profile?.notifications ? "Enabled" : "Disabled"}</p>
+                <h3 className="font-medium text-white">Dark Mode</h3>
+                <p className="text-sm text-gray-400">Toggle between light and dark theme</p>
               </div>
+              <Switch
+                checked={preferences.darkMode}
+                onCheckedChange={(checked) => updatePreferences({ darkMode: checked })}
+              />
+            </div>
+
+            <Separator className="bg-gray-700" />
+
+            {/* Notifications */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-white">Notifications</h3>
+                <p className="text-sm text-gray-400">Receive updates and reminders</p>
+              </div>
+              <Switch
+                checked={preferences.notifications}
+                onCheckedChange={(checked) => updatePreferences({ notifications: checked })}
+              />
+            </div>
+
+            <Separator className="bg-gray-700" />
+
+            {/* Sign Out */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-white">Sign Out</h3>
+                <p className="text-sm text-gray-400">Sign out of your Scholar account</p>
+              </div>
+              <Button
+                onClick={signOut}
+                variant="outline"
+                className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white"
+              >
+                Sign Out
+              </Button>
             </div>
           </CardContent>
         </Card>
