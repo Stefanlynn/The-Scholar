@@ -1,5 +1,8 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import { storage } from "./storage";
 import { 
   insertChatMessageSchema, 
@@ -32,6 +35,36 @@ declare global {
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Configure multer for file uploads
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage_multer = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage_multer,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  }
+});
 
 // Middleware to verify user authentication
 async function authenticateUser(req: Request, res: Response, next: NextFunction) {
@@ -189,7 +222,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const updateData = updateUserProfileSchema.parse(req.body);
       
-      const updatedUser = await storage.updateUser(req.user.id, updateData);
+      const updatedUser = await storage.updateUser(req.user!.id, updateData);
       if (!updatedUser) {
         return res.status(404).json({ error: "Failed to update user" });
       }
@@ -198,6 +231,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  // Add PATCH endpoint for profile updates (what the frontend expects)
+  app.patch("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const updateData = updateUserProfileSchema.parse(req.body);
+      
+      const updatedUser = await storage.updateUser(req.user!.id, updateData);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Failed to update user" });
+      }
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  // Profile picture upload endpoint
+  app.post("/api/profile/upload-picture", authenticateUser, upload.single('profilePicture'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const imageUrl = `/uploads/${req.file.filename}`;
+      
+      const updatedUser = await storage.updateUser(req.user!.id, { 
+        profilePicture: imageUrl 
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Failed to update user" });
+      }
+      
+      res.json({ profilePicture: imageUrl });
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      res.status(500).json({ error: "Failed to upload profile picture" });
     }
   });
 
