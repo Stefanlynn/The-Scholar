@@ -37,7 +37,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Configure multer for file uploads (skip in serverless environments)
-const uploadDir = path.join(process.cwd(), 'uploads');
+const uploadDir = process.env.NETLIFY ? '/tmp' : path.join(process.cwd(), 'uploads');
 if (!process.env.NETLIFY && !fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

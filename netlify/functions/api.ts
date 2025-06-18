@@ -4,6 +4,11 @@ import serverless from 'serverless-http';
 import cors from 'cors';
 import { registerRoutes } from '../../server/routes';
 
+// Set serverless environment flag early
+process.env.NETLIFY = 'true';
+
+// Force rebuild with filesystem fixes - June 18, 2025 v2
+
 // Create app instance
 const app = express();
 
