@@ -592,44 +592,77 @@ export default function Notes() {
                   Create New
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>{editingNote ? "Edit Note" : "Create New Note"}</DialogTitle>
+              <DialogContent className="bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 border border-gray-700/50 backdrop-blur-xl text-white max-w-2xl shadow-2xl">
+                <DialogHeader className="pb-6">
+                  <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white via-gray-100 to-blue-200 bg-clip-text text-transparent">
+                    {editingNote ? "Edit Note" : "Create New Note"}
+                  </DialogTitle>
+                  <p className="text-gray-400 text-sm mt-2">
+                    {activeTab === 'journal' 
+                      ? "Capture your daily spiritual insights and reflections"
+                      : "Record your biblical study notes and discoveries"
+                    }
+                  </p>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Title</label>
                     <Input
                       name="title"
-                      placeholder="Note title"
+                      placeholder={activeTab === 'journal' ? "Today's reflection title..." : "Study topic or passage..."}
                       defaultValue={editingNote?.title || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 h-12"
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Content</label>
                     <Textarea
                       name="content"
-                      placeholder="Write your note here..."
+                      placeholder={
+                        activeTab === 'journal' 
+                          ? "What is God speaking to your heart today? Write your thoughts, prayers, and insights..."
+                          : "Record your study notes, insights, and key takeaways from Scripture..."
+                      }
                       defaultValue={editingNote?.content || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white min-h-[200px] resize-none"
+                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 min-h-[200px] resize-none leading-relaxed"
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Tags</label>
                     <Input
                       name="tags"
-                      placeholder="Tags (comma-separated)"
+                      placeholder={activeTab === 'journal' ? "gratitude, prayer, growth..." : "prayer, prophecy, wisdom..."}
                       defaultValue={editingNote?.tags?.join(", ") || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
                     />
+                    <p className="text-xs text-gray-500">Separate tags with commas to organize your notes</p>
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 w-full"
-                    disabled={createNoteMutation.isPending || updateNoteMutation.isPending}
-                  >
-                    {editingNote ? "Update Note" : "Create Note"}
-                  </Button>
+                  <div className="flex space-x-3 pt-4">
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsDialogOpen(false)}
+                      className="flex-1 border-gray-600/50 text-gray-300 hover:bg-gray-700/50 hover:border-gray-500/50"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className={`flex-1 font-semibold shadow-lg ${
+                        activeTab === 'journal' 
+                          ? 'bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white'
+                          : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                      }`}
+                      disabled={createNoteMutation.isPending || updateNoteMutation.isPending}
+                    >
+                      {createNoteMutation.isPending || updateNoteMutation.isPending 
+                        ? "Saving..." 
+                        : editingNote ? "Update Note" : "Create Note"
+                      }
+                    </Button>
+                  </div>
                 </form>
               </DialogContent>
             </Dialog>
