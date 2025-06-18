@@ -258,7 +258,7 @@ export default function Bible() {
   const scholarMutation = useMutation({
     mutationFn: async (query: string) => {
       setScholarLoading(true);
-      const response = await apiRequest("POST", "/api/chat/send", { message: query });
+      const response = await apiRequest("POST", "/api/chat/messages", { message: query });
       return response.json();
     },
     onSuccess: (data) => {
@@ -280,7 +280,7 @@ export default function Bible() {
   const inlineScholarMutation = useMutation({
     mutationFn: async (query: string) => {
       setInlineScholarLoading(true);
-      const response = await apiRequest("POST", "/api/chat/send", { message: query, mode: "study" });
+      const response = await apiRequest("POST", "/api/chat/messages", { message: query, mode: "study" });
       return response.json();
     },
     onSuccess: (data) => {

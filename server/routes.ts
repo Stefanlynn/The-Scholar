@@ -352,41 +352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Study tools endpoint for Bible analysis requests
-  app.post("/api/chat/send", authenticateUser, async (req, res) => {
-    try {
-      const { message } = req.body;
-      
-      if (!message || typeof message !== 'string') {
-        return res.status(400).json({ error: "Message is required" });
-      }
 
-      const user = await storage.getUserByEmail(req.user!.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const messageData = insertChatMessageSchema.parse({
-        message: message,
-        userId: user.id
-      });
-      
-      // Generate AI response using the same system as chat
-      const aiResponse = await generateAIResponse(messageData.message);
-      messageData.response = aiResponse;
-      
-      // Store the study tool request and response
-      const chatMessage = await storage.createChatMessage(messageData);
-      res.json({ 
-        success: true, 
-        message: chatMessage,
-        response: aiResponse 
-      });
-    } catch (error) {
-      console.error("Study tools API error:", error);
-      res.status(500).json({ error: "Failed to process study request" });
-    }
-  });
 
   // Sermon enhancement endpoint for AI-powered sermon workspace features
   app.post("/api/chat/enhance", async (req, res) => {
