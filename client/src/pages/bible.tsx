@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { getBibleChapter } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { 
   Search, 
   ChevronLeft, 
@@ -65,9 +66,10 @@ const highlightColors = [
 ];
 
 export default function Bible() {
+  const { preferences } = useUserPreferences();
   const [selectedBook, setSelectedBook] = useState("Matthew");
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const [selectedTranslation, setSelectedTranslation] = useState("kjv");
+  const [selectedTranslation, setSelectedTranslation] = useState(preferences.defaultBibleTranslation);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVerse, setSelectedVerse] = useState<any>(null);
   const [verseNote, setVerseNote] = useState("");
@@ -205,8 +207,12 @@ export default function Bible() {
   };
 
   const { data: chapterData, isLoading } = useQuery({
-    queryKey: ["/api/bible", selectedBook, selectedChapter, selectedTranslation],
-    queryFn: () => getBibleChapter(selectedBook, selectedChapter, selectedTranslation),
+    queryKey: ["/api/bible/text", selectedBook, selectedChapter, selectedTranslation],
+    queryFn: async () => {
+      const response = await fetch(`/api/bible/text?book=${encodeURIComponent(selectedBook)}&chapter=${selectedChapter}&translation=${selectedTranslation}`);
+      if (!response.ok) throw new Error('Failed to fetch Bible text');
+      return response.json();
+    },
     enabled: !!selectedBook && !!selectedChapter,
   });
 
