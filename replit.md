@@ -430,6 +430,13 @@ Changelog:
   * Enhanced mode toggle with pill-shaped design, backdrop blur, and golden glow effects
   * Simplified mode labels to "Study" and "Devotional" for cleaner appearance
   * Added smooth transitions and hover states for premium user experience
+- June 18, 2025: Implemented proper desktop/mobile layout separation with sidebar navigation
+  * Added desktop sidebar navigation visible on screens md+ with full feature access
+  * Fixed chat interface button layout with proper spacing between microphone and send buttons
+  * Updated tutorial and help system to include comprehensive voice conversation documentation
+  * Desktop now shows persistent sidebar with navigation links while mobile uses bottom tab bar
+  * Chat interface adapts layout: fixed positioning on mobile, relative on desktop
+  * Enhanced button container with flex layout preventing overlap and improving visual hierarchy
 ```
 
 ## User Preferences
