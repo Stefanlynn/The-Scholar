@@ -5,6 +5,7 @@ interface VoiceSpeechRecognition {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
+  maxAlternatives?: number;
   start(): void;
   stop(): void;
   abort(): void;
@@ -75,9 +76,13 @@ export default function ChatInterface() {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition() as VoiceSpeechRecognition;
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
+        // Set max alternatives if supported
+        if ('maxAlternatives' in recognition) {
+          (recognition as any).maxAlternatives = 3;
+        }
         
         recognition.onstart = () => {
           setIsRecording(true);
@@ -110,24 +115,35 @@ export default function ChatInterface() {
           let interimTranscript = '';
           
           for (let i = event.resultIndex; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
+            // Get the most confident alternative
+            let bestTranscript = event.results[i][0].transcript;
+            let bestConfidence = event.results[i][0].confidence || 0;
+            
+            // Check other alternatives for higher confidence
+            for (let j = 1; j < event.results[i].length; j++) {
+              const altConfidence = event.results[i][j].confidence || 0;
+              if (altConfidence > bestConfidence) {
+                bestTranscript = event.results[i][j].transcript;
+                bestConfidence = altConfidence;
+              }
+            }
+            
             if (event.results[i].isFinal) {
-              finalTranscript += transcript;
+              finalTranscript += bestTranscript;
             } else {
-              interimTranscript += transcript;
+              interimTranscript += bestTranscript;
             }
           }
           
-          if (finalTranscript) {
-            setRecordedTranscript(finalTranscript);
-            currentTranscriptRef.current = finalTranscript;
+          if (finalTranscript.trim()) {
+            setRecordedTranscript(finalTranscript.trim());
+            currentTranscriptRef.current = finalTranscript.trim();
             // Auto-stop recording when we get final result
-            recognition.stop();
-          } else {
+            setTimeout(() => recognition.stop(), 500);
+          } else if (interimTranscript.trim()) {
             // Show interim results while speaking
-            const currentText = interimTranscript;
-            setRecordedTranscript(currentText);
-            currentTranscriptRef.current = currentText;
+            setRecordedTranscript(interimTranscript.trim());
+            currentTranscriptRef.current = interimTranscript.trim();
           }
         };
         
@@ -216,7 +232,7 @@ export default function ChatInterface() {
   };
 
   // Start recording voice input
-  const startRecording = () => {
+  const startRecording = async () => {
     if (!recognitionRef.current) {
       toast({
         title: "Voice Recognition Not Supported",
@@ -226,8 +242,28 @@ export default function ChatInterface() {
       return;
     }
     
+    // Check microphone permission and quality
+    try {
+      await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 44100
+        } 
+      });
+    } catch (error) {
+      toast({
+        title: "Microphone Access Required",
+        description: "Please allow microphone access. Try speaking closer to your device in a quiet environment.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // Reset all voice states
     setRecordedTranscript("");
+    currentTranscriptRef.current = "";
     setShowRecordingControls(false);
     setIsRecording(false);
     
@@ -241,7 +277,15 @@ export default function ChatInterface() {
     // Start new recognition after a brief delay
     setTimeout(() => {
       if (recognitionRef.current) {
-        recognitionRef.current.start();
+        try {
+          recognitionRef.current.start();
+        } catch (error) {
+          toast({
+            title: "Speech Recognition Error",
+            description: "Please try again. Ensure you're in a quiet environment and speak clearly.",
+            variant: "destructive",
+          });
+        }
       }
     }, 100);
   };
@@ -693,7 +737,9 @@ export default function ChatInterface() {
               </div>
             </div>
             <p className="text-red-500 font-medium mt-4">Recording...</p>
-            <p className="text-gray-400 text-sm mt-2">Speak now, recording will auto-stop when you finish</p>
+            <p className="text-gray-400 text-sm mt-2 max-w-md mx-auto text-center">
+              Speak clearly and close to your device. Pause briefly between sentences.
+            </p>
             
             {/* Live transcript preview */}
             {recordedTranscript && (
