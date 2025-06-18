@@ -847,7 +847,7 @@ export default function ChatInterface() {
                 className="group relative w-9 h-9 bg-black/10 hover:bg-black/20 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
                 title="Pause"
               >
-                <div className="text-lg leading-none">⏸</div>
+                <Pause className="w-4 h-4" />
                 <div className="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-black/20 transition-all duration-200"></div>
               </button>
               
@@ -856,7 +856,7 @@ export default function ChatInterface() {
                 className="group relative w-9 h-9 bg-black/10 hover:bg-black/20 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
                 title="Stop"
               >
-                <div className="text-lg leading-none font-bold">×</div>
+                <Square className="w-4 h-4" />
                 <div className="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-black/20 transition-all duration-200"></div>
               </button>
             </div>
