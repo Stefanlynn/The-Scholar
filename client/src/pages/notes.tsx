@@ -13,23 +13,357 @@ import PageHelp from "@/components/page-help";
 import { apiRequest } from "@/lib/queryClient";
 import type { Note, InsertNote } from "@shared/schema";
 
-// Sermon Workspace Component (simplified for now)
+// Sermon Workspace Component with full functionality
 function SermonWorkspace() {
+  const [currentSermon, setCurrentSermon] = useState({
+    title: "",
+    scripture: "",
+    theme: "",
+    body: "",
+    outline: ""
+  });
+  const [writingMode, setWritingMode] = useState<'outline' | 'manuscript' | 'bullets'>('outline');
+  const [preachingStyle, setPreachingStyle] = useState<'prophetic' | 'teaching' | 'evangelistic' | 'youth' | 'devotional'>('teaching');
+  const [selectedText, setSelectedText] = useState("");
+  const [previousContent, setPreviousContent] = useState("");
+  const [enhanceLoading, setEnhanceLoading] = useState(false);
+  const [showOutlineBuilder, setShowOutlineBuilder] = useState(false);
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim()) {
+      setSelectedText(selection.toString().trim());
+    }
+  };
+
+  const handleEnhancement = async (action: string) => {
+    if (!selectedText.trim()) {
+      alert("Please select text first to enhance it.");
+      return;
+    }
+
+    setEnhanceLoading(true);
+    setPreviousContent(currentSermon.body);
+
+    try {
+      const response = await fetch('/api/chat/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: selectedText,
+          action: action,
+          style: preachingStyle,
+          context: currentSermon.theme
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const enhancedText = data.response;
+        
+        // Replace selected text with enhanced version
+        const newBody = currentSermon.body.replace(selectedText, enhancedText);
+        setCurrentSermon(prev => ({ ...prev, body: newBody }));
+        setSelectedText("");
+      }
+    } catch (error) {
+      console.error('Enhancement failed:', error);
+    } finally {
+      setEnhanceLoading(false);
+    }
+  };
+
+  const handleUndo = () => {
+    if (previousContent) {
+      setCurrentSermon(prev => ({ ...prev, body: previousContent }));
+      setPreviousContent("");
+    }
+  };
+
+  const handleStyleRewrite = async () => {
+    if (!currentSermon.body.trim()) {
+      alert("Please write some content first before applying a style.");
+      return;
+    }
+
+    setEnhanceLoading(true);
+    setPreviousContent(currentSermon.body);
+
+    try {
+      const response = await fetch('/api/chat/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: currentSermon.body,
+          action: 'rewrite_style',
+          style: preachingStyle,
+          context: currentSermon.theme,
+          title: currentSermon.title,
+          scripture: currentSermon.scripture
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentSermon(prev => ({ ...prev, body: data.response }));
+      }
+    } catch (error) {
+      console.error('Style rewrite failed:', error);
+    } finally {
+      setEnhanceLoading(false);
+    }
+  };
+
+  const copyContent = () => {
+    const fullSermon = `${currentSermon.title}\n\nScripture: ${currentSermon.scripture}\nTheme: ${currentSermon.theme}\n\n${currentSermon.body}`;
+    navigator.clipboard.writeText(fullSermon);
+  };
+
+  const downloadSermon = () => {
+    const fullSermon = `${currentSermon.title}\n\nScripture: ${currentSermon.scripture}\nTheme: ${currentSermon.theme}\n\n${currentSermon.body}`;
+    const blob = new Blob([fullSermon], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${currentSermon.title || 'sermon'}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-white">Sermon Workspace</h2>
-      </div>
-      <Card className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-orange-500/20 border-[var(--scholar-gold)]/50 p-8 text-center">
-        <div className="w-16 h-16 bg-[var(--scholar-gold)]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-          <Mic className="w-8 h-8 text-[var(--scholar-gold)]" />
+        <div className="flex items-center space-x-3">
+          <Button
+            onClick={() => setShowOutlineBuilder(!showOutlineBuilder)}
+            variant="outline"
+            className="border-[var(--scholar-gold)]/50 text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
+          >
+            {showOutlineBuilder ? "Hide Outline" : "Outline Builder"}
+          </Button>
+          <Button
+            onClick={copyContent}
+            variant="outline"
+            className="border-gray-600 text-gray-300 hover:bg-gray-700/50"
+          >
+            Copy All
+          </Button>
+          <Button
+            onClick={downloadSermon}
+            className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black"
+          >
+            Download
+          </Button>
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">Sermon Builder</h3>
-        <p className="text-gray-400 mb-6">Create powerful sermons with AI assistance, multiple writing modes, and preaching style adaptation</p>
-        <Button className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black">
-          Start Building Sermon
-        </Button>
-      </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Editor */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Sermon Details */}
+          <Card className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-orange-500/20 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
+            <CardContent className="p-6 space-y-4">
+              <Input
+                placeholder="Sermon Title"
+                value={currentSermon.title}
+                onChange={(e) => setCurrentSermon(prev => ({ ...prev, title: e.target.value }))}
+                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white text-lg font-semibold placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+              />
+              <Input
+                placeholder="Scripture Reference (e.g., John 3:16-21)"
+                value={currentSermon.scripture}
+                onChange={(e) => setCurrentSermon(prev => ({ ...prev, scripture: e.target.value }))}
+                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+              />
+              <Input
+                placeholder="Main Theme or Focus"
+                value={currentSermon.theme}
+                onChange={(e) => setCurrentSermon(prev => ({ ...prev, theme: e.target.value }))}
+                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Writing Mode & Style Selector */}
+          <Card className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border-purple-700/50 hover:border-purple-500/70 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Writing Mode */}
+                <div>
+                  <label className="text-sm font-medium text-white mb-3 block">Writing Mode</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: 'outline', label: 'Outline', desc: 'Structured points' },
+                      { value: 'manuscript', label: 'Full Text', desc: 'Complete sermon' },
+                      { value: 'bullets', label: 'Bullets', desc: 'Key points only' }
+                    ].map((mode) => (
+                      <button
+                        key={mode.value}
+                        onClick={() => setWritingMode(mode.value as any)}
+                        className={`p-3 rounded-lg text-sm transition-all ${
+                          writingMode === mode.value
+                            ? 'bg-purple-500/40 border border-purple-400/70 text-white shadow-lg'
+                            : 'bg-gray-800/30 border border-gray-600/30 text-gray-300 hover:text-white hover:bg-gray-700/50 hover:border-gray-500/50'
+                        }`}
+                      >
+                        <div className="font-medium">{mode.label}</div>
+                        <div className="text-xs opacity-75">{mode.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Preaching Style */}
+                <div>
+                  <label className="text-sm font-medium text-white mb-3 block">Preaching Style</label>
+                  <select
+                    value={preachingStyle}
+                    onChange={(e) => setPreachingStyle(e.target.value as any)}
+                    className="w-full p-3 bg-gray-900/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500/70"
+                  >
+                    <option value="prophetic">Prophetic - Bold & Revelatory</option>
+                    <option value="teaching">Teaching - Educational & Deep</option>
+                    <option value="evangelistic">Evangelistic - Salvation Focus</option>
+                    <option value="youth">Youth/Modern - Engaging & Relevant</option>
+                    <option value="devotional">Devotional - Heart & Worship</option>
+                  </select>
+                  <Button
+                    onClick={handleStyleRewrite}
+                    disabled={enhanceLoading || !currentSermon.body.trim()}
+                    className="w-full mt-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white shadow-lg"
+                  >
+                    {enhanceLoading ? "Rewriting..." : "Rewrite in Selected Style"}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Main Text Editor */}
+          <Card className="bg-gradient-to-br from-slate-900/40 to-gray-900/40 border-slate-700/50 hover:border-slate-500/70 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Sermon Content</h3>
+                <div className="flex items-center space-x-2">
+                  {previousContent && (
+                    <Button
+                      onClick={handleUndo}
+                      variant="outline"
+                      size="sm"
+                      className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20 hover:border-yellow-400/70"
+                    >
+                      Undo
+                    </Button>
+                  )}
+                  {selectedText && (
+                    <Badge variant="secondary" className="bg-blue-500/30 text-blue-300 text-xs shadow-lg">
+                      Text Selected
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <Textarea
+                placeholder={
+                  writingMode === 'outline' 
+                    ? "I. Introduction\n   A. Hook/Opening\n   B. Context\n\nII. Main Point 1\n   A. Scripture\n   B. Application\n\nIII. Conclusion\n   A. Summary\n   B. Call to Action"
+                    : writingMode === 'manuscript'
+                    ? "Write your complete sermon manuscript here. Select text and use the AI tools to enhance specific sections..."
+                    : "• Opening thought\n• Key point 1\n• Key point 2\n• Closing application"
+                }
+                value={currentSermon.body}
+                onChange={(e) => setCurrentSermon(prev => ({ ...prev, body: e.target.value }))}
+                onMouseUp={handleTextSelection}
+                onKeyUp={handleTextSelection}
+                className="bg-gray-900/60 border-slate-600/50 text-white min-h-[400px] resize-none font-mono text-sm leading-relaxed placeholder-gray-400 focus:border-slate-400/70 focus:ring-1 focus:ring-slate-400/30"
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar Tools */}
+        <div className="space-y-6">
+          {/* AI Enhancement Tools */}
+          <Card className="bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-700/50 hover:border-green-500/70 transition-all duration-300">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">AI Enhancement Tools</h3>
+              <p className="text-sm text-gray-300 mb-4">Select text in your sermon, then use these tools:</p>
+              
+              <div className="space-y-3">
+                <Button
+                  onClick={() => handleEnhancement('expand')}
+                  disabled={enhanceLoading || !selectedText}
+                  className="w-full bg-green-600/30 border border-green-500/50 text-green-200 hover:bg-green-600/40 hover:border-green-400/70 disabled:opacity-50 shadow-lg"
+                >
+                  {enhanceLoading ? "Enhancing..." : "Expand Point"}
+                </Button>
+                
+                <Button
+                  onClick={() => handleEnhancement('clarify')}
+                  disabled={enhanceLoading || !selectedText}
+                  className="w-full bg-blue-600/30 border border-blue-500/50 text-blue-200 hover:bg-blue-600/40 hover:border-blue-400/70 disabled:opacity-50 shadow-lg"
+                >
+                  {enhanceLoading ? "Enhancing..." : "Rewrite Clearly"}
+                </Button>
+                
+                <Button
+                  onClick={() => handleEnhancement('add_verse')}
+                  disabled={enhanceLoading || !selectedText}
+                  className="w-full bg-purple-600/30 border border-purple-500/50 text-purple-200 hover:bg-purple-600/40 hover:border-purple-400/70 disabled:opacity-50 shadow-lg"
+                >
+                  {enhanceLoading ? "Enhancing..." : "Add Supporting Verse"}
+                </Button>
+                
+                <Button
+                  onClick={() => handleEnhancement('add_story')}
+                  disabled={enhanceLoading || !selectedText}
+                  className="w-full bg-orange-600/30 border border-orange-500/50 text-orange-200 hover:bg-orange-600/40 hover:border-orange-400/70 disabled:opacity-50 shadow-lg"
+                >
+                  {enhanceLoading ? "Enhancing..." : "Add Illustration"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Outline Builder */}
+          {showOutlineBuilder && (
+            <Card className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-amber-900/20 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Preaching Outline</h3>
+                <div className="space-y-4 text-sm">
+                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
+                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Title:</div>
+                    <div className="text-white">{currentSermon.title || "(Add sermon title)"}</div>
+                  </div>
+                  
+                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
+                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Text:</div>
+                    <div className="text-white">{currentSermon.scripture || "(Add scripture reference)"}</div>
+                  </div>
+                  
+                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
+                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Theme:</div>
+                    <div className="text-white">{currentSermon.theme || "(Add main theme)"}</div>
+                  </div>
+                  
+                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
+                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Structure:</div>
+                    <div className="text-gray-200 text-xs space-y-1">
+                      <div>I. Introduction</div>
+                      <div>II. Point 1</div>
+                      <div>III. Point 2</div>
+                      <div>IV. Point 3</div>
+                      <div>V. Call to Action</div>
+                      <div>VI. Closing</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </section>
   );
 }
