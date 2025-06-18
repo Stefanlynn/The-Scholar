@@ -1098,12 +1098,12 @@ Convert this into bullet format with:
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+          'X-RapidAPI-Key': RAPIDAPI_KEY || '',
           'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });

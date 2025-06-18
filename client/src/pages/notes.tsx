@@ -37,7 +37,7 @@ export default function Notes() {
   const [previousContent, setPreviousContent] = useState("");
   const [canUndo, setCanUndo] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   
   const { toast } = useToast();
 
