@@ -447,6 +447,12 @@ Changelog:
   * Bible study tool responses (Greek/Hebrew analysis, Scholar's Take, etc.) no longer appear in main chat conversation
   * Added "BETA" labels next to "The Scholar" branding in both desktop sidebar and mobile navigation
   * Enhanced profile page with simplified design: auto-populated name/email, direct password change, and essential account settings only
+- June 18, 2025: Integrated IQ Bible semantic analysis as additional enhancement layer
+  * Added new "Semantic Relations" study tool to Bible study interface without changing existing Greek/Hebrew functionality
+  * Integrated IQ Bible API `/GetSemanticRelationsAllWords` endpoint for biblical word relationship analysis
+  * Created semantic analysis handler that extracts key words from verses and provides word connection insights
+  * Added formatted display of semantic relationships to complement existing study tools
+  * Semantic analysis provides additional layer of biblical word connections alongside traditional word studies
 ```
 
 ## User Preferences
