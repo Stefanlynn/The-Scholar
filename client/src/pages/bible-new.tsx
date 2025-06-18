@@ -97,15 +97,15 @@ export default function Bible() {
   const bookmarkMutation = useMutation({
     mutationFn: async (verseRef: string) => {
       const [book, chapter, verse] = verseRef.split(':');
-      return fetch('/api/bookmarks', {
+      const response = await apiRequest('/api/bookmarks', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           book,
           chapter: parseInt(chapter),
           verse: parseInt(verse)
-        })
-      }).then(res => res.json());
+        }
+      });
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Bookmark added", description: "Verse saved to your bookmarks" });
@@ -115,15 +115,15 @@ export default function Bible() {
 
   const noteMutation = useMutation({
     mutationFn: async ({ verseRef, note }: { verseRef: string; note: string }) => {
-      return fetch('/api/notes', {
+      const response = await apiRequest('/api/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           title: `Note on ${verseRef}`,
           content: note,
           scripture: verseRef
-        })
-      }).then(res => res.json());
+        }
+      });
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Note saved", description: "Your verse note has been saved" });

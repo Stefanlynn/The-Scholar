@@ -46,15 +46,14 @@ function SermonWorkspace() {
     setPreviousContent(currentSermon.body);
 
     try {
-      const response = await fetch('/api/chat/enhance', {
+      const response = await apiRequest('/api/chat/enhance', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           text: selectedText,
           action: action,
           style: preachingStyle,
           context: currentSermon.theme
-        }),
+        }
       });
 
       if (response.ok) {
@@ -90,17 +89,16 @@ function SermonWorkspace() {
     setPreviousContent(currentSermon.body);
 
     try {
-      const response = await fetch('/api/chat/enhance', {
+      const response = await apiRequest('/api/chat/enhance', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           text: currentSermon.body,
           action: 'rewrite_style',
           style: preachingStyle,
           context: currentSermon.theme,
           title: currentSermon.title,
           scripture: currentSermon.scripture
-        }),
+        }
       });
 
       if (response.ok) {
