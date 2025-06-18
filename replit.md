@@ -437,6 +437,12 @@ Changelog:
   * Desktop now shows persistent sidebar with navigation links while mobile uses bottom tab bar
   * Chat interface adapts layout: fixed positioning on mobile, relative on desktop
   * Enhanced button container with flex layout preventing overlap and improving visual hierarchy
+- June 18, 2025: Fixed Bible Scholar tools connection error and improved voice response system
+  * Resolved authentication issue by updating Bible page to use proper API request headers
+  * Fixed Google AI API key access for Bible study tools (Greek/Hebrew analysis, commentary, etc.)
+  * Enhanced voice response system with mobile autoplay compatibility and fallback mechanisms
+  * Improved automatic voice playback after voice input while maintaining mobile browser compliance
+  * Removed expert voice adaptation section from help documentation while keeping backend functionality intact
 ```
 
 ## User Preferences
