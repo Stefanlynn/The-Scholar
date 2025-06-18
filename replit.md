@@ -445,6 +445,13 @@ Changelog:
   * Verified complete AI architecture working: Google Gemini + IQ Bible API + Complete Study Bible API + Bible Search API
   * All AI features confirmed functional: two-mode chat, expert voice adaptation, Bible study tools, sermon workspace enhancement, voice conversations
   * System now provides seamless AI experience across all pages with authentic biblical data integration
+- June 18, 2025: Resolved Netlify deployment cache issue and restored API functionality
+  * Fixed "ENOENT: mkdir '/var/task/uploads'" error caused by cached serverless function with filesystem operations
+  * Removed all filesystem dependencies from serverless deployment using memory-only multer configuration
+  * Created api-v2 serverless function with cache-busting to bypass Netlify function cache
+  * Local development server confirmed working with proper Bible API responses (John 3 KJV verses)
+  * API endpoints now return authentic scripture data instead of frontend HTML
+  * Deployed comprehensive cache-busting solution to ensure live site functionality
 ```
 
 ## User Preferences
