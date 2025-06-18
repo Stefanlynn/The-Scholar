@@ -288,10 +288,10 @@ export default function Profile() {
                 value={preferences.defaultBibleTranslation} 
                 onValueChange={(value) => updatePreferences({ defaultBibleTranslation: value })}
               >
-                <SelectTrigger className="w-32 bg-[var(--scholar-dark)] border-gray-600">
+                <SelectTrigger className="w-32 bg-[var(--scholar-dark)] border-gray-600 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[var(--scholar-dark)] border-gray-600">
                   <SelectItem value="KJV">KJV</SelectItem>
                   <SelectItem value="KJV1611">KJV 1611</SelectItem>
                   <SelectItem value="ASV">ASV</SelectItem>

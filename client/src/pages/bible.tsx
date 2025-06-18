@@ -65,6 +65,22 @@ const highlightColors = [
   { value: "purple", label: "Purple", color: "bg-purple-200 text-purple-900" }
 ];
 
+const bibleTranslations = [
+  { value: "KJV", label: "KJV" },
+  { value: "KJV1611", label: "KJV 1611" },
+  { value: "ASV", label: "ASV" },
+  { value: "BBE", label: "BBE" },
+  { value: "DBY", label: "Darby" },
+  { value: "WBT", label: "Webster" },
+  { value: "WEB", label: "WEB" },
+  { value: "YLT", label: "YLT" },
+  { value: "RV1909", label: "Reina-Valera 1909" },
+  { value: "SVD", label: "Smith-Van Dyke" },
+  { value: "NIV", label: "NIV" },
+  { value: "ESV", label: "ESV" },
+  { value: "NASB", label: "NASB" }
+];
+
 export default function Bible() {
   const { preferences } = useUserPreferences();
   const [selectedBook, setSelectedBook] = useState("Matthew");
@@ -207,11 +223,16 @@ export default function Bible() {
   };
 
   const { data: chapterData, isLoading } = useQuery({
-    queryKey: ["/api/bible/text", selectedBook, selectedChapter, selectedTranslation],
+    queryKey: ["/api/bible", selectedBook, selectedChapter, selectedTranslation],
     queryFn: async () => {
-      const response = await fetch(`/api/bible/text?book=${encodeURIComponent(selectedBook)}&chapter=${selectedChapter}&translation=${selectedTranslation}`);
-      if (!response.ok) throw new Error('Failed to fetch Bible text');
-      return response.json();
+      // Use existing KJV endpoint for KJV, IQ Bible API for others
+      if (selectedTranslation === "KJV") {
+        return getBibleChapter(selectedBook, selectedChapter, selectedTranslation);
+      } else {
+        const response = await fetch(`/api/bible/text?book=${encodeURIComponent(selectedBook)}&chapter=${selectedChapter}&translation=${selectedTranslation}`);
+        if (!response.ok) throw new Error('Failed to fetch Bible text');
+        return response.json();
+      }
     },
     enabled: !!selectedBook && !!selectedChapter,
   });
@@ -612,7 +633,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                    {translations.map((translation) => (
+                    {bibleTranslations.map((translation) => (
                       <SelectItem key={translation.value} value={translation.value} className="text-white hover:bg-gray-700">
                         {translation.label}
                       </SelectItem>
@@ -644,7 +665,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                    {translations.map((translation) => (
+                    {bibleTranslations.map((translation) => (
                       <SelectItem key={translation.value} value={translation.value} className="text-white hover:bg-gray-700">
                         {translation.label}
                       </SelectItem>
