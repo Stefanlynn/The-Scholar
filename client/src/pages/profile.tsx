@@ -72,9 +72,6 @@ export default function Profile() {
       fullName: formData.get("fullName") as string,
       email: formData.get("email") as string,
       bio: formData.get("bio") as string,
-      location: formData.get("location") as string,
-      website: formData.get("website") as string,
-      phone: formData.get("phone") as string,
       ministryRole: formData.get("ministryRole") as string,
       defaultBibleTranslation: formData.get("defaultBibleTranslation") as string,
       darkMode: formData.get("darkMode") === "on",
@@ -91,10 +88,14 @@ export default function Profile() {
     formData.append('profilePicture', file);
 
     try {
+      const { supabase } = await import('@/lib/supabase');
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
       const response = await fetch('/api/profile/upload-picture', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${user?.access_token || ''}`,
+          'Authorization': `Bearer ${token || ''}`,
         },
         body: formData,
       });
@@ -218,31 +219,7 @@ export default function Profile() {
                       className="bg-[var(--scholar-darker)] border-gray-600 text-white"
                     />
                   </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Phone</label>
-                    <Input
-                      name="phone"
-                      defaultValue={profile?.phone || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Location</label>
-                    <Input
-                      name="location"
-                      defaultValue={profile?.location || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white text-sm font-medium mb-2 block">Website</label>
-                    <Input
-                      name="website"
-                      defaultValue={profile?.website || ""}
-                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="text-white text-sm font-medium mb-2 block">Ministry Role</label>
                     <Select name="ministryRole" defaultValue={profile?.ministryRole || ""}>
                       <SelectTrigger className="bg-[var(--scholar-darker)] border-gray-600 text-white">
@@ -358,26 +335,6 @@ export default function Profile() {
                     <div className="flex items-center space-x-2 text-gray-300">
                       <Mail className="h-4 w-4" />
                       <span>{profile.email}</span>
-                    </div>
-                  )}
-                  {profile?.phone && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Phone className="h-4 w-4" />
-                      <span>{profile.phone}</span>
-                    </div>
-                  )}
-                  {profile?.location && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <MapPin className="h-4 w-4" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-                  {profile?.website && (
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Globe className="h-4 w-4" />
-                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--scholar-gold)]">
-                        {profile.website}
-                      </a>
                     </div>
                   )}
                 </div>
