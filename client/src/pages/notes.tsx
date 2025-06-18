@@ -1029,9 +1029,9 @@ ${sermonMode === 'outline' ? 'Use headers and bullet points for key ideas' :
               </div>
             </TabsContent>
           </Tabs>
+          </div>
         </div>
       </div>
-
     </div>
   );
 }
