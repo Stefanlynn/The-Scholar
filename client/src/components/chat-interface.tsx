@@ -554,23 +554,23 @@ export default function ChatInterface() {
             <div className="relative inline-flex items-center bg-gray-900/60 rounded-full p-1 backdrop-blur-sm border border-gray-700/30">
               <button
                 onClick={() => setScholarMode("study")}
-                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
+                className={`relative px-3 py-2 text-xs font-medium rounded-full transition-all duration-300 ${
                   scholarMode === "study"
                     ? "bg-[var(--scholar-gold)] text-black shadow-lg shadow-yellow-500/25"
                     : "text-gray-300 hover:text-white hover:bg-gray-800/50"
                 }`}
               >
-                Study
+                Study Mode
               </button>
               <button
                 onClick={() => setScholarMode("devotional")}
-                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
+                className={`relative px-3 py-2 text-xs font-medium rounded-full transition-all duration-300 ${
                   scholarMode === "devotional"
                     ? "bg-[var(--scholar-gold)] text-black shadow-lg shadow-yellow-500/25"
                     : "text-gray-300 hover:text-white hover:bg-gray-800/50"
                 }`}
               >
-                Devotional
+                Devotional Mode
               </button>
             </div>
           </div>
@@ -864,27 +864,35 @@ export default function ChatInterface() {
               />
               
               {/* Voice Input Button */}
-              <Button
+              <button
                 type="button"
                 onClick={isRecording ? stopRecording : startRecording}
                 disabled={sendMessageMutation.isPending}
-                className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full ${
+                className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg ${
                   isRecording 
-                    ? "bg-red-500 hover:bg-red-600 text-white animate-pulse" 
-                    : "bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
-                }`}
+                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-red-500/30" 
+                    : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:shadow-yellow-500/40"
+                } backdrop-blur-sm border border-white/10`}
               >
-                {isRecording ? <MicOff className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <Mic className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
-              </Button>
+                {isRecording ? (
+                  <MicOff className="h-5 w-5 mx-auto" />
+                ) : (
+                  <Mic className="h-5 w-5 mx-auto" />
+                )}
+              </button>
               
               {/* Send Button */}
-              <Button
+              <button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
-                className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 p-2 sm:p-2.5 lg:p-3 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full"
+                className={`absolute bottom-3 sm:bottom-4 right-3 sm:right-4 h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 shadow-lg backdrop-blur-sm border border-white/10 ${
+                  !message.trim() || sendMessageMutation.isPending
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:scale-105 active:scale-95 hover:shadow-yellow-500/40"
+                }`}
               >
-                <Send className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-              </Button>
+                <Send className="h-5 w-5 mx-auto" />
+              </button>
             </div>
           </div>
         </form>
