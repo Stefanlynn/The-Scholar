@@ -520,13 +520,14 @@ export default function ChatInterface() {
 
       {
         title: "Voice Conversations",
-        description: "Have natural voice conversations with The Scholar using the microphone button next to the chat input.",
+        description: "Have natural voice conversations with The Scholar using the microphone button next to the chat input. The Scholar responds with both text and audio.",
         tips: [
           "Click the golden microphone button to start recording your question",
           "Speak clearly and close to your device for best accuracy",
           "Recording stops automatically when you finish speaking, or click 'Stop Recording'",
-          "Preview your transcript, then Listen, Send, or Delete your recording",
-          "The Scholar responds with both text and voice for full conversation experience",
+          "Click 'Listen' to hear your voice note before sending it to The Scholar",
+          "Send your voice note and The Scholar responds with both text and voice",
+          "The Scholar uses a masculine, professorial voice for biblical teaching",
           "Use pause (⏸) and stop (×) controls during Scholar's voice responses"
         ]
       },
