@@ -337,7 +337,17 @@ export default function ChatInterface() {
     if (recordedTranscript.trim()) {
       setMessage(recordedTranscript);
       setIsVoiceMessage(true); // Mark this as a voice message
-      sendMessageMutation.mutate(recordedTranscript);
+      
+      // Ensure speech synthesis is ready for automatic playback
+      if (synthRef.current && synthRef.current.getVoices().length === 0) {
+        // Wait for voices to load on mobile
+        synthRef.current.addEventListener('voiceschanged', () => {
+          sendMessageMutation.mutate(recordedTranscript);
+        }, { once: true });
+      } else {
+        sendMessageMutation.mutate(recordedTranscript);
+      }
+      
       setShowRecordingControls(false);
       setRecordedTranscript("");
       currentTranscriptRef.current = "";
@@ -401,7 +411,10 @@ export default function ChatInterface() {
       
       // Always speak the response when it comes from voice input
       if (data.response && isVoiceMessage) {
-        speakResponse(data.response);
+        // Use setTimeout to ensure the speech synthesis happens after the user interaction context
+        setTimeout(() => {
+          speakResponse(data.response);
+        }, 100);
         setIsVoiceMessage(false); // Reset voice message flag
       }
       
