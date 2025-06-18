@@ -36,24 +36,24 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Configure multer for file uploads (skip in serverless environments)
-const uploadDir = process.env.NETLIFY ? '/tmp' : path.join(process.cwd(), 'uploads');
-if (!process.env.NETLIFY && !fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Use memory storage for serverless environments
+// Configure multer for file uploads (serverless-safe)
 const storage_multer = process.env.NETLIFY 
   ? multer.memoryStorage()
-  : multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, uploadDir);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  : (() => {
+      const uploadDir = path.join(process.cwd(), 'uploads');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
       }
-    });
+      return multer.diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, uploadDir);
+        },
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+      });
+    })();
 
 const upload = multer({
   storage: storage_multer,
@@ -227,8 +227,11 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve uploaded files statically
-  app.use('/uploads', express.static(uploadDir));
+  // Serve uploaded files statically (only in non-serverless environments)
+  if (!process.env.NETLIFY) {
+    const uploadDir = path.join(process.cwd(), 'uploads');
+    app.use('/uploads', express.static(uploadDir));
+  }
   
   // Users
   app.get("/api/users/current", authenticateUser, async (req, res) => {

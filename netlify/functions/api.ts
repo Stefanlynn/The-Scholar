@@ -7,7 +7,7 @@ import { registerRoutes } from '../../server/routes';
 // Set serverless environment flag early
 process.env.NETLIFY = 'true';
 
-// Force rebuild with filesystem fixes - June 18, 2025 v2
+// Force rebuild with inline multer storage - June 18, 2025 v5
 
 // Create app instance
 const app = express();
