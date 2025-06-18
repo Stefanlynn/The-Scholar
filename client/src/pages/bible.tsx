@@ -1099,13 +1099,13 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Study Tools Dialog */}
         <Dialog open={!!selectedVerse} onOpenChange={() => setSelectedVerse(null)}>
-          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl max-h-[95vh] overflow-y-auto">
-            <DialogHeader className="border-b border-[var(--scholar-gold)]/20 pb-4">
-              <DialogTitle className="text-[var(--scholar-gold)] flex items-center text-xl">
-                <GraduationCap className="h-6 w-6 mr-3" />
+          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-md w-[90vw] max-h-[70vh] overflow-y-auto">
+            <DialogHeader className="pb-3">
+              <DialogTitle className="text-[var(--scholar-gold)] text-lg font-semibold flex items-center">
+                <GraduationCap className="h-5 w-5 mr-2" />
                 The Scholar Study Tools
                 {selectedVerse && (
-                  <span className="text-gray-300 text-base ml-2 font-normal">
+                  <span className="text-gray-300 text-sm ml-2 font-normal">
                     {selectedBook} {selectedChapter}:{selectedVerse.verse}
                   </span>
                 )}
