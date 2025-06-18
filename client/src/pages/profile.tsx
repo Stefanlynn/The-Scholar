@@ -46,7 +46,10 @@ export default function Profile() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<UserType>) => {
-      const response = await apiRequest("PATCH", "/api/profile", data);
+      const response = await apiRequest("/api/profile", {
+        method: "PATCH",
+        body: data
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -101,7 +104,10 @@ export default function Profile() {
 
   const uploadImageMutation = useMutation({
     mutationFn: async (imageData: string) => {
-      const response = await apiRequest("POST", "/api/profile/upload-image", { imageData });
+      const response = await apiRequest("/api/profile/upload-image", {
+        method: "POST",
+        body: { imageData }
+      });
       return response.json();
     },
     onSuccess: () => {
