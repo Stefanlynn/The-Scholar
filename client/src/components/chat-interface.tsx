@@ -20,7 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Send, User, Save, Plus, Check, RotateCcw, Mic, MicOff, Volume2 } from "lucide-react";
+import { Send, User, Save, Plus, Check, RotateCcw, Mic, MicOff, Volume2, Pause, Square, Play, Trash2 } from "lucide-react";
 import type { ChatMessage } from "@shared/schema";
 import scholarLogo from "@assets/ZiNRAi-7_1750106794159.png";
 import PageHelp from "@/components/page-help";
@@ -764,18 +764,34 @@ export default function ChatInterface() {
 
       {/* Speaking Indicator */}
       {isSpeaking && (
-        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="bg-[var(--scholar-gold)] text-black px-4 py-2 rounded-full flex items-center space-x-2">
-            <Volume2 className="w-4 h-4 animate-pulse" />
+        <div className="fixed bottom-32 md:bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-[var(--scholar-gold)] text-black px-4 py-3 rounded-full flex items-center space-x-3 shadow-lg">
+            <Volume2 className="w-5 h-5 animate-pulse" />
             <span className="text-sm font-medium">The Scholar is speaking...</span>
-            <Button
-              onClick={stopSpeaking}
-              size="sm"
-              variant="ghost"
-              className="text-black hover:bg-yellow-600 p-1 h-6 w-6"
-            >
-              ×
-            </Button>
+            <div className="flex items-center space-x-1">
+              <Button
+                onClick={() => {
+                  if (synthRef.current) {
+                    synthRef.current.pause();
+                  }
+                }}
+                size="sm"
+                variant="ghost"
+                className="text-black hover:bg-yellow-600 p-1 h-7 w-7 rounded-full"
+                title="Pause"
+              >
+                ⏸
+              </Button>
+              <Button
+                onClick={stopSpeaking}
+                size="sm"
+                variant="ghost"
+                className="text-black hover:bg-yellow-600 p-1 h-7 w-7 rounded-full"
+                title="Stop"
+              >
+                ⏹
+              </Button>
+            </div>
           </div>
         </div>
       )}

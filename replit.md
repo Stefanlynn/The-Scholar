@@ -411,6 +411,12 @@ Changelog:
   * Enhanced voice response system with automatic text-to-speech for Scholar replies
   * Complete voice workflow: record → preview → send → Scholar responds with both text and voice
   * Voice conversations now work seamlessly like ChatGPT/Siri with full audio interaction
+- June 17, 2025: Enhanced Scholar voice with masculine, professorial tone and speech controls
+  * Configured voice selection to prioritize masculine, scholarly voices (Daniel, David, Alex, Thomas, etc.)
+  * Adjusted speech parameters: lower pitch (0.8) and slower rate (0.85) for authoritative, professorial sound
+  * Repositioned speaking indicator above chat input for full visibility on all devices
+  * Added pause and stop controls during Scholar speech with intuitive button design
+  * Scholar now sounds like a distinguished male biblical scholar with user-controllable speech playback
 ```
 
 ## User Preferences
