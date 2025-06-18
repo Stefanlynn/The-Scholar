@@ -186,7 +186,7 @@ function SermonWorkspace() {
           </Card>
 
           {/* Writing Mode & Style Selector */}
-          <Card className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border-purple-700/50 hover:border-purple-500/70 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-amber-900/20 to-yellow-900/20 border-amber-700/50 hover:border-amber-500/70 transition-all duration-300">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Writing Mode */}
@@ -203,7 +203,7 @@ function SermonWorkspace() {
                         onClick={() => setWritingMode(mode.value as any)}
                         className={`p-3 rounded-lg text-sm transition-all ${
                           writingMode === mode.value
-                            ? 'bg-purple-500/40 border border-purple-400/70 text-white shadow-lg'
+                            ? 'bg-[var(--scholar-gold)]/40 border border-[var(--scholar-gold)]/70 text-white shadow-lg'
                             : 'bg-gray-800/30 border border-gray-600/30 text-gray-300 hover:text-white hover:bg-gray-700/50 hover:border-gray-500/50'
                         }`}
                       >
@@ -220,7 +220,7 @@ function SermonWorkspace() {
                   <select
                     value={preachingStyle}
                     onChange={(e) => setPreachingStyle(e.target.value as any)}
-                    className="w-full p-3 bg-gray-900/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500/70"
+                    className="w-full p-3 bg-gray-900/50 border border-[var(--scholar-gold)]/30 rounded-lg text-white focus:border-[var(--scholar-gold)]/70"
                   >
                     <option value="prophetic">Prophetic - Bold & Revelatory</option>
                     <option value="teaching">Teaching - Educational & Deep</option>
@@ -231,7 +231,7 @@ function SermonWorkspace() {
                   <Button
                     onClick={handleStyleRewrite}
                     disabled={enhanceLoading || !currentSermon.body.trim()}
-                    className="w-full mt-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white shadow-lg"
+                    className="w-full mt-3 bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black shadow-lg"
                   >
                     {enhanceLoading ? "Rewriting..." : "Rewrite in Selected Style"}
                   </Button>
