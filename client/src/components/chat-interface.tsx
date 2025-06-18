@@ -548,29 +548,29 @@ export default function ChatInterface() {
   return (
     <div className="fixed inset-0 flex flex-col bg-[var(--scholar-black)] overflow-hidden">
       {/* Mode Toggle - Always Visible */}
-      <div className="border-b border-gray-800 bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0">
+      <div className="border-b border-gray-800/50 bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 py-4 flex-shrink-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="flex bg-gray-800 rounded-lg p-1">
+            <div className="relative inline-flex items-center bg-gray-900/60 rounded-full p-1 backdrop-blur-sm border border-gray-700/30">
               <button
                 onClick={() => setScholarMode("study")}
-                className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 text-xs sm:text-sm lg:text-base rounded font-medium transition-all ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                   scholarMode === "study"
-                    ? "bg-[var(--scholar-gold)] text-black"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-[var(--scholar-gold)] text-black shadow-lg shadow-yellow-500/25"
+                    : "text-gray-300 hover:text-white hover:bg-gray-800/50"
                 }`}
               >
-                Study Mode
+                Study
               </button>
               <button
                 onClick={() => setScholarMode("devotional")}
-                className={`px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 text-xs sm:text-sm lg:text-base rounded font-medium transition-all ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                   scholarMode === "devotional"
-                    ? "bg-[var(--scholar-gold)] text-black"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-[var(--scholar-gold)] text-black shadow-lg shadow-yellow-500/25"
+                    : "text-gray-300 hover:text-white hover:bg-gray-800/50"
                 }`}
               >
-                Devotional Mode
+                Devotional
               </button>
             </div>
           </div>

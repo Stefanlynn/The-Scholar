@@ -424,6 +424,12 @@ Changelog:
   * Improved continuous recognition for better handling of longer speech patterns
   * Added clear user guidance for optimal recording conditions and microphone positioning
   * Enhanced error handling with helpful messages about environment and device positioning
+- June 17, 2025: Modernized speaking indicator and mode toggle interface design
+  * Redesigned speaking indicator with gradient background, glass morphism, and modern button styling
+  * Updated pause/stop controls with intuitive symbols (⏸ for pause, × for stop)
+  * Enhanced mode toggle with pill-shaped design, backdrop blur, and golden glow effects
+  * Simplified mode labels to "Study" and "Devotional" for cleaner appearance
+  * Added smooth transitions and hover states for premium user experience
 ```
 
 ## User Preferences
