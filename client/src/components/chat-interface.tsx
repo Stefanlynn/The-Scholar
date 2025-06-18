@@ -517,16 +517,7 @@ export default function ChatInterface() {
           "The Scholar adapts its personality completely based on your selected mode"
         ]
       },
-      {
-        title: "Expert Voice Adaptation",
-        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical experts.",
-        tips: [
-          "Theology questions get responses like Dr. Frank Turek or John Piper",
-          "Leadership topics channel John Maxwell or Andy Stanley",
-          "Prophetic insights use Kris Vallotton's style",
-          "Inner healing follows Bob Hamp's compassionate approach"
-        ]
-      },
+
       {
         title: "Voice Conversations",
         description: "Have natural voice conversations with The Scholar using the microphone button next to the chat input.",
