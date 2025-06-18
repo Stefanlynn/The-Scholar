@@ -1,8 +1,6 @@
 import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { storage } from "./storage";
 import { 
   insertChatMessageSchema, 
@@ -198,11 +196,7 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve uploaded files statically (only in non-serverless environments)
-  if (!process.env.NETLIFY) {
-    const uploadDir = path.join(process.cwd(), 'uploads');
-    app.use('/uploads', express.static(uploadDir));
-  }
+  // Static file serving disabled in serverless environments
   
   // Users
   app.get("/api/users/current", authenticateUser, async (req, res) => {
