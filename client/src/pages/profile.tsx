@@ -29,9 +29,30 @@ import {
   Trophy,
   Clock,
   CheckCircle,
-  Upload
+  Upload,
+  Flame,
+  Target,
+  TrendingUp,
+  MessageSquare,
+  Bookmark as BookmarkIcon,
+  FileText,
+  ChevronRight,
+  BarChart3,
+  Award,
+  Activity
 } from "lucide-react";
+import { Link } from "wouter";
 import type { User as UserType } from "@shared/schema";
+
+interface ProfileStats {
+  totalNotes: number;
+  totalBookmarks: number;
+  totalChatMessages: number;
+  streak: number;
+  lastLoginDate: string;
+  recentActivity: number;
+  studyTimeThisWeek: number;
+}
 
 export default function Profile() {
   const { user } = useAuth();
@@ -41,6 +62,21 @@ export default function Profile() {
   
   const { data: profile, isLoading } = useQuery<UserType>({
     queryKey: ["/api/profile"],
+    enabled: !!user,
+  });
+
+  const { data: stats } = useQuery<ProfileStats>({
+    queryKey: ["/api/profile/stats"],
+    enabled: !!user,
+  });
+
+  const { data: recentNotes } = useQuery<any[]>({
+    queryKey: ["/api/notes", "recent"],
+    enabled: !!user,
+  });
+
+  const { data: recentBookmarks } = useQuery<any[]>({
+    queryKey: ["/api/bookmarks", "recent"],
     enabled: !!user,
   });
 
@@ -157,6 +193,249 @@ export default function Profile() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
+        
+        {/* Dashboard Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="bg-[var(--scholar-dark)] border-gray-700 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-orange-500/20 rounded-lg">
+                <Flame className="h-5 w-5 text-orange-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{stats?.streak || 0}</p>
+                <p className="text-xs text-gray-400">Day Streak</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="bg-[var(--scholar-dark)] border-gray-700 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <FileText className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{stats?.totalNotes || 0}</p>
+                <p className="text-xs text-gray-400">Total Notes</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="bg-[var(--scholar-dark)] border-gray-700 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-yellow-500/20 rounded-lg">
+                <BookmarkIcon className="h-5 w-5 text-yellow-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{stats?.totalBookmarks || 0}</p>
+                <p className="text-xs text-gray-400">Bookmarks</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="bg-[var(--scholar-dark)] border-gray-700 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <MessageSquare className="h-5 w-5 text-green-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{stats?.totalChatMessages || 0}</p>
+                <p className="text-xs text-gray-400">AI Chats</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Progress and Activity Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Study Progress */}
+          <Card className="bg-[var(--scholar-dark)] border-gray-700">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2" />
+                Study Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-[var(--scholar-gold)]/20 rounded-full">
+                    <Flame className="h-6 w-6 text-[var(--scholar-gold)]" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold">Current Streak</p>
+                    <p className="text-gray-400 text-sm">Keep it going!</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-[var(--scholar-gold)]">{stats?.streak || 0}</p>
+                  <p className="text-gray-400 text-sm">days</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300 text-sm">This Week's Activity</span>
+                  <span className="text-white font-medium">{stats?.recentActivity || 0}%</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-[var(--scholar-gold)] h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${Math.min(stats?.recentActivity || 0, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4 pt-2">
+                <div className="flex items-center space-x-2">
+                  <Award className="h-4 w-4 text-[var(--scholar-gold)]" />
+                  <span className="text-gray-300 text-sm">Study time: {stats?.studyTimeThisWeek || 0}h</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="bg-[var(--scholar-dark)] border-gray-700">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center">
+                <Target className="h-5 w-5 mr-2" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link href="/" className="block">
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <MessageSquare className="h-5 w-5 text-blue-400" />
+                    <span className="text-white">Start Bible Study</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+              </Link>
+              
+              <Link href="/notes" className="block">
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-5 w-5 text-green-400" />
+                    <span className="text-white">Create New Note</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+              </Link>
+              
+              <Link href="/bible" className="block">
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <BookOpen className="h-5 w-5 text-purple-400" />
+                    <span className="text-white">Read Scripture</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+              </Link>
+              
+              <Link href="/library" className="block">
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <Star className="h-5 w-5 text-yellow-400" />
+                    <span className="text-white">Browse Library</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Notes */}
+          <Card className="bg-[var(--scholar-dark)] border-gray-700">
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <CardTitle className="text-white flex items-center">
+                <FileText className="h-5 w-5 mr-2" />
+                Recent Notes
+              </CardTitle>
+              <Link href="/notes">
+                <Button variant="ghost" size="sm" className="text-[var(--scholar-gold)] hover:bg-gray-700">
+                  View All
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              {recentNotes && recentNotes.length > 0 ? (
+                <div className="space-y-3">
+                  {recentNotes.slice(0, 3).map((note: any, index: number) => (
+                    <div key={index} className="p-3 bg-gray-800/50 rounded-lg">
+                      <h4 className="text-white font-medium text-sm mb-1">
+                        {note.title || 'Untitled Note'}
+                      </h4>
+                      <p className="text-gray-400 text-xs line-clamp-2">
+                        {note.content || 'No content'}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-2">
+                        {new Date(note.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <FileText className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">No notes yet</p>
+                  <Link href="/notes">
+                    <Button size="sm" className="mt-2 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+                      Create Your First Note
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Bookmarks */}
+          <Card className="bg-[var(--scholar-dark)] border-gray-700">
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <CardTitle className="text-white flex items-center">
+                <BookmarkIcon className="h-5 w-5 mr-2" />
+                Recent Bookmarks
+              </CardTitle>
+              <Link href="/bible">
+                <Button variant="ghost" size="sm" className="text-[var(--scholar-gold)] hover:bg-gray-700">
+                  View All
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              {recentBookmarks && recentBookmarks.length > 0 ? (
+                <div className="space-y-3">
+                  {recentBookmarks.slice(0, 3).map((bookmark: any, index: number) => (
+                    <div key={index} className="p-3 bg-gray-800/50 rounded-lg">
+                      <h4 className="text-white font-medium text-sm mb-1">
+                        {bookmark.verseReference || 'Scripture Bookmark'}
+                      </h4>
+                      <p className="text-gray-400 text-xs line-clamp-2">
+                        {bookmark.notes || bookmark.verseText || 'Bookmarked verse'}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-2">
+                        {new Date(bookmark.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <BookmarkIcon className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">No bookmarks yet</p>
+                  <Link href="/bible">
+                    <Button size="sm" className="mt-2 bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+                      Start Reading Scripture
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
         
         {/* User Info Section */}
         <Card className="bg-[var(--scholar-dark)] border-gray-700">

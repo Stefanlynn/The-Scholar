@@ -309,35 +309,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lastBookmarkDate = bookmarks.length > 0 ? Math.max(...bookmarks.map(b => new Date(b.createdAt).getTime())) : null;
       const lastChatDate = chatMessages.length > 0 ? Math.max(...chatMessages.map(m => new Date(m.timestamp).getTime())) : null;
 
-      res.json({
-        // Total counts
-        notes: notes.length,
-        sermons: sermons.length,
-        bookmarks: bookmarks.length,
-        chatSessions: chatMessages.length,
-        libraryItems: libraryItems.length,
-        
-        // Recent activity (last 7 days)
-        recentActivity: {
-          notes: recentNotes.length,
-          sermons: recentSermons.length,
-          bookmarks: recentBookmarks.length,
-          chatSessions: recentChats.length,
-          libraryItems: recentLibrary.length,
-          total: recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length + recentLibrary.length
-        },
+      // Calculate streak (consecutive days with activity)
+      const calculateStreak = () => {
+        const allActivities = [
+          ...notes.map(n => new Date(n.createdAt)),
+          ...sermons.map(s => new Date(s.createdAt)),
+          ...bookmarks.map(b => new Date(b.createdAt)),
+          ...chatMessages.map(m => new Date(m.timestamp))
+        ].sort((a, b) => b.getTime() - a.getTime());
 
-        // Last activity timestamps
-        lastActivity: {
-          note: lastNoteDate ? new Date(lastNoteDate).toISOString() : null,
-          sermon: lastSermonDate ? new Date(lastSermonDate).toISOString() : null,
-          bookmark: lastBookmarkDate ? new Date(lastBookmarkDate).toISOString() : null,
-          chat: lastChatDate ? new Date(lastChatDate).toISOString() : null
+        if (allActivities.length === 0) return 0;
+
+        let streak = 0;
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        for (let i = 0; i < 365; i++) { // Check up to a year
+          const dayHasActivity = allActivities.some(activity => {
+            const activityDate = new Date(activity);
+            activityDate.setHours(0, 0, 0, 0);
+            return activityDate.getTime() === currentDate.getTime();
+          });
+
+          if (dayHasActivity) {
+            streak++;
+          } else if (i > 0) { // Allow for today to not have activity yet
+            break;
+          }
+
+          currentDate.setDate(currentDate.getDate() - 1);
         }
+
+        return streak;
+      };
+
+      // Calculate weekly activity percentage
+      const totalRecentActivity = recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length;
+      const weeklyActivityPercentage = Math.min(Math.round((totalRecentActivity / 7) * 100), 100);
+
+      // Calculate study time estimate (based on activity count)
+      const studyTimeThisWeek = Math.round((totalRecentActivity * 0.5) * 10) / 10; // Rough estimate
+
+      res.json({
+        totalNotes: notes.length,
+        totalBookmarks: bookmarks.length,
+        totalChatMessages: chatMessages.length,
+        totalSermons: sermons.length,
+        totalLibraryItems: libraryItems.length,
+        streak: calculateStreak(),
+        recentActivity: weeklyActivityPercentage,
+        studyTimeThisWeek: studyTimeThisWeek,
+        lastLoginDate: new Date().toISOString()
       });
     } catch (error) {
       console.error("Error fetching profile stats:", error);
       res.status(500).json({ error: "Failed to fetch profile stats" });
+    }
+  });
+
+  // Recent notes endpoint
+  app.get("/api/notes/recent", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const notes = await storage.getNotes(user.id);
+      const recentNotes = notes
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 5);
+
+      res.json(recentNotes);
+    } catch (error) {
+      console.error("Error fetching recent notes:", error);
+      res.status(500).json({ error: "Failed to fetch recent notes" });
+    }
+  });
+
+  // Recent bookmarks endpoint
+  app.get("/api/bookmarks/recent", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUserByEmail(req.user!.email);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const bookmarks = await storage.getBookmarks(user.id);
+      const recentBookmarks = bookmarks
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 5);
+
+      res.json(recentBookmarks);
+    } catch (error) {
+      console.error("Error fetching recent bookmarks:", error);
+      res.status(500).json({ error: "Failed to fetch recent bookmarks" });
     }
   });
 
