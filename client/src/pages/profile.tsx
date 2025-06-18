@@ -83,8 +83,65 @@ export default function Profile() {
     updateProfileMutation.mutate(data);
   };
 
+  const uploadProfilePictureMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+      
+      const response = await apiRequest("POST", "/api/profile/upload", formData, {
+        headers: {} // Let browser set Content-Type for FormData
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({ title: "Profile picture updated successfully!" });
+      // Invalidate queries to refresh profile data everywhere
+      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sermons"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bookmarks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/library"] });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Failed to upload profile picture", 
+        description: error.message || "Please try again",
+        variant: "destructive" 
+      });
+    },
+  });
+
   const handleFileUpload = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select a valid image file (JPEG, PNG, GIF, or WebP)",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      uploadProfilePictureMutation.mutate(file);
+    }
   };
 
   if (isLoading) {
@@ -157,10 +214,18 @@ export default function Profile() {
                       onClick={handleFileUpload}
                       variant="outline"
                       className="border-gray-600 text-white hover:bg-gray-700"
+                      disabled={uploadProfilePictureMutation.isPending}
                     >
                       <Camera className="h-4 w-4 mr-2" />
-                      Change Photo
+                      {uploadProfilePictureMutation.isPending ? 'Uploading...' : 'Change Photo'}
                     </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
                     <input
                       ref={fileInputRef}
                       type="file"
