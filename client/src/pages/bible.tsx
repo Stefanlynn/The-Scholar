@@ -67,7 +67,7 @@ const highlightColors = [
 export default function Bible() {
   const [selectedBook, setSelectedBook] = useState("Matthew");
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const [selectedTranslation, setSelectedTranslation] = useState("kjv");
+  const [selectedTranslation, setSelectedTranslation] = useState("niv");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVerse, setSelectedVerse] = useState<any>(null);
   const [verseNote, setVerseNote] = useState("");
