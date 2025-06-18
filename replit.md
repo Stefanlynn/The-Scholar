@@ -417,6 +417,13 @@ Changelog:
   * Repositioned speaking indicator above chat input for full visibility on all devices
   * Added pause and stop controls during Scholar speech with intuitive button design
   * Scholar now sounds like a distinguished male biblical scholar with user-controllable speech playback
+- June 17, 2025: Significantly improved speech recognition accuracy and user guidance
+  * Enhanced audio quality with echo cancellation, noise suppression, and auto gain control
+  * Added microphone permission verification with quality settings (44100 sample rate)
+  * Implemented confidence-based transcript selection from multiple recognition alternatives
+  * Improved continuous recognition for better handling of longer speech patterns
+  * Added clear user guidance for optimal recording conditions and microphone positioning
+  * Enhanced error handling with helpful messages about environment and device positioning
 ```
 
 ## User Preferences
