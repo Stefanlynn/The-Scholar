@@ -143,6 +143,7 @@ export default function Bible() {
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Save Scholar response to notes
   const saveToNotesMutation = useMutation({
