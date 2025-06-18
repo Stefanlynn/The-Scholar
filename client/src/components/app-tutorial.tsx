@@ -60,7 +60,7 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
         { title: "Study Mode", desc: "Deep theological analysis and academic insights" },
         { title: "Devotional Mode", desc: "Heart-level encouragement and personal application" },
         { title: "Voice Conversations", desc: "Speak your questions and hear Scholar's responses" },
-        { title: "Expert Voices", desc: "AI adapts to different biblical teaching styles" },
+        { title: "Expert Voices", desc: "AI channels different theological scholars" },
         { title: "Save Responses", desc: "Keep important insights in your notes" }
       ],
       instructions: [

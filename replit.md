@@ -437,12 +437,6 @@ Changelog:
   * Desktop now shows persistent sidebar with navigation links while mobile uses bottom tab bar
   * Chat interface adapts layout: fixed positioning on mobile, relative on desktop
   * Enhanced button container with flex layout preventing overlap and improving visual hierarchy
-- June 18, 2025: Configured expert voice system with hidden backend references
-  * Backend AI prompts use specific names (John Piper, Tim Mackie, Kris Vallotton, etc.) for authentic voice channeling
-  * Frontend help documentation shows generic descriptions without mentioning specific people
-  * Scholar can authentically emulate teaching styles while keeping user interface clean
-  * Voice conversation system enhanced - recording + send automatically triggers Scholar voice response
-  * Save to Notes functionality confirmed working for all Scholar responses
 ```
 
 ## User Preferences

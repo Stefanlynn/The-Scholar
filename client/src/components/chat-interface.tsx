@@ -336,10 +336,17 @@ export default function ChatInterface() {
   const sendRecording = () => {
     if (recordedTranscript.trim()) {
       setMessage(recordedTranscript);
-      setIsVoiceMessage(true); // ALWAYS mark as voice message since it came from recording
+      setIsVoiceMessage(true); // Mark this as a voice message
       
-      // Send the message and it will automatically trigger voice response
-      sendMessageMutation.mutate(recordedTranscript);
+      // Ensure speech synthesis is ready for automatic playback
+      if (synthRef.current && synthRef.current.getVoices().length === 0) {
+        // Wait for voices to load on mobile
+        synthRef.current.addEventListener('voiceschanged', () => {
+          sendMessageMutation.mutate(recordedTranscript);
+        }, { once: true });
+      } else {
+        sendMessageMutation.mutate(recordedTranscript);
+      }
       
       setShowRecordingControls(false);
       setRecordedTranscript("");
@@ -456,10 +463,8 @@ export default function ChatInterface() {
     },
     onSuccess: () => {
       toast({ title: "Saved to Notes successfully!" });
-      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
     },
-    onError: (error) => {
-      console.error("Save to notes error:", error);
+    onError: () => {
       toast({ title: "Failed to save to Notes", variant: "destructive" });
     },
   });
@@ -514,12 +519,12 @@ export default function ChatInterface() {
       },
       {
         title: "Expert Voice Adaptation",
-        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical teaching approaches.",
+        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical experts.",
         tips: [
-          "Theology questions receive scholarly, apologetic responses with deep analysis",
-          "Leadership topics get practical, structured guidance with clear frameworks",
-          "Prophetic insights use reflective, revelatory tone with biblical anchoring",
-          "Inner healing follows compassionate pastoral care with emotional depth"
+          "Theology questions get responses like Dr. Frank Turek or John Piper",
+          "Leadership topics channel John Maxwell or Andy Stanley",
+          "Prophetic insights use Kris Vallotton's style",
+          "Inner healing follows Bob Hamp's compassionate approach"
         ]
       },
       {
