@@ -1,8 +1,5 @@
-import express, { type Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { storage } from "./storage";
 import { 
   insertChatMessageSchema, 
@@ -35,36 +32,6 @@ declare global {
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-// Configure multer for file uploads
-const uploadDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage_multer = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage_multer,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'));
-    }
-  }
-});
 
 // Middleware to verify user authentication
 async function authenticateUser(req: Request, res: Response, next: NextFunction) {
@@ -151,9 +118,6 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve uploaded files statically
-  app.use('/uploads', express.static(uploadDir));
-  
   // Users
   app.get("/api/users/current", authenticateUser, async (req, res) => {
     try {
@@ -225,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const updateData = updateUserProfileSchema.parse(req.body);
       
-      const updatedUser = await storage.updateUser(req.user!.id, updateData);
+      const updatedUser = await storage.updateUser(req.user.id, updateData);
       if (!updatedUser) {
         return res.status(404).json({ error: "Failed to update user" });
       }
@@ -234,47 +198,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Failed to update profile" });
-    }
-  });
-
-  // Add PATCH endpoint for profile updates (what the frontend expects)
-  app.patch("/api/profile", authenticateUser, async (req, res) => {
-    try {
-      const updateData = updateUserProfileSchema.parse(req.body);
-      
-      const updatedUser = await storage.updateUser(req.user!.id, updateData);
-      if (!updatedUser) {
-        return res.status(404).json({ error: "Failed to update user" });
-      }
-      
-      res.json(updatedUser);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      res.status(500).json({ error: "Failed to update profile" });
-    }
-  });
-
-  // Profile picture upload endpoint
-  app.post("/api/profile/upload-picture", authenticateUser, upload.single('profilePicture'), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
-      const imageUrl = `/uploads/${req.file.filename}`;
-      
-      const updatedUser = await storage.updateUser(req.user!.id, { 
-        profilePicture: imageUrl 
-      });
-      
-      if (!updatedUser) {
-        return res.status(404).json({ error: "Failed to update user" });
-      }
-      
-      res.json({ profilePicture: imageUrl });
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      res.status(500).json({ error: "Failed to upload profile picture" });
     }
   });
 
@@ -309,101 +232,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lastBookmarkDate = bookmarks.length > 0 ? Math.max(...bookmarks.map(b => new Date(b.createdAt).getTime())) : null;
       const lastChatDate = chatMessages.length > 0 ? Math.max(...chatMessages.map(m => new Date(m.timestamp).getTime())) : null;
 
-      // Calculate streak (consecutive days with activity)
-      const calculateStreak = () => {
-        const allActivities = [
-          ...notes.map(n => new Date(n.createdAt)),
-          ...sermons.map(s => new Date(s.createdAt)),
-          ...bookmarks.map(b => new Date(b.createdAt)),
-          ...chatMessages.map(m => new Date(m.timestamp))
-        ].sort((a, b) => b.getTime() - a.getTime());
-
-        if (allActivities.length === 0) return 0;
-
-        let streak = 0;
-        let currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-
-        for (let i = 0; i < 365; i++) { // Check up to a year
-          const dayHasActivity = allActivities.some(activity => {
-            const activityDate = new Date(activity);
-            activityDate.setHours(0, 0, 0, 0);
-            return activityDate.getTime() === currentDate.getTime();
-          });
-
-          if (dayHasActivity) {
-            streak++;
-          } else if (i > 0) { // Allow for today to not have activity yet
-            break;
-          }
-
-          currentDate.setDate(currentDate.getDate() - 1);
-        }
-
-        return streak;
-      };
-
-      // Calculate weekly activity percentage
-      const totalRecentActivity = recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length;
-      const weeklyActivityPercentage = Math.min(Math.round((totalRecentActivity / 7) * 100), 100);
-
-      // Calculate study time estimate (based on activity count)
-      const studyTimeThisWeek = Math.round((totalRecentActivity * 0.5) * 10) / 10; // Rough estimate
-
       res.json({
-        totalNotes: notes.length,
-        totalBookmarks: bookmarks.length,
-        totalChatMessages: chatMessages.length,
-        totalSermons: sermons.length,
-        totalLibraryItems: libraryItems.length,
-        streak: calculateStreak(),
-        recentActivity: weeklyActivityPercentage,
-        studyTimeThisWeek: studyTimeThisWeek,
-        lastLoginDate: new Date().toISOString()
+        // Total counts
+        notes: notes.length,
+        sermons: sermons.length,
+        bookmarks: bookmarks.length,
+        chatSessions: chatMessages.length,
+        libraryItems: libraryItems.length,
+        
+        // Recent activity (last 7 days)
+        recentActivity: {
+          notes: recentNotes.length,
+          sermons: recentSermons.length,
+          bookmarks: recentBookmarks.length,
+          chatSessions: recentChats.length,
+          libraryItems: recentLibrary.length,
+          total: recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length + recentLibrary.length
+        },
+
+        // Last activity timestamps
+        lastActivity: {
+          note: lastNoteDate ? new Date(lastNoteDate).toISOString() : null,
+          sermon: lastSermonDate ? new Date(lastSermonDate).toISOString() : null,
+          bookmark: lastBookmarkDate ? new Date(lastBookmarkDate).toISOString() : null,
+          chat: lastChatDate ? new Date(lastChatDate).toISOString() : null
+        }
       });
     } catch (error) {
       console.error("Error fetching profile stats:", error);
       res.status(500).json({ error: "Failed to fetch profile stats" });
-    }
-  });
-
-  // Recent notes endpoint
-  app.get("/api/notes/recent", authenticateUser, async (req, res) => {
-    try {
-      const user = await storage.getUserByEmail(req.user!.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const notes = await storage.getNotes(user.id);
-      const recentNotes = notes
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
-
-      res.json(recentNotes);
-    } catch (error) {
-      console.error("Error fetching recent notes:", error);
-      res.status(500).json({ error: "Failed to fetch recent notes" });
-    }
-  });
-
-  // Recent bookmarks endpoint
-  app.get("/api/bookmarks/recent", authenticateUser, async (req, res) => {
-    try {
-      const user = await storage.getUserByEmail(req.user!.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const bookmarks = await storage.getBookmarks(user.id);
-      const recentBookmarks = bookmarks
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
-
-      res.json(recentBookmarks);
-    } catch (error) {
-      console.error("Error fetching recent bookmarks:", error);
-      res.status(500).json({ error: "Failed to fetch recent bookmarks" });
     }
   });
 
@@ -1098,12 +955,12 @@ Convert this into bullet format with:
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY || '',
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
           'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
