@@ -336,17 +336,10 @@ export default function ChatInterface() {
   const sendRecording = () => {
     if (recordedTranscript.trim()) {
       setMessage(recordedTranscript);
-      setIsVoiceMessage(true); // Mark this as a voice message
+      setIsVoiceMessage(true); // ALWAYS mark as voice message since it came from recording
       
-      // Ensure speech synthesis is ready for automatic playback
-      if (synthRef.current && synthRef.current.getVoices().length === 0) {
-        // Wait for voices to load on mobile
-        synthRef.current.addEventListener('voiceschanged', () => {
-          sendMessageMutation.mutate(recordedTranscript);
-        }, { once: true });
-      } else {
-        sendMessageMutation.mutate(recordedTranscript);
-      }
+      // Send the message and it will automatically trigger voice response
+      sendMessageMutation.mutate(recordedTranscript);
       
       setShowRecordingControls(false);
       setRecordedTranscript("");
