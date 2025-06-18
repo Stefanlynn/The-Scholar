@@ -134,26 +134,32 @@ function SermonWorkspace() {
     <section>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-white">Sermon Workspace</h2>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-1 md:space-x-3">
           <Button
             onClick={() => setShowOutlineBuilder(!showOutlineBuilder)}
             variant="outline"
-            className="border-[var(--scholar-gold)]/50 text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10"
+            size="sm"
+            className="border-[var(--scholar-gold)]/50 text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10 text-xs md:text-sm px-2 md:px-4"
           >
-            {showOutlineBuilder ? "Hide Outline" : "Outline Builder"}
+            <span className="hidden sm:inline">{showOutlineBuilder ? "Hide Outline" : "Outline Builder"}</span>
+            <span className="sm:hidden">{showOutlineBuilder ? "Hide" : "Outline"}</span>
           </Button>
           <Button
             onClick={copyContent}
             variant="outline"
-            className="border-gray-600 text-gray-300 hover:bg-gray-700/50"
+            size="sm"
+            className="border-gray-600 text-gray-300 hover:bg-gray-700/50 text-xs md:text-sm px-2 md:px-4"
           >
-            Copy All
+            <span className="hidden sm:inline">Copy All</span>
+            <span className="sm:hidden">Copy</span>
           </Button>
           <Button
             onClick={downloadSermon}
-            className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black"
+            size="sm"
+            className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black text-xs md:text-sm px-2 md:px-4"
           >
-            Download
+            <span className="hidden sm:inline">Download</span>
+            <span className="sm:hidden">DL</span>
           </Button>
         </div>
       </div>
