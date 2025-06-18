@@ -992,7 +992,8 @@ Convert this into bullet format with:
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      const { word } = req.query;
+      const IQ_BIBLE_API_KEY = process.env.RAPIDAPI_KEY;
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
@@ -1007,7 +1008,20 @@ Convert this into bullet format with:
       }
 
       const data = await response.json();
-      res.json(data);
+      
+      // Filter data for specific word if provided
+      if (word && typeof data === 'object') {
+        const filteredData = Object.keys(data).reduce((acc, key) => {
+          if (key.toLowerCase().includes(word.toLowerCase()) || 
+              (data[key] && JSON.stringify(data[key]).toLowerCase().includes(word.toLowerCase()))) {
+            acc[key] = data[key];
+          }
+          return acc;
+        }, {});
+        res.json(filteredData);
+      } else {
+        res.json(data);
+      }
     } catch (error) {
       console.error('IQ Bible semantic relations error:', error);
       res.status(500).json({ message: "Failed to get semantic relations" });
