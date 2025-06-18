@@ -162,7 +162,7 @@ function SermonWorkspace() {
         {/* Main Editor */}
         <div className="lg:col-span-2 space-y-6">
           {/* Sermon Details */}
-          <Card className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-orange-500/20 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-amber-900 to-orange-900 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
             <CardContent className="p-6 space-y-4">
               <Input
                 placeholder="Sermon Title"
@@ -186,7 +186,7 @@ function SermonWorkspace() {
           </Card>
 
           {/* Writing Mode & Style Selector */}
-          <Card className="bg-gradient-to-br from-amber-900/20 to-yellow-900/20 border-amber-700/50 hover:border-amber-500/70 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-amber-900 to-yellow-900 border-amber-700/50 hover:border-amber-500/70 transition-all duration-300">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Writing Mode */}
@@ -241,7 +241,7 @@ function SermonWorkspace() {
           </Card>
 
           {/* Main Text Editor */}
-          <Card className="bg-gradient-to-br from-slate-900/40 to-gray-900/40 border-slate-700/50 hover:border-slate-500/70 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-gray-900 to-black border-gray-700/50 hover:border-gray-500/70 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">Sermon Content</h3>
@@ -285,7 +285,7 @@ function SermonWorkspace() {
         {/* Sidebar Tools */}
         <div className="space-y-6">
           {/* AI Enhancement Tools */}
-          <Card className="bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-700/50 hover:border-green-500/70 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-green-900 to-emerald-900 border-green-700/50 hover:border-green-500/70 transition-all duration-300">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-white mb-4">AI Enhancement Tools</h3>
               <p className="text-sm text-gray-300 mb-4">Select text in your sermon, then use these tools:</p>
@@ -328,7 +328,7 @@ function SermonWorkspace() {
 
           {/* Outline Builder */}
           {showOutlineBuilder && (
-            <Card className="bg-gradient-to-br from-[var(--scholar-gold)]/20 to-amber-900/20 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
+            <Card className="bg-gradient-to-br from-amber-900 to-yellow-900 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Preaching Outline</h3>
                 <div className="space-y-4 text-sm">
