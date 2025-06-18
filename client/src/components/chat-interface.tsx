@@ -811,32 +811,37 @@ export default function ChatInterface() {
       {/* Speaking Indicator */}
       {isSpeaking && (
         <div className="fixed bottom-32 md:bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-[var(--scholar-gold)] text-black px-4 py-3 rounded-full flex items-center space-x-3 shadow-lg">
-            <Volume2 className="w-5 h-5 animate-pulse" />
-            <span className="text-sm font-medium">The Scholar is speaking...</span>
-            <div className="flex items-center space-x-1">
-              <Button
+          <div className="bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black px-6 py-4 rounded-2xl flex items-center space-x-4 shadow-2xl backdrop-blur-sm border border-yellow-300/20">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Volume2 className="w-5 h-5 animate-pulse" />
+                <div className="absolute -inset-1 bg-black/10 rounded-full animate-ping"></div>
+              </div>
+              <span className="text-sm font-semibold tracking-wide">The Scholar is speaking...</span>
+            </div>
+            
+            <div className="flex items-center space-x-2 ml-4">
+              <button
                 onClick={() => {
                   if (synthRef.current) {
                     synthRef.current.pause();
                   }
                 }}
-                size="sm"
-                variant="ghost"
-                className="text-black hover:bg-yellow-600 p-1 h-7 w-7 rounded-full"
+                className="group relative w-9 h-9 bg-black/10 hover:bg-black/20 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
                 title="Pause"
               >
-                ⏸
-              </Button>
-              <Button
+                <div className="text-lg leading-none">⏸</div>
+                <div className="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-black/20 transition-all duration-200"></div>
+              </button>
+              
+              <button
                 onClick={stopSpeaking}
-                size="sm"
-                variant="ghost"
-                className="text-black hover:bg-yellow-600 p-1 h-7 w-7 rounded-full"
+                className="group relative w-9 h-9 bg-black/10 hover:bg-black/20 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
                 title="Stop"
               >
-                ⏹
-              </Button>
+                <div className="text-lg leading-none">⏹</div>
+                <div className="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-black/20 transition-all duration-200"></div>
+              </button>
             </div>
           </div>
         </div>
