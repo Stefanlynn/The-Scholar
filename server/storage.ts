@@ -114,10 +114,14 @@ export class MemStorage implements IStorage {
       bio: insertUser.bio ?? null,
       ministryRole: insertUser.ministryRole ?? null,
       profilePicture: insertUser.profilePicture ?? null,
+      phone: insertUser.phone ?? null,
+      location: insertUser.location ?? null,
+      website: insertUser.website ?? null,
       defaultBibleTranslation: insertUser.defaultBibleTranslation ?? "NIV",
       darkMode: insertUser.darkMode ?? true,
       notifications: insertUser.notifications ?? true,
       hasCompletedOnboarding: insertUser.hasCompletedOnboarding ?? false,
+      isPremiumMember: insertUser.isPremiumMember ?? false,
       createdAt: new Date(),
       updatedAt: new Date()
     };

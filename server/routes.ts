@@ -1,8 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { PostgreSQLStorage } from "./pg-storage";
-
-const storage = new PostgreSQLStorage();
+import { storage } from "./storage";
 import { 
   insertChatMessageSchema, 
   insertNoteSchema, 

@@ -48,13 +48,18 @@ export class PostgreSQLStorage implements IStorage {
     return result[0];
   }
 
-  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
+  async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
     const result = await db.update(users).set(updateData).where(eq(users.id, id)).returning();
     return result[0];
   }
 
+  async deleteUser(id: string): Promise<boolean> {
+    const result = await db.delete(users).where(eq(users.id, id)).returning();
+    return result.length > 0;
+  }
+
   // Chat Messages
-  async getChatMessages(userId: number): Promise<ChatMessage[]> {
+  async getChatMessages(userId: string): Promise<ChatMessage[]> {
     return await db.select().from(chatMessages).where(eq(chatMessages.userId, userId));
   }
 
@@ -64,7 +69,7 @@ export class PostgreSQLStorage implements IStorage {
   }
 
   // Notes
-  async getNotes(userId: number): Promise<Note[]> {
+  async getNotes(userId: string): Promise<Note[]> {
     return await db.select().from(notes).where(eq(notes.userId, userId));
   }
 
