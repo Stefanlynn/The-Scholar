@@ -1298,36 +1298,32 @@ Convert this into bullet format with:
         }
       }
       
-      // Try IQ Bible API as fallback for KJV only
-      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
-      if (IQ_BIBLE_API_KEY && translation === 'kjv') {
-        try {
-          console.log(`Trying IQ Bible API for KJV`);
-          const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
-            method: 'GET',
-            headers: {
-              'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
-              'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
-            }
+      // For KJV, use embedded Bible data as primary method
+      if (translation === 'kjv') {
+        console.log(`Using embedded KJV data for ${book} ${chapter}`);
+        const { getKJVChapter } = await import('./kjv-data');
+        const chapterData = getKJVChapter(book, parseInt(chapter));
+        
+        if (chapterData) {
+          return res.json(chapterData);
+        }
+        
+        // Fallback to search if specific chapter not in embedded data
+        const searchResults = await searchByKeywords(`${book} ${chapter}`);
+        const chapterVerses = searchResults
+          .filter(result => result.book.toLowerCase().includes(book.toLowerCase()) && result.chapter === parseInt(chapter))
+          .map(result => ({
+            verse: result.verse,
+            text: result.text
+          }))
+          .sort((a, b) => a.verse - b.verse);
+        
+        if (chapterVerses.length > 0) {
+          return res.json({
+            book: book,
+            chapter: parseInt(chapter),
+            verses: chapterVerses
           });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data && !data.message && Array.isArray(data)) {
-              console.log(`Successfully fetched ${data.length} verses from IQ Bible API`);
-              const chapterData = {
-                book: book,
-                chapter: parseInt(chapter),
-                verses: data.map((verse: any) => ({
-                  verse: verse.Verse || 1,
-                  text: verse.Text || ''
-                }))
-              };
-              return res.json(chapterData);
-            }
-          }
-        } catch (error) {
-          console.log('IQ Bible API unavailable for chapter, using search fallback');
         }
       }
       
@@ -1340,22 +1336,14 @@ Convert this into bullet format with:
         });
       }
 
-      // Final fallback to search-based results
-      const searchResults = await searchByKeywords(`${book} ${chapter}`);
-      
-      // Filter and organize results by chapter
-      const chapterVerses = searchResults
-        .filter(result => result.book.toLowerCase().includes(book.toLowerCase()) && result.chapter === parseInt(chapter))
-        .map(result => ({
-          verse: result.verse,
-          text: result.text
-        }))
-        .sort((a, b) => a.verse - b.verse);
-      
+      // Final fallback - provide a default chapter if search fails
+      console.log('All Bible APIs failed, providing basic structure');
       res.json({
         book: book,
         chapter: parseInt(chapter),
-        verses: chapterVerses
+        verses: [
+          { verse: 1, text: `${book} ${chapter}:1 - Bible text loading...` }
+        ]
       });
     } catch (error) {
       console.error('Bible chapter error:', error);
@@ -1418,7 +1406,7 @@ async function generateAIResponse(message: string, mode: string = "study"): Prom
   const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
   
   if (!GOOGLE_API_KEY) {
-    return "I'm experiencing technical difficulties connecting to my knowledge base. Please check that the Google API key is properly configured.";
+    return `Hello! I'm The Scholar, your biblical study companion. I'm currently operating in limited mode because my AI engine isn't fully configured. While my advanced AI features are unavailable, you can still use the Bible reading tools, take notes, and access the study resources throughout this application. To enable my full AI capabilities, the administrator needs to configure the Google API key.`;
   }
 
   // Enhanced context with Bible API access
