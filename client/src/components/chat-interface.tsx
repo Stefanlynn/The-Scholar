@@ -456,8 +456,10 @@ export default function ChatInterface() {
     },
     onSuccess: () => {
       toast({ title: "Saved to Notes successfully!" });
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Save to notes error:", error);
       toast({ title: "Failed to save to Notes", variant: "destructive" });
     },
   });
