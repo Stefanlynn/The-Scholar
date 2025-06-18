@@ -3,8 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
-import Sidebar from "@/components/sidebar";
-import MobileTabBar from "@/components/mobile-tab-bar";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -154,23 +153,16 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-white">Loading profile...</div>
-        </div>
-        <MobileTabBar />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-white">Loading profile...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile-Optimized Header */}
-        <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-3 md:py-4">
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Mobile-Optimized Header */}
+      <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 md:space-x-4">
               <h2 className="text-lg md:text-xl font-semibold text-white">Profile</h2>
@@ -587,7 +579,6 @@ export default function Profile() {
 
         </div>
       </div>
-      <MobileTabBar />
     </div>
   );
 }

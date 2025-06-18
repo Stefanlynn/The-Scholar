@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Book, Play, FileText, Headphones, Heart, Calendar, Clock, User, ChevronRight } from "lucide-react";
+import { Book, Play, FileText, Headphones, Heart, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import PageHelp from "@/components/page-help";
 
@@ -26,24 +25,6 @@ const libraryHelpContent = {
         "Articles: Written content on theology, spiritual growth, and practical faith",
         "Devotionals: Daily readings and spiritual reflection materials",
         "Sermons: Video and audio messages from conferences and churches"
-      ]
-    },
-    {
-      title: "Personal Organization",
-      description: "Save and organize content that resonates with your spiritual journey",
-      tips: [
-        "Heart items to add them to your personal favorites collection",
-        "Use content for study preparation and spiritual growth",
-        "Share meaningful content with your ministry team or small group"
-      ]
-    },
-    {
-      title: "Sermon Integration",
-      description: "Use library content to enhance your teaching and preaching preparation",
-      tips: [
-        "Reference articles and teachings in your sermon notes",
-        "Use sermon content for study and sermon preparation",
-        "Save memorable quotes and teaching points to your notes"
       ]
     }
   ]
