@@ -152,11 +152,7 @@ export default function ChatInterface() {
 
   // Handle speaking response with voice synthesis
   const speakResponse = (text: string) => {
-    console.log("speakResponse called with:", text);
-    if (!synthRef.current) {
-      console.log("No speech synthesis reference");
-      return;
-    }
+    if (!synthRef.current) return;
     
     // Cancel any ongoing speech
     synthRef.current.cancel();
@@ -175,36 +171,39 @@ export default function ChatInterface() {
       .trim();
     
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    utterance.volume = 0.8;
+    utterance.rate = 0.85; // Slightly slower for scholarly pace
+    utterance.pitch = 0.8; // Lower pitch for more masculine, authoritative sound
+    utterance.volume = 0.9;
     
-    // Try to use a more natural voice
+    // Try to use a scholarly male voice
     const voices = synthRef.current.getVoices();
     const preferredVoice = voices.find(voice => 
-      voice.name.includes('Samantha') || 
-      voice.name.includes('Daniel') || 
-      voice.name.includes('Karen') ||
-      voice.lang.includes('en')
-    );
+      // Look for masculine, scholarly voices first
+      voice.name.includes('Daniel') ||
+      voice.name.includes('David') ||
+      voice.name.includes('Alex') ||
+      voice.name.includes('Thomas') ||
+      voice.name.includes('James') ||
+      voice.name.includes('Michael') ||
+      voice.name.includes('Male') ||
+      // Fallback to any English male voice
+      (voice.lang.includes('en') && voice.name.toLowerCase().includes('male'))
+    ) || voices.find(voice => 
+      // If no specific male voice found, look for deeper/authoritative voices
+      voice.name.includes('Arthur') ||
+      voice.name.includes('Bruce') ||
+      voice.name.includes('Fred') ||
+      voice.lang.includes('en-GB') // British voices often sound more scholarly
+    ) || voices.find(voice => voice.lang.includes('en')); // Final fallback
+    
     if (preferredVoice) {
       utterance.voice = preferredVoice;
     }
     
-    utterance.onstart = () => {
-      console.log("Speech started");
-      setIsSpeaking(true);
-    };
-    utterance.onend = () => {
-      console.log("Speech ended");
-      setIsSpeaking(false);
-    };
-    utterance.onerror = (error) => {
-      console.log("Speech error:", error);
-      setIsSpeaking(false);
-    };
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
     
-    console.log("Starting speech synthesis");
     synthRef.current.speak(utterance);
   };
 
@@ -292,10 +291,8 @@ export default function ChatInterface() {
   // Send recorded message
   const sendRecording = () => {
     if (recordedTranscript.trim()) {
-      console.log("Sending voice message:", recordedTranscript);
       setMessage(recordedTranscript);
       setIsVoiceMessage(true); // Mark this as a voice message
-      console.log("Voice message flag set to true");
       sendMessageMutation.mutate(recordedTranscript);
       setShowRecordingControls(false);
       setRecordedTranscript("");
@@ -360,11 +357,8 @@ export default function ChatInterface() {
       
       // Always speak the response when it comes from voice input
       if (data.response && isVoiceMessage) {
-        console.log("Speaking response:", data.response);
         speakResponse(data.response);
         setIsVoiceMessage(false); // Reset voice message flag
-      } else if (isVoiceMessage) {
-        console.log("Voice message flag set but no response data");
       }
       
       // Update profile stats for chat activity

@@ -405,6 +405,12 @@ Changelog:
   * Improved speech recognition with interim results showing real-time transcription
   * Enhanced error handling and state management for consistent voice functionality
   * Recording now works reliably every time with proper state reset between uses
+- June 17, 2025: Completed full voice conversation system with bidirectional audio
+  * Fixed recording controls to appear properly after stopping recording manually
+  * Implemented reliable transcript preservation using reference-based state management
+  * Enhanced voice response system with automatic text-to-speech for Scholar replies
+  * Complete voice workflow: record → preview → send → Scholar responds with both text and voice
+  * Voice conversations now work seamlessly like ChatGPT/Siri with full audio interaction
 ```
 
 ## User Preferences
