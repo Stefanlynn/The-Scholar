@@ -525,10 +525,11 @@ export default function ChatInterface() {
           "Click the golden microphone button to start recording your question",
           "Speak clearly and close to your device for best accuracy",
           "Recording stops automatically when you finish speaking, or click 'Stop Recording'",
-          "Click 'Listen' to hear your voice note before sending it to The Scholar",
-          "Send your voice note and The Scholar responds with both text and voice",
+          "IMPORTANT: Click 'Listen' to preview your voice message before clicking 'Send'",
+          "Only after clicking 'Listen' first, then click 'Send' to get Scholar's voice response",
+          "The Scholar will respond with both text and voice when you follow this workflow",
           "The Scholar uses a masculine, professorial voice for biblical teaching",
-          "Use pause (⏸) and stop (×) controls during Scholar's voice responses"
+          "Use pause and stop controls during Scholar's voice responses"
         ]
       },
       {

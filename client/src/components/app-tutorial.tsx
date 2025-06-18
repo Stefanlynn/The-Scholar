@@ -66,7 +66,8 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
       instructions: [
         "Click the mode toggle at the top to switch between Study and Devotional",
         "Ask questions by typing or clicking the microphone button to speak",
-        "The Scholar responds with both text and voice for full conversation experience",
+        "For voice responses: Click 'Listen' to preview your message, then click 'Send'",
+        "The Scholar will respond with both text and voice when you use voice input",
         "Use 'Save to Notes' to keep important responses",
         "Start new conversations with the 'New' button"
       ],
