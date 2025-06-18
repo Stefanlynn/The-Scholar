@@ -194,6 +194,229 @@ export default function Profile() {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
         
+        {/* User Info Section */}
+        <Card className="bg-[var(--scholar-dark)] border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <User className="h-5 w-5 mr-2" />
+              User Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isEditing ? (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                    {profile?.profilePicture ? (
+                      <img 
+                        src={profile.profilePicture} 
+                        alt="Profile" 
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="text-gray-400 text-2xl" />
+                    )}
+                  </div>
+                  <div>
+                    <Button
+                      type="button"
+                      onClick={triggerFileUpload}
+                      variant="outline"
+                      className="border-gray-600 text-white hover:bg-gray-700"
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Change Photo
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-white text-sm font-medium mb-2 block">Full Name</label>
+                    <Input
+                      name="fullName"
+                      defaultValue={profile?.fullName || user?.user_metadata?.full_name || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white text-sm font-medium mb-2 block">Email</label>
+                    <Input
+                      name="email"
+                      type="email"
+                      defaultValue={profile?.email || user?.email || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white text-sm font-medium mb-2 block">Bio</label>
+                    <Textarea
+                      name="bio"
+                      placeholder="Tell us about yourself..."
+                      defaultValue={profile?.bio || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white text-sm font-medium mb-2 block">Ministry Role</label>
+                    <Input
+                      name="ministryRole"
+                      placeholder="Pastor, Teacher, Student..."
+                      defaultValue={profile?.ministryRole || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-4">
+                  <div className="space-y-2">
+                    <Button
+                      type="submit"
+                      className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                      disabled={updateProfileMutation.isPending}
+                    >
+                      {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+                    </Button>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setIsEditing(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                    {profile?.profilePicture ? (
+                      <img 
+                        src={profile.profilePicture} 
+                        alt="Profile" 
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="text-gray-400 text-2xl" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {profile?.fullName || user?.user_metadata?.full_name || "User"}
+                    </h3>
+                    <p className="text-gray-400">{profile?.email || user?.email}</p>
+                    {profile?.ministryRole && (
+                      <p className="text-[var(--scholar-gold)] font-medium">{profile.ministryRole}</p>
+                    )}
+                  </div>
+                </div>
+
+                {profile?.bio && (
+                  <div>
+                    <h4 className="text-white font-medium mb-2">About</h4>
+                    <p className="text-gray-300">{profile.bio}</p>
+                  </div>
+                )}
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    className="border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Account Settings */}
+        <Card className="bg-[var(--scholar-dark)] border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <Settings className="h-5 w-5 mr-2" />
+              Account Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-white text-sm font-medium">Default Bible Translation</label>
+                    <p className="text-gray-400 text-xs">Choose your preferred Bible version</p>
+                  </div>
+                  <select
+                    value={preferences.defaultBibleTranslation}
+                    onChange={(e) => updatePreferences({ defaultBibleTranslation: e.target.value })}
+                    className="bg-[var(--scholar-darker)] border border-gray-600 text-white rounded px-3 py-1 text-sm"
+                  >
+                    <option value="NIV">NIV</option>
+                    <option value="ESV">ESV</option>
+                    <option value="KJV">KJV</option>
+                    <option value="NASB">NASB</option>
+                    <option value="NLT">NLT</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-white text-sm font-medium">Dark Mode</label>
+                    <p className="text-gray-400 text-xs">Toggle dark theme</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updatePreferences({ darkMode: !preferences.darkMode })}
+                    className={`${preferences.darkMode ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
+                  >
+                    {preferences.darkMode ? "On" : "Off"}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-white text-sm font-medium">Notifications</label>
+                    <p className="text-gray-400 text-xs">Receive study reminders</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updatePreferences({ notifications: !preferences.notifications })}
+                    className={`${preferences.notifications ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
+                  >
+                    {preferences.notifications ? "On" : "Off"}
+                  </Button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-white text-sm font-medium">Ministry Role</label>
+                    <p className="text-gray-400 text-xs">Your role in ministry</p>
+                  </div>
+                  <span className="text-[var(--scholar-gold)] text-sm">
+                    {preferences.ministryRole || "Not set"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         {/* Dashboard Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="bg-[var(--scholar-dark)] border-gray-700 p-4">

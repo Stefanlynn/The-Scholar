@@ -9,10 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, FileText, Edit, Trash2, PenTool, BookOpen, Mic, Lightbulb, Quote, Volume2, Wand2, RotateCcw, Download, Copy, MessageSquareText, NotebookPen, HelpCircle } from "lucide-react";
+import { Plus, Search, FileText, Edit, Trash2, PenTool, BookOpen, Star, Calendar, Clock, Grid3X3, List, Filter, MessageSquareText, NotebookPen, HelpCircle, BookmarkCheck, Lightbulb, Quote, Archive, TrendingUp, Sparkles } from "lucide-react";
 import type { Note } from "@shared/schema";
 import PageHelp from "@/components/page-help";
 
@@ -20,7 +18,9 @@ export default function Notes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
-  const [activeTab, setActiveTab] = useState("notes");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showHelp, setShowHelp] = useState(false);
   const { toast } = useToast();
 
   // Helper functions for copy and download
