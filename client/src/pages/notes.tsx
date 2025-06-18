@@ -162,7 +162,7 @@ function SermonWorkspace() {
         {/* Main Editor */}
         <div className="lg:col-span-2 space-y-6">
           {/* Sermon Details */}
-          <Card className="bg-gradient-to-br from-amber-900 to-orange-900 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
+          <Card className="bg-black/80 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
             <CardContent className="p-6 space-y-4">
               <Input
                 placeholder="Sermon Title"
@@ -186,7 +186,7 @@ function SermonWorkspace() {
           </Card>
 
           {/* Writing Mode & Style Selector */}
-          <Card className="bg-gradient-to-br from-amber-900 to-yellow-900 border-amber-700/50 hover:border-amber-500/70 transition-all duration-300">
+          <Card className="bg-black/80 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Writing Mode */}
