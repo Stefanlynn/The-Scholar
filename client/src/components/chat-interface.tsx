@@ -50,7 +50,7 @@ export default function ChatInterface() {
   // Load initial messages from server
   const { data: serverMessages, isLoading } = useQuery<ChatMessage[]>({
     queryKey: ["/api/chat/messages"],
-    enabled: !!user,
+    enabled: true, // Always enabled with fallback authentication
   });
 
   // Update conversation when server messages load

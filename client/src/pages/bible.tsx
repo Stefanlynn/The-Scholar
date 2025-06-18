@@ -52,6 +52,7 @@ const books = [
 ];
 
 const translations = [
+  { value: "niv", label: "New International Version" },
   { value: "kjv", label: "King James Version" }
 ];
 
