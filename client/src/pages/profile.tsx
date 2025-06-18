@@ -57,6 +57,7 @@ interface ProfileStats {
 
 export default function Profile() {
   const { user } = useAuth();
+  const { preferences, updatePreferences } = useUserPreferences();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -360,7 +361,7 @@ export default function Profile() {
                     <p className="text-gray-400 text-xs">Choose your preferred Bible version</p>
                   </div>
                   <select
-                    value={preferences.defaultBibleTranslation}
+                    value={profile?.defaultBibleTranslation || "NIV"}
                     onChange={(e) => updatePreferences({ defaultBibleTranslation: e.target.value })}
                     className="bg-[var(--scholar-darker)] border border-gray-600 text-white rounded px-3 py-1 text-sm"
                   >
@@ -380,10 +381,10 @@ export default function Profile() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => updatePreferences({ darkMode: !preferences.darkMode })}
-                    className={`${preferences.darkMode ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
+                    onClick={() => updatePreferences({ darkMode: !(profile?.darkMode ?? true) })}
+                    className={`${profile?.darkMode ?? true ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
                   >
-                    {preferences.darkMode ? "On" : "Off"}
+                    {profile?.darkMode ?? true ? "On" : "Off"}
                   </Button>
                 </div>
               </div>
@@ -397,10 +398,10 @@ export default function Profile() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => updatePreferences({ notifications: !preferences.notifications })}
-                    className={`${preferences.notifications ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
+                    onClick={() => updatePreferences({ notifications: !(profile?.notifications ?? true) })}
+                    className={`${profile?.notifications ?? true ? 'bg-[var(--scholar-gold)] text-black' : 'bg-gray-700 text-white'} hover:opacity-80`}
                   >
-                    {preferences.notifications ? "On" : "Off"}
+                    {profile?.notifications ?? true ? "On" : "Off"}
                   </Button>
                 </div>
 
@@ -410,7 +411,7 @@ export default function Profile() {
                     <p className="text-gray-400 text-xs">Your role in ministry</p>
                   </div>
                   <span className="text-[var(--scholar-gold)] text-sm">
-                    {preferences.ministryRole || "Not set"}
+                    {profile?.ministryRole || "Not set"}
                   </span>
                 </div>
               </div>
