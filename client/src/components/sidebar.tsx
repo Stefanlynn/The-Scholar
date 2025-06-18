@@ -35,7 +35,12 @@ export default function Sidebar() {
             />
           </div>
           <div>
-            <h1 className="text-xl lg:text-2xl font-bold text-white">The Scholar</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl lg:text-2xl font-bold text-white">The Scholar</h1>
+              <span className="px-2 py-0.5 text-xs font-semibold bg-[var(--scholar-gold)] text-black rounded">
+                BETA
+              </span>
+            </div>
             <p className="text-xs lg:text-sm text-gray-400">Biblical Study Tool</p>
           </div>
         </div>

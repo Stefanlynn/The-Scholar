@@ -83,7 +83,16 @@ export default function MobileTabBar() {
                 <span className={`text-[10px] mt-1 transition-all ${
                   isActive ? 'font-medium' : 'font-normal'
                 }`}>
-                  {item.name}
+                  {item.name === "Scholar" ? (
+                    <div className="flex items-center gap-1">
+                      <span>Scholar</span>
+                      <span className="px-1 py-0.5 text-[8px] font-bold bg-[var(--scholar-gold)] text-black rounded">
+                        BETA
+                      </span>
+                    </div>
+                  ) : (
+                    item.name
+                  )}
                 </span>
               </button>
             </Link>

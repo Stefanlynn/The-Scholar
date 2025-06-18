@@ -442,6 +442,11 @@ Changelog:
   * Moved Voice & Style selector from sidebar into main content flow for better workflow
   * Removed Expert Voice Adaptation section from chat help documentation for cleaner interface
   * Enhanced sermon preparation workflow with more logical section ordering
+- June 18, 2025: Separated Bible study tools from main Scholar chat and added Beta branding
+  * Created dedicated `/api/bible/study-tools` endpoint to keep Bible study responses separate from chat history
+  * Bible study tool responses (Greek/Hebrew analysis, Scholar's Take, etc.) no longer appear in main chat conversation
+  * Added "BETA" labels next to "The Scholar" branding in both desktop sidebar and mobile navigation
+  * Enhanced profile page with simplified design: auto-populated name/email, direct password change, and essential account settings only
 ```
 
 ## User Preferences
