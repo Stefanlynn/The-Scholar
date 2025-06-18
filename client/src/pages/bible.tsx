@@ -1099,13 +1099,13 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Study Tools Dialog */}
         <Dialog open={!!selectedVerse} onOpenChange={() => setSelectedVerse(null)}>
-          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-md w-[90vw] max-h-[70vh] overflow-y-auto">
-            <DialogHeader className="pb-3">
-              <DialogTitle className="text-[var(--scholar-gold)] text-lg font-semibold flex items-center">
-                <GraduationCap className="h-5 w-5 mr-2" />
+          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl max-h-[95vh] overflow-y-auto">
+            <DialogHeader className="border-b border-[var(--scholar-gold)]/20 pb-4">
+              <DialogTitle className="text-[var(--scholar-gold)] flex items-center text-xl">
+                <GraduationCap className="h-6 w-6 mr-3" />
                 The Scholar Study Tools
                 {selectedVerse && (
-                  <span className="text-gray-300 text-sm ml-2 font-normal">
+                  <span className="text-gray-300 text-base ml-2 font-normal">
                     {selectedBook} {selectedChapter}:{selectedVerse.verse}
                   </span>
                 )}
@@ -1346,11 +1346,11 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Response Dialog */}
         <Dialog open={showScholarDialog} onOpenChange={setShowScholarDialog}>
-          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-[var(--scholar-gold)] text-xl font-semibold flex items-center justify-between">
+          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-md w-[90vw] max-h-[70vh] overflow-y-auto">
+            <DialogHeader className="pb-3">
+              <DialogTitle className="text-[var(--scholar-gold)] text-lg font-semibold flex items-center justify-between">
                 <div className="flex items-center">
-                  <GraduationCap className="h-6 w-6 mr-2" />
+                  <GraduationCap className="h-5 w-5 mr-2" />
                   {currentStudyTool ? getStudyToolTitle(currentStudyTool) : "The Scholar's Analysis"}
                 </div>
                 <Button
@@ -1370,54 +1370,52 @@ Please provide a direct, conversational answer to the user's question. Do not us
               </DialogTitle>
             </DialogHeader>
             
-            {/* Verse Reference Display */}
-            {currentVerseForStudy && (
-              <div className="bg-[var(--scholar-darker)] border border-[var(--scholar-gold)]/20 rounded-lg p-4 mb-6">
-                <div className="text-[var(--scholar-gold)] font-semibold text-lg mb-2">
-                  {currentVerseForStudy.reference}
+            <div className="space-y-4">
+              {/* Verse Reference Display */}
+              {currentVerseForStudy && (
+                <div className="p-3 bg-[var(--scholar-darker)] rounded border border-[var(--scholar-gold)]/20">
+                  <p className="text-[var(--scholar-gold)] text-sm font-medium mb-1">
+                    {currentVerseForStudy.reference}
+                  </p>
+                  <p className="text-gray-200 text-sm leading-relaxed italic">
+                    "{currentVerseForStudy.text}"
+                  </p>
                 </div>
-                <div className="text-gray-200 leading-relaxed italic text-base">
-                  "{currentVerseForStudy.text}"
-                </div>
-              </div>
-            )}
+              )}
             
-            <div className="mt-4">
+              {/* Scholar Response Content */}
               {scholarLoading ? (
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 text-[var(--scholar-gold)]">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[var(--scholar-gold)]"></div>
-                    <span>Analyzing Scripture and connecting to biblical resources...</span>
+                <div className="border border-gray-700 rounded p-3 bg-[var(--scholar-darker)]/30">
+                  <div className="flex items-center space-x-3 text-[var(--scholar-gold)] mb-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--scholar-gold)]"></div>
+                    <span className="text-sm">Analyzing Scripture...</span>
                   </div>
-                  <Skeleton className="h-4 w-full bg-gray-700" />
-                  <Skeleton className="h-4 w-3/4 bg-gray-700" />
-                  <Skeleton className="h-4 w-1/2 bg-gray-700" />
-                  <Skeleton className="h-4 w-4/5 bg-gray-700" />
-                  <Skeleton className="h-4 w-2/3 bg-gray-700" />
+                  <Skeleton className="h-3 w-full bg-gray-700 mb-2" />
+                  <Skeleton className="h-3 w-3/4 bg-gray-700 mb-2" />
+                  <Skeleton className="h-3 w-1/2 bg-gray-700" />
                 </div>
-              ) : (
-                <div className="bg-[var(--scholar-darker)] border border-[var(--scholar-gold)]/20 rounded-lg p-6">
-                  <div className="text-white leading-relaxed whitespace-pre-wrap text-base">
+              ) : scholarResponse && (
+                <div className="border border-gray-700 rounded p-3 bg-[var(--scholar-darker)]/30">
+                  <h4 className="text-white font-medium text-sm mb-2">Analysis</h4>
+                  <div className="text-gray-300 text-xs leading-relaxed whitespace-pre-wrap">
                     {scholarResponse}
                   </div>
                 </div>
               )}
-            </div>
-            <div className="flex justify-between mt-6 pt-4 border-t border-gray-700">
-              <Button 
-                onClick={handleSaveToNotes}
-                disabled={saveToNotesMutation.isPending || !scholarResponse}
-                className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 font-medium"
-              >
-                {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
-              </Button>
-              <Button
-                onClick={() => setShowScholarDialog(false)}
-                variant="ghost"
-                className="text-gray-400 hover:text-white"
-              >
-                Close
-              </Button>
+              
+              {/* Action buttons */}
+              {scholarResponse && (
+                <div className="mt-3 flex gap-2">
+                  <Button 
+                    onClick={handleSaveToNotes}
+                    disabled={saveToNotesMutation.isPending}
+                    size="sm"
+                    className="bg-[var(--scholar-gold)] text-black hover:bg-[var(--scholar-gold)]/90 text-xs"
+                  >
+                    {saveToNotesMutation.isPending ? 'Saving...' : 'Save to Notes'}
+                  </Button>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
