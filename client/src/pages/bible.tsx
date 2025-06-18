@@ -1098,7 +1098,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Study Tools Dialog */}
         <Dialog open={!!selectedVerse} onOpenChange={() => setSelectedVerse(null)}>
-          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl w-[calc(100vw-2rem)] sm:w-[90vw] max-h-[calc(100vh-4rem)] overflow-y-auto m-4 sm:mx-auto sm:my-8 rounded-xl shadow-2xl">
+          <DialogContent className="bg-[var(--scholar-darker)] border-[var(--scholar-gold)]/20 text-white max-w-5xl w-[calc(100vw-2rem)] sm:w-[90vw] max-h-[calc(100vh-4rem)] overflow-y-auto m-4 sm:mx-auto sm:my-8 rounded-xl shadow-2xl [&>button]:hidden">
             <DialogHeader className="border-b border-[var(--scholar-gold)]/20 pb-4">
               <DialogTitle className="text-[var(--scholar-gold)] flex items-center text-xl">
                 <GraduationCap className="h-6 w-6 mr-3" />
