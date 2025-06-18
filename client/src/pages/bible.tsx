@@ -1346,7 +1346,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
 
         {/* Scholar Response Dialog */}
         <Dialog open={showScholarDialog} onOpenChange={setShowScholarDialog}>
-          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-md w-[90vw] max-h-[70vh] overflow-y-auto">
+          <DialogContent className="bg-[var(--scholar-dark)] border-[var(--scholar-gold)]/30 text-white max-w-md w-[90vw] max-h-[70vh] overflow-y-auto" hideCloseButton>
             <DialogHeader className="pb-3">
               <DialogTitle className="text-[var(--scholar-gold)] text-lg font-semibold flex items-center justify-between">
                 <div className="flex items-center">
