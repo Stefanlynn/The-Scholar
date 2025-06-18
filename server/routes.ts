@@ -35,8 +35,17 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Configure multer for file uploads (serverless-safe)
-import { createMulterConfig } from './multer-config';
-const upload = multer(createMulterConfig());
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req: any, file: any, cb: any) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  }
+});
 
 // Middleware to verify user authentication
 async function authenticateUser(req: Request, res: Response, next: NextFunction) {
