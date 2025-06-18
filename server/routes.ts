@@ -1,6 +1,5 @@
-import express, { type Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import multer from "multer";
 import { storage } from "./storage";
 import { 
   insertChatMessageSchema, 
@@ -34,19 +33,6 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Configure multer for file uploads (serverless-safe)
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req: any, file: any, cb: any) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'));
-    }
-  }
-});
-
 // Middleware to verify user authentication
 async function authenticateUser(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -71,105 +57,32 @@ async function authenticateUser(req: Request, res: Response, next: NextFunction)
   }
 }
 
-// Middleware with fallback authentication for AI endpoints
-async function authenticateUserWithFallback(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  
-  if (authHeader) {
-    const token = authHeader.replace('Bearer ', '');
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      if (!error && user && user.email) {
-        req.user = {
-          id: user.id,
-          email: user.email,
-          user_metadata: user.user_metadata
-        };
-        
-        // Ensure user exists in storage for authenticated users
-        let existingUser = await storage.getUserByEmail(user.email);
-        if (!existingUser) {
-          await storage.createUser({
-            id: user.id,
-            email: user.email,
-            fullName: user.user_metadata?.full_name || null,
-            bio: null,
-            ministryRole: null,
-            profilePicture: user.user_metadata?.avatar_url || null,
-            defaultBibleTranslation: "NIV",
-            darkMode: true,
-            notifications: true,
-            hasCompletedOnboarding: false
-          });
-        }
-        
-        return next();
-      }
-    } catch (error) {
-      console.log('Authentication failed, using fallback:', error);
-    }
-  }
-  
-  // Fallback to demo user for AI functionality
-  req.user = {
-    id: 'demo-user-id',
-    email: 'demo@scholar.app',
-    user_metadata: { full_name: 'Demo User' }
-  };
-  
-  // Ensure demo user exists in storage
-  try {
-    let demoUser = await storage.getUserByEmail('demo@scholar.app');
-    if (!demoUser) {
-      await storage.createUser({
-        id: 'demo-user-id',
-        email: 'demo@scholar.app',
-        fullName: 'Demo User',
-        bio: null,
-        ministryRole: null,
-        profilePicture: null,
-        defaultBibleTranslation: "NIV",
-        darkMode: true,
-        notifications: true,
-        hasCompletedOnboarding: true
-      });
-    }
-  } catch (error) {
-    console.log('Error creating demo user:', error);
-  }
-  
-  next();
-}
-
 // Bible search function using API-Bible for authentic scripture data
 async function searchByKeywords(query: string) {
   try {
     // Use API-Bible service for authentic biblical text
-    const API_BIBLE_KEY = process.env.API_BIBLE_KEY;
-    if (API_BIBLE_KEY) {
-      const response = await fetch(`https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/search?query=${encodeURIComponent(query)}&limit=50`, {
-        method: 'GET',
-        headers: {
-          'api-key': API_BIBLE_KEY
-        }
-      });
+    const response = await fetch(`https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/search?query=${encodeURIComponent(query)}&limit=50`, {
+      method: 'GET',
+      headers: {
+        'api-key': process.env.RAPIDAPI_KEY || ''
+      }
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data && data.data.verses) {
-          return data.data.verses.map((verse: any) => {
-            const reference = verse.reference;
-            const bookMatch = reference.match(/^([^0-9]+)/);
-            const chapterVerseMatch = reference.match(/(\d+):(\d+)/);
-            
-            return {
-              book: bookMatch ? bookMatch[1].trim() : "Unknown",
-              chapter: chapterVerseMatch ? parseInt(chapterVerseMatch[1]) : 1,
-              verse: chapterVerseMatch ? parseInt(chapterVerseMatch[2]) : 1,
-              text: verse.text.replace(/<[^>]*>/g, '') // Remove HTML tags
-            };
-          });
-        }
+    if (response.ok) {
+      const data = await response.json();
+      if (data.data && data.data.verses) {
+        return data.data.verses.map((verse: any) => {
+          const reference = verse.reference;
+          const bookMatch = reference.match(/^([^0-9]+)/);
+          const chapterVerseMatch = reference.match(/(\d+):(\d+)/);
+          
+          return {
+            book: bookMatch ? bookMatch[1].trim() : "Unknown",
+            chapter: chapterVerseMatch ? parseInt(chapterVerseMatch[1]) : 1,
+            verse: chapterVerseMatch ? parseInt(chapterVerseMatch[2]) : 1,
+            text: verse.text.replace(/<[^>]*>/g, '') // Remove HTML tags
+          };
+        });
       }
     }
   } catch (error) {
@@ -205,8 +118,6 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Static file serving disabled in serverless environments
-  
   // Users
   app.get("/api/users/current", authenticateUser, async (req, res) => {
     try {
@@ -278,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const updateData = updateUserProfileSchema.parse(req.body);
       
-      const updatedUser = await storage.updateUser(req.user!.id, updateData);
+      const updatedUser = await storage.updateUser(req.user.id, updateData);
       if (!updatedUser) {
         return res.status(404).json({ error: "Failed to update user" });
       }
@@ -287,47 +198,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Failed to update profile" });
-    }
-  });
-
-  // Add PATCH endpoint for profile updates (what the frontend expects)
-  app.patch("/api/profile", authenticateUser, async (req, res) => {
-    try {
-      const updateData = updateUserProfileSchema.parse(req.body);
-      
-      const updatedUser = await storage.updateUser(req.user!.id, updateData);
-      if (!updatedUser) {
-        return res.status(404).json({ error: "Failed to update user" });
-      }
-      
-      res.json(updatedUser);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      res.status(500).json({ error: "Failed to update profile" });
-    }
-  });
-
-  // Profile picture upload endpoint
-  app.post("/api/profile/upload-picture", authenticateUser, upload.single('profilePicture'), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
-      const imageUrl = `/uploads/${req.file.filename}`;
-      
-      const updatedUser = await storage.updateUser(req.user!.id, { 
-        profilePicture: imageUrl 
-      });
-      
-      if (!updatedUser) {
-        return res.status(404).json({ error: "Failed to update user" });
-      }
-      
-      res.json({ profilePicture: imageUrl });
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      res.status(500).json({ error: "Failed to upload profile picture" });
     }
   });
 
@@ -362,101 +232,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lastBookmarkDate = bookmarks.length > 0 ? Math.max(...bookmarks.map(b => new Date(b.createdAt).getTime())) : null;
       const lastChatDate = chatMessages.length > 0 ? Math.max(...chatMessages.map(m => new Date(m.timestamp).getTime())) : null;
 
-      // Calculate streak (consecutive days with activity)
-      const calculateStreak = () => {
-        const allActivities = [
-          ...notes.map(n => new Date(n.createdAt)),
-          ...sermons.map(s => new Date(s.createdAt)),
-          ...bookmarks.map(b => new Date(b.createdAt)),
-          ...chatMessages.map(m => new Date(m.timestamp))
-        ].sort((a, b) => b.getTime() - a.getTime());
-
-        if (allActivities.length === 0) return 0;
-
-        let streak = 0;
-        let currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-
-        for (let i = 0; i < 365; i++) { // Check up to a year
-          const dayHasActivity = allActivities.some(activity => {
-            const activityDate = new Date(activity);
-            activityDate.setHours(0, 0, 0, 0);
-            return activityDate.getTime() === currentDate.getTime();
-          });
-
-          if (dayHasActivity) {
-            streak++;
-          } else if (i > 0) { // Allow for today to not have activity yet
-            break;
-          }
-
-          currentDate.setDate(currentDate.getDate() - 1);
-        }
-
-        return streak;
-      };
-
-      // Calculate weekly activity percentage
-      const totalRecentActivity = recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length;
-      const weeklyActivityPercentage = Math.min(Math.round((totalRecentActivity / 7) * 100), 100);
-
-      // Calculate study time estimate (based on activity count)
-      const studyTimeThisWeek = Math.round((totalRecentActivity * 0.5) * 10) / 10; // Rough estimate
-
       res.json({
-        totalNotes: notes.length,
-        totalBookmarks: bookmarks.length,
-        totalChatMessages: chatMessages.length,
-        totalSermons: sermons.length,
-        totalLibraryItems: libraryItems.length,
-        streak: calculateStreak(),
-        recentActivity: weeklyActivityPercentage,
-        studyTimeThisWeek: studyTimeThisWeek,
-        lastLoginDate: new Date().toISOString()
+        // Total counts
+        notes: notes.length,
+        sermons: sermons.length,
+        bookmarks: bookmarks.length,
+        chatSessions: chatMessages.length,
+        libraryItems: libraryItems.length,
+        
+        // Recent activity (last 7 days)
+        recentActivity: {
+          notes: recentNotes.length,
+          sermons: recentSermons.length,
+          bookmarks: recentBookmarks.length,
+          chatSessions: recentChats.length,
+          libraryItems: recentLibrary.length,
+          total: recentNotes.length + recentSermons.length + recentBookmarks.length + recentChats.length + recentLibrary.length
+        },
+
+        // Last activity timestamps
+        lastActivity: {
+          note: lastNoteDate ? new Date(lastNoteDate).toISOString() : null,
+          sermon: lastSermonDate ? new Date(lastSermonDate).toISOString() : null,
+          bookmark: lastBookmarkDate ? new Date(lastBookmarkDate).toISOString() : null,
+          chat: lastChatDate ? new Date(lastChatDate).toISOString() : null
+        }
       });
     } catch (error) {
       console.error("Error fetching profile stats:", error);
       res.status(500).json({ error: "Failed to fetch profile stats" });
-    }
-  });
-
-  // Recent notes endpoint
-  app.get("/api/notes/recent", authenticateUser, async (req, res) => {
-    try {
-      const user = await storage.getUserByEmail(req.user!.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const notes = await storage.getNotes(user.id);
-      const recentNotes = notes
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
-
-      res.json(recentNotes);
-    } catch (error) {
-      console.error("Error fetching recent notes:", error);
-      res.status(500).json({ error: "Failed to fetch recent notes" });
-    }
-  });
-
-  // Recent bookmarks endpoint
-  app.get("/api/bookmarks/recent", authenticateUser, async (req, res) => {
-    try {
-      const user = await storage.getUserByEmail(req.user!.email);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const bookmarks = await storage.getBookmarks(user.id);
-      const recentBookmarks = bookmarks
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
-
-      res.json(recentBookmarks);
-    } catch (error) {
-      console.error("Error fetching recent bookmarks:", error);
-      res.status(500).json({ error: "Failed to fetch recent bookmarks" });
     }
   });
 
@@ -484,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat Messages
-  app.get("/api/chat/messages", authenticateUserWithFallback, async (req, res) => {
+  app.get("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
       const user = await storage.getUserByEmail(req.user.email);
       if (!user) {
@@ -497,7 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", authenticateUserWithFallback, async (req, res) => {
+  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
     try {
       const user = await storage.getUserByEmail(req.user!.email);
       if (!user) {
@@ -549,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Study tools endpoint for Bible analysis requests
-  app.post("/api/chat/send", authenticateUserWithFallback, async (req, res) => {
+  app.post("/api/chat/send", authenticateUser, async (req, res) => {
     try {
       const { message } = req.body;
       
@@ -585,7 +389,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Sermon enhancement endpoint for AI-powered sermon workspace features
-  app.post("/api/chat/enhance", authenticateUserWithFallback, async (req, res) => {
+  app.post("/api/chat/enhance", async (req, res) => {
     try {
       const { action, text, style } = req.body;
       
@@ -1151,12 +955,12 @@ Convert this into bullet format with:
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {
-      const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
 
       const response = await fetch('https://iq-bible.p.rapidapi.com/GetSemanticRelationsAllWords', {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY || '',
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
           'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
         }
       });
@@ -1278,32 +1082,36 @@ Convert this into bullet format with:
         }
       }
       
-      // For KJV, use embedded Bible data as primary method
-      if (translation === 'kjv') {
-        console.log(`Using embedded KJV data for ${book} ${chapter}`);
-        const { getKJVChapter } = await import('./kjv-data');
-        const chapterData = getKJVChapter(book, parseInt(chapter));
-        
-        if (chapterData) {
-          return res.json(chapterData);
-        }
-        
-        // Fallback to search if specific chapter not in embedded data
-        const searchResults = await searchByKeywords(`${book} ${chapter}`);
-        const chapterVerses = searchResults
-          .filter(result => result.book.toLowerCase().includes(book.toLowerCase()) && result.chapter === parseInt(chapter))
-          .map(result => ({
-            verse: result.verse,
-            text: result.text
-          }))
-          .sort((a, b) => a.verse - b.verse);
-        
-        if (chapterVerses.length > 0) {
-          return res.json({
-            book: book,
-            chapter: parseInt(chapter),
-            verses: chapterVerses
+      // Try IQ Bible API as fallback for KJV only
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      if (IQ_BIBLE_API_KEY && translation === 'kjv') {
+        try {
+          console.log(`Trying IQ Bible API for KJV`);
+          const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVersesByBookAndChapter?BookName=${encodeURIComponent(book)}&ChapterNumber=${chapter}`, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': IQ_BIBLE_API_KEY,
+              'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+            }
           });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data && !data.message && Array.isArray(data)) {
+              console.log(`Successfully fetched ${data.length} verses from IQ Bible API`);
+              const chapterData = {
+                book: book,
+                chapter: parseInt(chapter),
+                verses: data.map((verse: any) => ({
+                  verse: verse.Verse || 1,
+                  text: verse.Text || ''
+                }))
+              };
+              return res.json(chapterData);
+            }
+          }
+        } catch (error) {
+          console.log('IQ Bible API unavailable for chapter, using search fallback');
         }
       }
       
@@ -1316,14 +1124,22 @@ Convert this into bullet format with:
         });
       }
 
-      // Final fallback - provide a default chapter if search fails
-      console.log('All Bible APIs failed, providing basic structure');
+      // Final fallback to search-based results
+      const searchResults = await searchByKeywords(`${book} ${chapter}`);
+      
+      // Filter and organize results by chapter
+      const chapterVerses = searchResults
+        .filter(result => result.book.toLowerCase().includes(book.toLowerCase()) && result.chapter === parseInt(chapter))
+        .map(result => ({
+          verse: result.verse,
+          text: result.text
+        }))
+        .sort((a, b) => a.verse - b.verse);
+      
       res.json({
         book: book,
         chapter: parseInt(chapter),
-        verses: [
-          { verse: 1, text: `${book} ${chapter}:1 - Bible text loading...` }
-        ]
+        verses: chapterVerses
       });
     } catch (error) {
       console.error('Bible chapter error:', error);
@@ -1386,7 +1202,7 @@ async function generateAIResponse(message: string, mode: string = "study"): Prom
   const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
   
   if (!GOOGLE_API_KEY) {
-    return `Hello! I'm The Scholar, your biblical study companion. I'm currently operating in limited mode because my AI engine isn't fully configured. While my advanced AI features are unavailable, you can still use the Bible reading tools, take notes, and access the study resources throughout this application. To enable my full AI capabilities, the administrator needs to configure the Google API key.`;
+    return "I'm experiencing technical difficulties connecting to my knowledge base. Please check that the Google API key is properly configured.";
   }
 
   // Enhanced context with Bible API access

@@ -4,12 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  CACHE_BUST = "v9-final-fix"
-  NETLIFY_USE_ESBUILD = "true"
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/api-v2/:splat"
+  to = "/.netlify/functions/api/:splat"
   status = 200
 
 [[redirects]]
