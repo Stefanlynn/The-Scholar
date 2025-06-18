@@ -104,6 +104,24 @@ async function authenticateUserWithFallback(req: Request, res: Response, next: N
           email: user.email,
           user_metadata: user.user_metadata
         };
+        
+        // Ensure user exists in storage for authenticated users
+        let existingUser = await storage.getUserByEmail(user.email);
+        if (!existingUser) {
+          await storage.createUser({
+            id: user.id,
+            email: user.email,
+            fullName: user.user_metadata?.full_name || null,
+            bio: null,
+            ministryRole: null,
+            profilePicture: user.user_metadata?.avatar_url || null,
+            defaultBibleTranslation: "NIV",
+            darkMode: true,
+            notifications: true,
+            hasCompletedOnboarding: false
+          });
+        }
+        
         return next();
       }
     } catch (error) {
@@ -117,6 +135,28 @@ async function authenticateUserWithFallback(req: Request, res: Response, next: N
     email: 'demo@scholar.app',
     user_metadata: { full_name: 'Demo User' }
   };
+  
+  // Ensure demo user exists in storage
+  try {
+    let demoUser = await storage.getUserByEmail('demo@scholar.app');
+    if (!demoUser) {
+      await storage.createUser({
+        id: 'demo-user-id',
+        email: 'demo@scholar.app',
+        fullName: 'Demo User',
+        bio: null,
+        ministryRole: null,
+        profilePicture: null,
+        defaultBibleTranslation: "NIV",
+        darkMode: true,
+        notifications: true,
+        hasCompletedOnboarding: true
+      });
+    }
+  } catch (error) {
+    console.log('Error creating demo user:', error);
+  }
+  
   next();
 }
 
@@ -464,7 +504,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat Messages
-  app.get("/api/chat/messages", authenticateUser, async (req, res) => {
+  app.get("/api/chat/messages", authenticateUserWithFallback, async (req, res) => {
     try {
       const user = await storage.getUserByEmail(req.user.email);
       if (!user) {
@@ -477,7 +517,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/chat/messages", authenticateUser, async (req, res) => {
+  app.post("/api/chat/messages", authenticateUserWithFallback, async (req, res) => {
     try {
       const user = await storage.getUserByEmail(req.user!.email);
       if (!user) {
@@ -529,7 +569,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Study tools endpoint for Bible analysis requests
-  app.post("/api/chat/send", authenticateUser, async (req, res) => {
+  app.post("/api/chat/send", authenticateUserWithFallback, async (req, res) => {
     try {
       const { message } = req.body;
       
@@ -565,7 +605,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Sermon enhancement endpoint for AI-powered sermon workspace features
-  app.post("/api/chat/enhance", async (req, res) => {
+  app.post("/api/chat/enhance", authenticateUserWithFallback, async (req, res) => {
     try {
       const { action, text, style } = req.body;
       
