@@ -493,7 +493,7 @@ export default function ChatInterface() {
 
   const chatHelpContent = {
     title: "How to Use The Scholar Chat",
-    description: "The Scholar is your AI-powered biblical study assistant. Choose between Study Mode for academic analysis or Devotional Mode for heart-level encouragement, then ask questions about Scripture, theology, or spiritual topics.",
+    description: "The Scholar is your AI-powered biblical study assistant with full voice conversation support. Choose between Study Mode for academic analysis or Devotional Mode for heart-level encouragement, then ask questions using text or voice.",
     features: [
       {
         title: "Study Mode vs Devotional Mode",
@@ -515,8 +515,20 @@ export default function ChatInterface() {
         ]
       },
       {
+        title: "Voice Conversations",
+        description: "Have natural voice conversations with The Scholar using the microphone button next to the chat input.",
+        tips: [
+          "Click the golden microphone button to start recording your question",
+          "Speak clearly and close to your device for best accuracy",
+          "Recording stops automatically when you finish speaking, or click 'Stop Recording'",
+          "Preview your transcript, then Listen, Send, or Delete your recording",
+          "The Scholar responds with both text and voice for full conversation experience",
+          "Use pause (⏸) and stop (×) controls during Scholar's voice responses"
+        ]
+      },
+      {
         title: "Asking Questions",
-        description: "Type any biblical, theological, or spiritual question in the chat box and press Enter or click Send.",
+        description: "Type or speak any biblical, theological, or spiritual question and get expert-level responses.",
         tips: [
           "Ask about specific verses: 'What does John 3:16 mean?'",
           "Request word studies: 'What does agape mean in Greek?'",
@@ -858,41 +870,44 @@ export default function ChatInterface() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-3 sm:px-4 lg:px-5 py-3 sm:py-4 pr-20 sm:pr-24 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] max-h-32 text-sm sm:text-base lg:text-lg"
+                className="w-full bg-[var(--scholar-darker)] border-2 border-gray-600 text-white px-3 sm:px-4 lg:px-5 py-3 sm:py-4 pr-24 sm:pr-28 rounded-lg focus:outline-none focus:border-[var(--scholar-gold)] resize-none min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] max-h-32 text-sm sm:text-base lg:text-lg"
                 rows={1}
                 disabled={sendMessageMutation.isPending}
               />
               
-              {/* Voice Input Button */}
-              <button
-                type="button"
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={sendMessageMutation.isPending}
-                className={`absolute bottom-3 sm:bottom-4 right-12 sm:right-14 h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg ${
-                  isRecording 
-                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-red-500/30" 
-                    : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:shadow-yellow-500/40"
-                } backdrop-blur-sm border border-white/10`}
-              >
-                {isRecording ? (
-                  <MicOff className="h-5 w-5 mx-auto" />
-                ) : (
-                  <Mic className="h-5 w-5 mx-auto" />
-                )}
-              </button>
-              
-              {/* Send Button */}
-              <button
-                type="submit"
-                disabled={!message.trim() || sendMessageMutation.isPending}
-                className={`absolute bottom-3 sm:bottom-4 right-3 sm:right-4 h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 shadow-lg backdrop-blur-sm border border-white/10 ${
-                  !message.trim() || sendMessageMutation.isPending
-                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:scale-105 active:scale-95 hover:shadow-yellow-500/40"
-                }`}
-              >
-                <Send className="h-5 w-5 mx-auto" />
-              </button>
+              {/* Button Container */}
+              <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 flex items-center space-x-2">
+                {/* Voice Input Button */}
+                <button
+                  type="button"
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={sendMessageMutation.isPending}
+                  className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg ${
+                    isRecording 
+                      ? "bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-red-500/30" 
+                      : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:shadow-yellow-500/40"
+                  } backdrop-blur-sm border border-white/10`}
+                >
+                  {isRecording ? (
+                    <MicOff className="h-4 w-4 sm:h-5 sm:w-5 mx-auto" />
+                  ) : (
+                    <Mic className="h-4 w-4 sm:h-5 sm:w-5 mx-auto" />
+                  )}
+                </button>
+                
+                {/* Send Button */}
+                <button
+                  type="submit"
+                  disabled={!message.trim() || sendMessageMutation.isPending}
+                  className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full transition-all duration-200 shadow-lg backdrop-blur-sm border border-white/10 ${
+                    !message.trim() || sendMessageMutation.isPending
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-[var(--scholar-gold)] to-yellow-400 text-black hover:scale-105 active:scale-95 hover:shadow-yellow-500/40"
+                  }`}
+                >
+                  <Send className="h-4 w-4 sm:h-5 sm:w-5 mx-auto" />
+                </button>
+              </div>
             </div>
           </div>
         </form>

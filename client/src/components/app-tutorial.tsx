@@ -53,18 +53,20 @@ export default function AppTutorial({ isOpen, onClose }: AppTutorialProps) {
       title: "Chat with The Scholar",
       subtitle: "AI conversations that adapt to your study goals",
       icon: <div className="relative"><div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center"><MessageSquare className="w-7 h-7 text-blue-400" /></div><div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><Sparkles className="w-2.5 h-2.5 text-white" /></div></div>,
-      content: "Experience two distinct AI personalities designed for different study needs. Study Mode provides academic theological analysis with Greek/Hebrew insights, while Devotional Mode offers warm, encouraging personal application.",
-      highlight: "Two AI modes for every study need",
+      content: "Experience two distinct AI personalities with full voice conversation support. Study Mode provides academic theological analysis with Greek/Hebrew insights, while Devotional Mode offers warm, encouraging personal application. Have natural voice conversations or type your questions.",
+      highlight: "Voice-enabled AI for every study need",
       gradient: "from-blue-500 to-cyan-500",
       keyFeatures: [
         { title: "Study Mode", desc: "Deep theological analysis and academic insights" },
         { title: "Devotional Mode", desc: "Heart-level encouragement and personal application" },
+        { title: "Voice Conversations", desc: "Speak your questions and hear Scholar's responses" },
         { title: "Expert Voices", desc: "AI channels different theological scholars" },
         { title: "Save Responses", desc: "Keep important insights in your notes" }
       ],
       instructions: [
         "Click the mode toggle at the top to switch between Study and Devotional",
-        "Ask any biblical question - from doctrine to daily application",
+        "Ask questions by typing or clicking the microphone button to speak",
+        "The Scholar responds with both text and voice for full conversation experience",
         "Use 'Save to Notes' to keep important responses",
         "Start new conversations with the 'New' button"
       ],
