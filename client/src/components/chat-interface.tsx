@@ -514,12 +514,12 @@ export default function ChatInterface() {
       },
       {
         title: "Expert Voice Adaptation",
-        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical experts.",
+        description: "The Scholar automatically adjusts its teaching style based on your question topic, channeling different biblical teaching approaches.",
         tips: [
-          "Theology questions get responses like Dr. Frank Turek or John Piper",
-          "Leadership topics channel John Maxwell or Andy Stanley",
-          "Prophetic insights use Kris Vallotton's style",
-          "Inner healing follows Bob Hamp's compassionate approach"
+          "Theology questions receive scholarly, apologetic responses with deep analysis",
+          "Leadership topics get practical, structured guidance with clear frameworks",
+          "Prophetic insights use reflective, revelatory tone with biblical anchoring",
+          "Inner healing follows compassionate pastoral care with emotional depth"
         ]
       },
       {
