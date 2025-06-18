@@ -8,10 +8,11 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  method: string,
   url: string,
-  data?: unknown | undefined,
+  options?: { method?: string; body?: unknown } | undefined,
 ): Promise<Response> {
+  const method = options?.method || "GET";
+  const data = options?.body;
   const { supabase } = await import('@/lib/supabase');
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;

@@ -237,11 +237,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/profile", authenticateUser, async (req, res) => {
+  app.patch("/api/profile", authenticateUser, async (req, res) => {
     try {
       const updateData = updateUserProfileSchema.parse(req.body);
       
-      const updatedUser = await storage.updateUser(req.user.id, updateData);
+      const updatedUser = await storage.updateUser(req.user!.id, updateData);
       if (!updatedUser) {
         return res.status(404).json({ error: "Failed to update user" });
       }
@@ -250,6 +250,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  app.post("/api/profile/upload-image", authenticateUser, async (req, res) => {
+    try {
+      const { imageData } = req.body;
+      
+      if (!imageData) {
+        return res.status(400).json({ error: "Image data is required" });
+      }
+      
+      const updatedUser = await storage.updateUser(req.user!.id, { profilePicture: imageData });
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Failed to update profile picture" });
+      }
+      
+      res.json({ success: true, profilePicture: updatedUser.profilePicture });
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      res.status(500).json({ error: "Failed to upload profile image" });
     }
   });
 
