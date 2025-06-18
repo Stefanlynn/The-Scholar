@@ -558,7 +558,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-[var(--scholar-black)] overflow-hidden">
+    <div className="flex flex-col bg-[var(--scholar-black)] overflow-hidden h-screen md:h-full">
       {/* Mode Toggle - Always Visible */}
       <div className="border-b border-gray-800/50 bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 py-4 flex-shrink-0">
         <div className="flex justify-between items-center">
@@ -860,7 +860,7 @@ export default function ChatInterface() {
       )}
 
       {/* Chat Input */}
-      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6 flex-shrink-0 border-t border-gray-800 fixed bottom-0 left-0 right-0 z-30">
+      <div className="bg-[var(--scholar-black)] px-3 sm:px-4 lg:px-6 pb-20 md:pb-6 flex-shrink-0 border-t border-gray-800 fixed md:relative bottom-0 left-0 right-0 z-30">
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">

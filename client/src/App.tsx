@@ -9,6 +9,8 @@ import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { ScrollToTop } from "@/hooks/use-scroll-to-top";
 import LoadingPage from "@/components/loading-page";
 import CookieConsentBanner from "@/components/cookie-consent-banner";
+import Sidebar from "@/components/sidebar";
+import MobileTabBar from "@/components/mobile-tab-bar";
 import Home from "@/pages/home";
 import Bible from "@/pages/bible";
 import Library from "@/pages/library";
@@ -81,24 +83,39 @@ function AuthenticatedApp() {
   return (
     <UserPreferencesProvider>
       <ScrollToTop />
-      <Switch>
-        <Route path="/welcome" component={Welcome} />
-        <Route path="/" component={Home} />
-        <Route path="/bible" component={Bible} />
-        <Route path="/library" component={Library} />
-        <Route path="/notes" component={Notes} />
-        <Route path="/sermon-prep" component={SermonPrep} />
-        <Route path="/profile" component={Profile} />
-        <Route path="/settings" component={Settings} />
-        <Route path="/menu" component={Menu} />
-        <Route path="/settings/privacy" component={Privacy} />
-        <Route path="/settings/terms" component={Terms} />
-        <Route path="/settings/cookies" component={Cookies} />
-        <Route path="/settings/about" component={About} />
-        <Route path="/settings/support" component={Support} />
-        <Route path="/settings/delete-account" component={DeleteAccount} />
-        <Route path="/community" component={CommunityComingSoon} />
-      </Switch>
+      <div className="min-h-screen bg-[var(--scholar-black)] flex">
+        {/* Desktop Sidebar - Hidden on mobile, visible on desktop */}
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
+        
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          <Switch>
+            <Route path="/welcome" component={Welcome} />
+            <Route path="/" component={Home} />
+            <Route path="/bible" component={Bible} />
+            <Route path="/library" component={Library} />
+            <Route path="/notes" component={Notes} />
+            <Route path="/sermon-prep" component={SermonPrep} />
+            <Route path="/profile" component={Profile} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/menu" component={Menu} />
+            <Route path="/settings/privacy" component={Privacy} />
+            <Route path="/settings/terms" component={Terms} />
+            <Route path="/settings/cookies" component={Cookies} />
+            <Route path="/settings/about" component={About} />
+            <Route path="/settings/support" component={Support} />
+            <Route path="/settings/delete-account" component={DeleteAccount} />
+            <Route path="/community" component={CommunityComingSoon} />
+          </Switch>
+          
+          {/* Mobile Navigation - Only visible on mobile */}
+          <div className="md:hidden">
+            <MobileTabBar />
+          </div>
+        </div>
+      </div>
       <CookieConsentBanner />
     </UserPreferencesProvider>
   );

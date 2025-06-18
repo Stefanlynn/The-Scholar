@@ -24,7 +24,7 @@ export default function Sidebar() {
   });
 
   return (
-    <div className="w-64 lg:w-72 xl:w-80 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col hidden md:flex">
+    <div className="w-64 lg:w-72 xl:w-80 bg-[var(--scholar-dark)] border-r border-gray-800 flex flex-col">
       <div className="p-4 lg:p-6 border-b border-gray-800">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-white/10 rounded-lg">
