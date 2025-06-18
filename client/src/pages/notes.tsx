@@ -1,834 +1,1032 @@
-import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Search, FileText, PenTool, Mic, Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { useState, useRef } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { NotebookPen } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Search, FileText, Edit, Trash2, PenTool, BookOpen, Star, Calendar, Clock, Grid3X3, List, Filter, MessageSquareText, NotebookPen, HelpCircle, BookmarkCheck, Lightbulb, Quote, Archive, TrendingUp, Sparkles, Copy, Download, RotateCcw, Volume2, Wand2 } from "lucide-react";
+import type { Note } from "@shared/schema";
 import PageHelp from "@/components/page-help";
-import { apiRequest } from "@/lib/queryClient";
-import type { Note, InsertNote } from "@shared/schema";
-
-// Sermon Workspace Component with full functionality
-function SermonWorkspace() {
-  const [currentSermon, setCurrentSermon] = useState({
-    title: "",
-    scripture: "",
-    theme: "",
-    body: "",
-    outline: ""
-  });
-  const [writingMode, setWritingMode] = useState<'outline' | 'manuscript' | 'bullets'>('outline');
-  const [preachingStyle, setPreachingStyle] = useState<'prophetic' | 'teaching' | 'evangelistic' | 'youth' | 'devotional'>('teaching');
-  const [selectedText, setSelectedText] = useState("");
-  const [previousContent, setPreviousContent] = useState("");
-  const [enhanceLoading, setEnhanceLoading] = useState(false);
-  const [showOutlineBuilder, setShowOutlineBuilder] = useState(false);
-
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection && selection.toString().trim()) {
-      setSelectedText(selection.toString().trim());
-    }
-  };
-
-  const handleEnhancement = async (action: string) => {
-    if (!selectedText.trim()) {
-      alert("Please select text first to enhance it.");
-      return;
-    }
-
-    setEnhanceLoading(true);
-    setPreviousContent(currentSermon.body);
-
-    try {
-      const response = await apiRequest('/api/chat/enhance', {
-        method: 'POST',
-        body: {
-          text: selectedText,
-          action: action,
-          style: preachingStyle,
-          context: currentSermon.theme
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const enhancedText = data.response;
-        
-        // Replace selected text with enhanced version
-        const newBody = currentSermon.body.replace(selectedText, enhancedText);
-        setCurrentSermon(prev => ({ ...prev, body: newBody }));
-        setSelectedText("");
-      }
-    } catch (error) {
-      console.error('Enhancement failed:', error);
-    } finally {
-      setEnhanceLoading(false);
-    }
-  };
-
-  const handleUndo = () => {
-    if (previousContent) {
-      setCurrentSermon(prev => ({ ...prev, body: previousContent }));
-      setPreviousContent("");
-    }
-  };
-
-  const handleStyleRewrite = async () => {
-    if (!currentSermon.body.trim()) {
-      alert("Please write some content first before applying a style.");
-      return;
-    }
-
-    setEnhanceLoading(true);
-    setPreviousContent(currentSermon.body);
-
-    try {
-      const response = await apiRequest('/api/chat/enhance', {
-        method: 'POST',
-        body: {
-          text: currentSermon.body,
-          action: 'rewrite_style',
-          style: preachingStyle,
-          context: currentSermon.theme,
-          title: currentSermon.title,
-          scripture: currentSermon.scripture
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentSermon(prev => ({ ...prev, body: data.response }));
-      }
-    } catch (error) {
-      console.error('Style rewrite failed:', error);
-    } finally {
-      setEnhanceLoading(false);
-    }
-  };
-
-  const copyContent = () => {
-    const fullSermon = `${currentSermon.title}\n\nScripture: ${currentSermon.scripture}\nTheme: ${currentSermon.theme}\n\n${currentSermon.body}`;
-    navigator.clipboard.writeText(fullSermon);
-  };
-
-  const downloadSermon = () => {
-    const fullSermon = `${currentSermon.title}\n\nScripture: ${currentSermon.scripture}\nTheme: ${currentSermon.theme}\n\n${currentSermon.body}`;
-    const blob = new Blob([fullSermon], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${currentSermon.title || 'sermon'}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  return (
-    <section>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-white">Sermon Workspace</h2>
-        <div className="flex items-center space-x-1 md:space-x-3">
-          <Button
-            onClick={() => setShowOutlineBuilder(!showOutlineBuilder)}
-            variant="outline"
-            size="sm"
-            className="border-[var(--scholar-gold)]/50 text-[var(--scholar-gold)] hover:bg-[var(--scholar-gold)]/10 text-xs md:text-sm px-2 md:px-4"
-          >
-            <span className="hidden sm:inline">{showOutlineBuilder ? "Hide Outline" : "Outline Builder"}</span>
-            <span className="sm:hidden">{showOutlineBuilder ? "Hide" : "Outline"}</span>
-          </Button>
-          <Button
-            onClick={copyContent}
-            variant="outline"
-            size="sm"
-            className="border-gray-600 text-gray-300 hover:bg-gray-700/50 text-xs md:text-sm px-2 md:px-4"
-          >
-            <span className="hidden sm:inline">Copy All</span>
-            <span className="sm:hidden">Copy</span>
-          </Button>
-          <Button
-            onClick={downloadSermon}
-            size="sm"
-            className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black text-xs md:text-sm px-2 md:px-4"
-          >
-            <span className="hidden sm:inline">Download</span>
-            <span className="sm:hidden">DL</span>
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Editor */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Sermon Details */}
-          <Card className="bg-black/80 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
-            <CardContent className="p-6 space-y-4">
-              <Input
-                placeholder="Sermon Title"
-                value={currentSermon.title}
-                onChange={(e) => setCurrentSermon(prev => ({ ...prev, title: e.target.value }))}
-                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white text-lg font-semibold placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
-              />
-              <Input
-                placeholder="Scripture Reference (e.g., John 3:16-21)"
-                value={currentSermon.scripture}
-                onChange={(e) => setCurrentSermon(prev => ({ ...prev, scripture: e.target.value }))}
-                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
-              />
-              <Input
-                placeholder="Main Theme or Focus"
-                value={currentSermon.theme}
-                onChange={(e) => setCurrentSermon(prev => ({ ...prev, theme: e.target.value }))}
-                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
-              />
-            </CardContent>
-          </Card>
-
-          {/* Writing Mode & Style Selector */}
-          <Card className="bg-black/80 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Writing Mode */}
-                <div>
-                  <label className="text-sm font-medium text-white mb-3 block">Writing Mode</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { value: 'outline', label: 'Outline', desc: 'Structured points' },
-                      { value: 'manuscript', label: 'Full Text', desc: 'Complete sermon' },
-                      { value: 'bullets', label: 'Bullets', desc: 'Key points only' }
-                    ].map((mode) => (
-                      <button
-                        key={mode.value}
-                        onClick={() => setWritingMode(mode.value as any)}
-                        className={`p-3 rounded-lg text-sm transition-all ${
-                          writingMode === mode.value
-                            ? 'bg-[var(--scholar-gold)]/40 border border-[var(--scholar-gold)]/70 text-white shadow-lg'
-                            : 'bg-gray-800/30 border border-gray-600/30 text-gray-300 hover:text-white hover:bg-gray-700/50 hover:border-gray-500/50'
-                        }`}
-                      >
-                        <div className="font-medium">{mode.label}</div>
-                        <div className="text-xs opacity-75">{mode.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Preaching Style */}
-                <div>
-                  <label className="text-sm font-medium text-white mb-3 block">Preaching Style</label>
-                  <select
-                    value={preachingStyle}
-                    onChange={(e) => setPreachingStyle(e.target.value as any)}
-                    className="w-full p-3 bg-gray-900/50 border border-[var(--scholar-gold)]/30 rounded-lg text-white focus:border-[var(--scholar-gold)]/70"
-                  >
-                    <option value="prophetic">Prophetic - Bold & Revelatory</option>
-                    <option value="teaching">Teaching - Educational & Deep</option>
-                    <option value="evangelistic">Evangelistic - Salvation Focus</option>
-                    <option value="youth">Youth/Modern - Engaging & Relevant</option>
-                    <option value="devotional">Devotional - Heart & Worship</option>
-                  </select>
-                  <Button
-                    onClick={handleStyleRewrite}
-                    disabled={enhanceLoading || !currentSermon.body.trim()}
-                    className="w-full mt-3 bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black shadow-lg"
-                  >
-                    {enhanceLoading ? "Rewriting..." : "Rewrite in Selected Style"}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Main Text Editor */}
-          <Card className="bg-gray-900/90 border-gray-600/50 hover:border-gray-500/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Sermon Content</h3>
-                <div className="flex items-center space-x-2">
-                  {previousContent && (
-                    <Button
-                      onClick={handleUndo}
-                      variant="outline"
-                      size="sm"
-                      className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20 hover:border-yellow-400/70"
-                    >
-                      Undo
-                    </Button>
-                  )}
-                  {selectedText && (
-                    <Badge variant="secondary" className="bg-blue-500/30 text-blue-300 text-xs shadow-lg">
-                      Text Selected
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              
-              <Textarea
-                placeholder={
-                  writingMode === 'outline' 
-                    ? "I. Introduction\n   A. Hook/Opening\n   B. Context\n\nII. Main Point 1\n   A. Scripture\n   B. Application\n\nIII. Conclusion\n   A. Summary\n   B. Call to Action"
-                    : writingMode === 'manuscript'
-                    ? "Write your complete sermon manuscript here. Select text and use the AI tools to enhance specific sections..."
-                    : "• Opening thought\n• Key point 1\n• Key point 2\n• Closing application"
-                }
-                value={currentSermon.body}
-                onChange={(e) => setCurrentSermon(prev => ({ ...prev, body: e.target.value }))}
-                onMouseUp={handleTextSelection}
-                onKeyUp={handleTextSelection}
-                className="bg-black/80 border-gray-600/50 text-white min-h-[400px] resize-none text-sm leading-relaxed placeholder-gray-500 focus:border-gray-400/70 focus:ring-1 focus:ring-gray-400/30"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar Tools */}
-        <div className="space-y-6">
-          {/* AI Enhancement Tools */}
-          <Card className="bg-slate-800/90 border-slate-600/50 hover:border-slate-500/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">AI Enhancement Tools</h3>
-              <p className="text-sm text-gray-300 mb-4">Select text in your sermon, then use these tools:</p>
-              
-              <div className="space-y-3">
-                <Button
-                  onClick={() => handleEnhancement('expand')}
-                  disabled={enhanceLoading || !selectedText}
-                  className="w-full bg-green-600/30 border border-green-500/50 text-green-200 hover:bg-green-600/40 hover:border-green-400/70 disabled:opacity-50 shadow-lg"
-                >
-                  {enhanceLoading ? "Enhancing..." : "Expand Point"}
-                </Button>
-                
-                <Button
-                  onClick={() => handleEnhancement('clarify')}
-                  disabled={enhanceLoading || !selectedText}
-                  className="w-full bg-blue-600/30 border border-blue-500/50 text-blue-200 hover:bg-blue-600/40 hover:border-blue-400/70 disabled:opacity-50 shadow-lg"
-                >
-                  {enhanceLoading ? "Enhancing..." : "Rewrite Clearly"}
-                </Button>
-                
-                <Button
-                  onClick={() => handleEnhancement('add_verse')}
-                  disabled={enhanceLoading || !selectedText}
-                  className="w-full bg-purple-600/30 border border-purple-500/50 text-purple-200 hover:bg-purple-600/40 hover:border-purple-400/70 disabled:opacity-50 shadow-lg"
-                >
-                  {enhanceLoading ? "Enhancing..." : "Add Supporting Verse"}
-                </Button>
-                
-                <Button
-                  onClick={() => handleEnhancement('add_story')}
-                  disabled={enhanceLoading || !selectedText}
-                  className="w-full bg-orange-600/30 border border-orange-500/50 text-orange-200 hover:bg-orange-600/40 hover:border-orange-400/70 disabled:opacity-50 shadow-lg"
-                >
-                  {enhanceLoading ? "Enhancing..." : "Add Illustration"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Outline Builder */}
-          {showOutlineBuilder && (
-            <Card className="bg-slate-800/90 border-[var(--scholar-gold)]/50 hover:border-[var(--scholar-gold)]/70 transition-all duration-300">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Preaching Outline</h3>
-                <div className="space-y-4 text-sm">
-                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
-                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Title:</div>
-                    <div className="text-white">{currentSermon.title || "(Add sermon title)"}</div>
-                  </div>
-                  
-                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
-                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Text:</div>
-                    <div className="text-white">{currentSermon.scripture || "(Add scripture reference)"}</div>
-                  </div>
-                  
-                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
-                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Theme:</div>
-                    <div className="text-white">{currentSermon.theme || "(Add main theme)"}</div>
-                  </div>
-                  
-                  <div className="p-3 bg-[var(--scholar-gold)]/10 border border-[var(--scholar-gold)]/20 rounded-lg">
-                    <div className="font-semibold text-[var(--scholar-gold)] mb-1">Structure:</div>
-                    <div className="text-gray-200 text-xs space-y-1">
-                      <div>I. Introduction</div>
-                      <div>II. Point 1</div>
-                      <div>III. Point 2</div>
-                      <div>IV. Point 3</div>
-                      <div>V. Call to Action</div>
-                      <div>VI. Closing</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export default function Notes() {
-  const [activeTab, setActiveTab] = useState<'notes' | 'journal' | 'sermon'>('notes');
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showHelp, setShowHelp] = useState(false);
+  const [activeTab, setActiveTab] = useState("notes");
   
-  const queryClient = useQueryClient();
+  // Sermon workspace state
+  const [sermonTitle, setSermonTitle] = useState("");
+  const [sermonScripture, setSermonScripture] = useState("");
+  const [sermonTheme, setSermonTheme] = useState("");
+  const [sermonBody, setSermonBody] = useState("");
+  const [writingMode, setWritingMode] = useState("outline");
+  const [selectedStyle, setSelectedStyle] = useState("prophetic");
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [enhancementType, setEnhancementType] = useState("");
+  const [previousContent, setPreviousContent] = useState("");
+  const [canUndo, setCanUndo] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
-  // Fetch notes
-  const { data: notes = [] } = useQuery<Note[]>({
-    queryKey: ["/api/notes"],
-  });
+  
+  const { toast } = useToast();
 
-  // Create note mutation
-  const createNoteMutation = useMutation({
-    mutationFn: async (noteData: InsertNote) => {
-      const response = await apiRequest("/api/notes", { 
-        method: "POST", 
-        body: noteData 
-      });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
-      setIsDialogOpen(false);
-      setEditingNote(null);
-    },
-  });
-
-  // Update note mutation
-  const updateNoteMutation = useMutation({
-    mutationFn: async ({ id, ...noteData }: { id: number } & Partial<InsertNote>) => {
-      const response = await apiRequest(`/api/notes/${id}`, {
-        method: "PATCH",
-        body: noteData
-      });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
-      setIsDialogOpen(false);
-      setEditingNote(null);
-    },
-  });
-
-  // Delete note mutation
-  const deleteNoteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest(`/api/notes/${id}`, { method: "DELETE" });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
-    },
-  });
-
-  // Filter notes based on search and type
-  const filteredNotes = useMemo(() => {
-    if (!notes) return [];
-    
-    let filtered = notes.filter((note) => {
-      const matchesSearch = searchQuery === "" || 
-        note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        note.content.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesTab = activeTab === 'notes' 
-        ? !note.tags?.includes('journal')
-        : note.tags?.includes('journal');
-      
-      return matchesSearch && matchesTab;
-    });
-    
-    return filtered;
-  }, [notes, searchQuery, activeTab]);
-
-  const manualNotes = notes?.filter((note) => !note.tags?.includes('journal')) || [];
-  const journalNotes = notes?.filter((note) => note.tags?.includes('journal')) || [];
-
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const tagsStr = formData.get("tags") as string;
-    const tags = tagsStr ? tagsStr.split(",").map(tag => tag.trim()) : [];
-
-    if (activeTab === 'journal' && !tags.includes('journal')) {
-      tags.push('journal');
-    }
-
-    const noteData: InsertNote = { title, content, tags };
-
-    if (editingNote) {
-      updateNoteMutation.mutate({ id: editingNote.id, ...noteData });
-    } else {
-      createNoteMutation.mutate(noteData);
+  // Helper functions for copy and download
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: "Copied to clipboard" });
+    } catch (error) {
+      toast({ title: "Failed to copy", variant: "destructive" });
     }
   };
 
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-br from-[var(--scholar-dark)] via-gray-900 to-indigo-950 px-4 md:px-6 py-8 md:py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-[var(--scholar-gold)] to-amber-500 rounded-2xl flex items-center justify-center shadow-2xl">
-                <NotebookPen className="h-8 w-8 text-black" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-blue-200 bg-clip-text text-transparent">
-                  Notes & Sermons
-                </h1>
-                <p className="text-gray-400 text-lg mt-2">Capture insights, build sermons, grow in wisdom</p>
-              </div>
-            </div>
-            <PageHelp 
-              pageName="Notes"
-              helpContent={{
-                title: "Notes & Sermon Workspace Help",
-                description: "Manage your study notes, daily journal entries, and sermon preparation in one place.",
-                features: [
-                  {
-                    title: "Study Notes",
-                    description: "Create and organize your biblical study notes",
-                    tips: ["Use tags to categorize your notes", "Search across all your content", "Edit notes anytime with the menu"]
-                  },
-                  {
-                    title: "Daily Journal",
-                    description: "Record your daily spiritual insights and reflections",
-                    tips: ["Write regularly for spiritual growth", "Tag entries by topic or theme", "Review past entries for patterns"]
-                  },
-                  {
-                    title: "Sermon Workspace",
-                    description: "Professional sermon preparation with AI assistance",
-                    tips: ["Choose your writing mode: Outline, Full Manuscript, or Bullets", "Select text and use AI tools to enhance your content", "Use voice styles to match your preaching approach", "Download or copy your finished sermon"]
-                  }
-                ]
-              }}
-            />
-          </div>
-          
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div 
-              onClick={() => setActiveTab('notes')}
-              className={`p-6 rounded-xl cursor-pointer transition-all ${
-                activeTab === 'notes' 
-                  ? 'bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/50' 
-                  : 'bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50'
-              }`}
+  const downloadAsDocument = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: "Document downloaded" });
+  };
+
+  const generateSermonDocument = () => {
+    const timestamp = new Date().toLocaleDateString();
+    const content = `${sermonTitle || 'Untitled Sermon'}
+${sermonTitle ? '=' : ''}${'='.repeat(sermonTitle.length)}
+
+Date: ${timestamp}
+Scripture: ${sermonScripture}
+Theme: ${sermonTheme}
+Writing Mode: ${sermonMode.charAt(0).toUpperCase() + sermonMode.slice(1)}
+Voice Style: ${voiceStyle.charAt(0).toUpperCase() + voiceStyle.slice(1)}
+
+SERMON CONTENT:
+${'-'.repeat(50)}
+
+${sermonBody}
+
+PREACHING OUTLINE:
+${'-'.repeat(50)}
+
+Title: ${sermonOutline.title}
+Text: ${sermonOutline.text}
+Theme: ${sermonOutline.theme}
+
+Point 1: ${sermonOutline.point1}
+Point 2: ${sermonOutline.point2}
+Point 3: ${sermonOutline.point3}
+
+Call to Action: ${sermonOutline.callToAction}
+Closing Verse: ${sermonOutline.closingVerse}
+
+---
+Generated by The Scholar - Biblical Study Assistant
+`;
+    return content;
+  };
+
+  // Additional sermon workspace state
+  const [sermonMode, setSermonMode] = useState<"outline" | "manuscript" | "bullets">("outline");
+  const [voiceStyle, setVoiceStyle] = useState<"prophetic" | "teaching" | "evangelistic" | "youth" | "devotional">("prophetic");
+  const [loadingButton, setLoadingButton] = useState<string | null>(null);
+  const [sermonOutline, setSermonOutline] = useState({
+    title: "",
+    text: "",
+    theme: "",
+    point1: "",
+    point2: "",
+    point3: "",
+    callToAction: "",
+    closingVerse: ""
+  });
+
+  const { data: notes, isLoading } = useQuery<Note[]>({
+    queryKey: ["/api/notes"],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: { title: string; content: string; scripture?: string; tags?: string[] }) => {
+      return apiRequest("POST", "/api/notes", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
+      toast({ title: "Note created successfully" });
+      setIsDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error("Note creation error:", error);
+      toast({ title: "Failed to create note", variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Note> }) => {
+      return apiRequest("PUT", `/api/notes/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
+      toast({ title: "Note updated successfully" });
+      setEditingNote(null);
+      setIsDialogOpen(false);
+    },
+    onError: () => {
+      toast({ title: "Failed to update note", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return apiRequest("DELETE", `/api/notes/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile/stats"] });
+      toast({ title: "Note deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete note", variant: "destructive" });
+    },
+  });
+
+  // AI Helper Functions for Sermon Workspace
+  const [selectedText, setSelectedText] = useState("");
+  const [selectionStart, setSelectionStart] = useState(0);
+  const [selectionEnd, setSelectionEnd] = useState(0);
+  const [previousSermonBody, setPreviousSermonBody] = useState("");
+
+  const handleTextSelection = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = textarea.value.substring(start, end);
+      
+      setSelectedText(selected);
+      setSelectionStart(start);
+      setSelectionEnd(end);
+    }
+  };
+
+  const aiEnhanceMutation = useMutation({
+    mutationFn: async ({ action, text, style }: { action: string; text: string; style?: string }) => {
+      setLoadingButton(action);
+      const response = await apiRequest("POST", "/api/chat/enhance", { action, text, style });
+      const data = await response.json();
+      return data;
+    },
+    onSuccess: (data: any, variables) => {
+      const { action } = variables;
+      
+      // Save current state for undo functionality
+      setPreviousSermonBody(sermonBody);
+      
+      // Get the enhanced content from API response
+      const enhancedContent = data.message || data.content || "";
+      
+      if (!enhancedContent) {
+        toast({ title: "No enhanced content received", variant: "destructive" });
+        return;
+      }
+      
+      // Format the Scholar enhancement with clear attribution
+      const scholarAttribution = "\n\n--- Enhanced by The Scholar ---\n";
+      const formattedContent = scholarAttribution + enhancedContent + "\n--- End Enhancement ---\n";
+      
+      if (action === "expand") {
+        // Replace selected text with expanded version
+        if (selectedText) {
+          const newText = sermonBody.substring(0, selectionStart) + 
+                          formattedContent + 
+                          sermonBody.substring(selectionEnd);
+          setSermonBody(newText);
+        } else {
+          setSermonBody(prev => prev + formattedContent);
+        }
+      } else if (action === "rewrite") {
+        // Replace selected text with rewritten version
+        if (selectedText) {
+          const newText = sermonBody.substring(0, selectionStart) + 
+                          formattedContent + 
+                          sermonBody.substring(selectionEnd);
+          setSermonBody(newText);
+        } else {
+          setSermonBody(formattedContent);
+        }
+      } else if (action === "add_verse") {
+        // Add verse after selected text or at end
+        if (selectedText) {
+          const newText = sermonBody.substring(0, selectionEnd) + 
+                          formattedContent +
+                          sermonBody.substring(selectionEnd);
+          setSermonBody(newText);
+        } else {
+          setSermonBody(prev => prev + formattedContent);
+        }
+      } else if (action === "add_illustration") {
+        // Add illustration after selected text or at end
+        if (selectedText) {
+          const newText = sermonBody.substring(0, selectionEnd) + 
+                          formattedContent +
+                          sermonBody.substring(selectionEnd);
+          setSermonBody(newText);
+        } else {
+          setSermonBody(prev => prev + formattedContent);
+        }
+      } else if (action === "convert_outline") {
+        const outline = data.outline || {};
+        setSermonOutline({
+          title: outline.title || sermonTitle,
+          text: outline.text || sermonScripture,
+          theme: outline.theme || sermonTheme,
+          point1: outline.point1 || "",
+          point2: outline.point2 || "",
+          point3: outline.point3 || "",
+          callToAction: outline.callToAction || "",
+          closingVerse: outline.closingVerse || ""
+        });
+      } else if (action === "style_rewrite") {
+        setSermonBody(formattedContent);
+      } else if (action.startsWith("format_")) {
+        // For format transformations, replace the entire sermon body
+        setSermonBody(enhancedContent);
+      }
+      
+      // Clear selection after processing (only for text-based enhancements)
+      if (!action.startsWith("format_")) {
+        setSelectedText("");
+        setSelectionStart(0);
+        setSelectionEnd(0);
+      }
+      
+      toast({ 
+        title: action.startsWith("format_") ? "Sermon format transformed by The Scholar" : "Content enhanced by The Scholar" 
+      });
+    },
+    onError: () => {
+      toast({ title: "Failed to enhance content", variant: "destructive" });
+    },
+    onSettled: () => {
+      setLoadingButton(null);
+    },
+  });
+
+  const handleAIEnhancement = (action: string) => {
+    if (!selectedText || selectedText.trim().length === 0) {
+      toast({ 
+        title: "Please highlight text first", 
+        description: "Select the text you want The Scholar to enhance",
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    aiEnhanceMutation.mutate({ action, text: selectedText });
+  };
+
+  const handleFormatTransform = (newMode: "outline" | "manuscript" | "bullets") => {
+    if (!sermonBody || sermonBody.trim().length === 0) {
+      toast({ 
+        title: "No content to transform", 
+        description: "Write some sermon content first before changing the format",
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    // Save current state for undo functionality
+    setPreviousSermonBody(sermonBody);
+    setSermonMode(newMode);
+    aiEnhanceMutation.mutate({ 
+      action: `format_${newMode}`, 
+      text: sermonBody 
+    });
+  };
+
+  const handleUndo = () => {
+    if (previousSermonBody !== undefined) {
+      setSermonBody(previousSermonBody);
+      setPreviousSermonBody("");
+      toast({ title: "Changes reverted successfully" });
+    }
+  };
+
+
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const tagsString = formData.get("tags") as string;
+    const tags = tagsString ? tagsString.split(",").map(tag => tag.trim()).filter(Boolean) : [];
+    
+    const data = {
+      title: formData.get("title") as string,
+      content: formData.get("content") as string,
+      scripture: formData.get("scripture") as string || undefined,
+      tags: tags.length > 0 ? tags : undefined,
+    };
+
+    if (editingNote) {
+      updateMutation.mutate({ id: editingNote.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const filteredNotes = notes?.filter((note) => {
+    const searchLower = searchQuery.toLowerCase();
+    const noteContent = typeof note.content === 'string' ? note.content : JSON.stringify(note.content);
+    return (
+      note.title.toLowerCase().includes(searchLower) ||
+      noteContent.toLowerCase().includes(searchLower) ||
+      note.scripture?.toLowerCase().includes(searchLower) ||
+      note.tags?.some(tag => tag.toLowerCase().includes(searchLower))
+    );
+  });
+
+  // Organize notes by source type
+  const studyToolNotes = filteredNotes?.filter(note => 
+    note.tags?.some(tag => 
+      ['greek-hebrew', 'cross-references', 'commentary', 'cultural-context', 'study-tool'].includes(tag.toLowerCase())
+    )
+  );
+  
+  const manualNotes = filteredNotes?.filter(note => 
+    !note.tags?.some(tag => 
+      ['greek-hebrew', 'cross-references', 'commentary', 'cultural-context', 'study-tool'].includes(tag.toLowerCase())
+    )
+  );
+
+  // Journal notes (daily reflections)
+  const journalNotes = filteredNotes?.filter(note => 
+    note.tags?.some(tag => 
+      ['journal', 'reflection', 'prayer', 'daily'].includes(tag.toLowerCase())
+    )
+  );
+
+
+
+  // Render Notes Section with AI Enhancement
+  const renderNotesSection = (notesList: Note[] | undefined, title: string, emptyMessage: string) => {
+    if (isLoading) {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="bg-[var(--scholar-dark)] border-gray-700">
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4 bg-gray-600" />
+                <Skeleton className="h-4 w-1/2 bg-gray-600" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-20 w-full bg-gray-600" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+
+    if (!notesList || notesList.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <FileText className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-400 mb-2">
+            {searchQuery ? "No notes found" : `No ${title.toLowerCase()} yet`}
+          </h3>
+          <p className="text-gray-500 mb-6">
+            {searchQuery ? "Try adjusting your search criteria" : emptyMessage}
+          </p>
+          {!searchQuery && (
+            <Button 
+              className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+              onClick={() => setIsDialogOpen(true)}
             >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-blue-400" />
+              <Plus className="h-4 w-4 mr-2" />
+              Create Your First Note
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {notesList.map((note) => (
+          <Card key={note.id} className="bg-[var(--scholar-dark)] border-gray-700 hover:border-gray-600 transition-colors">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-white text-lg mb-2">{note.title}</CardTitle>
+                  {note.scripture && (
+                    <p className="text-[var(--scholar-gold)] text-sm mb-2">{note.scripture}</p>
+                  )}
+                  {note.tags && note.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {note.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="bg-[var(--scholar-darker)] text-gray-300 text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-white text-lg">Study Notes</h3>
-                  <p className="text-sm text-gray-400">{manualNotes.length} notes</p>
+                <div className="flex space-x-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setEditingNote(note);
+                      setIsDialogOpen(true);
+                    }}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => deleteMutation.mutate(note.id)}
+                    className="text-gray-400 hover:text-red-400"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            </div>
-            
-            <div 
-              onClick={() => setActiveTab('journal')}
-              className={`p-6 rounded-xl cursor-pointer transition-all ${
-                activeTab === 'journal' 
-                  ? 'bg-gradient-to-br from-green-600/20 to-teal-600/20 border border-green-500/50' 
-                  : 'bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50'
-              }`}
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-                  <PenTool className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white text-lg">Daily Journal</h3>
-                  <p className="text-sm text-gray-400">{journalNotes.length} entries</p>
-                </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-300 text-sm line-clamp-4">
+                {typeof note.content === 'string' ? note.content : JSON.stringify(note.content)}
+              </p>
+              <div className="mt-4 text-xs text-gray-500">
+                {new Date(note.createdAt).toLocaleDateString()}
               </div>
-            </div>
-            
-            <div 
-              onClick={() => setActiveTab('sermon')}
-              className={`p-6 rounded-xl cursor-pointer transition-all ${
-                activeTab === 'sermon' 
-                  ? 'bg-gradient-to-br from-[var(--scholar-gold)]/20 to-orange-500/20 border border-[var(--scholar-gold)]/50' 
-                  : 'bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50'
-              }`}
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-[var(--scholar-gold)]/20 rounded-xl flex items-center justify-center">
-                  <Mic className="w-6 h-6 text-[var(--scholar-gold)]" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white text-lg">Sermon Workspace</h3>
-                  <p className="text-sm text-gray-400">Build sermons with AI</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Search and Add */}
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search your notes and sermons..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--scholar-gold)]/50 focus:border-[var(--scholar-gold)]/50"
-              />
-            </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
+  // Render Journal Section
+  const renderJournalSection = () => {
+    return (
+      <div className="space-y-6">
+        {/* Quick Journal Entry */}
+        <Card className="bg-[var(--scholar-dark)] border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-[var(--scholar-gold)] flex items-center">
+              <PenTool className="h-5 w-5 mr-2" />
+              Today's Reflection
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Dialog>
               <DialogTrigger asChild>
-                <Button 
-                  className="bg-gradient-to-r from-[var(--scholar-gold)] to-amber-500 hover:from-amber-500 hover:to-[var(--scholar-gold)] text-black font-semibold px-6 py-3 rounded-xl shadow-lg"
-                  onClick={() => setEditingNote(null)}
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Create New
+                <Button className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Journal Entry
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 border border-gray-700/50 backdrop-blur-xl text-white max-w-2xl shadow-2xl">
-                <DialogHeader className="pb-6">
-                  <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white via-gray-100 to-blue-200 bg-clip-text text-transparent">
-                    {editingNote ? "Edit Note" : "Create New Note"}
-                  </DialogTitle>
-                  <p className="text-gray-400 text-sm mt-2">
-                    {activeTab === 'journal' 
-                      ? "Capture your daily spiritual insights and reflections"
-                      : "Record your biblical study notes and discoveries"
-                    }
-                  </p>
+              <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Daily Journal Entry</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Title</label>
-                    <Input
-                      name="title"
-                      placeholder={activeTab === 'journal' ? "Today's reflection title..." : "Study topic or passage..."}
-                      defaultValue={editingNote?.title || ""}
-                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 h-12"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Content</label>
-                    <Textarea
-                      name="content"
-                      placeholder={
-                        activeTab === 'journal' 
-                          ? "What is God speaking to your heart today? Write your thoughts, prayers, and insights..."
-                          : "Record your study notes, insights, and key takeaways from Scripture..."
-                      }
-                      defaultValue={editingNote?.content || ""}
-                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 min-h-[200px] resize-none leading-relaxed"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Tags</label>
-                    <Input
-                      name="tags"
-                      placeholder={activeTab === 'journal' ? "gratitude, prayer, growth..." : "prayer, prophecy, wisdom..."}
-                      defaultValue={editingNote?.tags?.join(", ") || ""}
-                      className="bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
-                    />
-                    <p className="text-xs text-gray-500">Separate tags with commas to organize your notes</p>
-                  </div>
-                  <div className="flex space-x-3 pt-4">
-                    <Button 
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                      className="flex-1 border-gray-600/50 text-gray-300 hover:bg-gray-700/50 hover:border-gray-500/50"
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      className={`flex-1 font-semibold shadow-lg ${
-                        activeTab === 'journal' 
-                          ? 'bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white'
-                          : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
-                      }`}
-                      disabled={createNoteMutation.isPending || updateNoteMutation.isPending}
-                    >
-                      {createNoteMutation.isPending || updateNoteMutation.isPending 
-                        ? "Saving..." 
-                        : editingNote ? "Update Note" : "Create Note"
-                      }
-                    </Button>
-                  </div>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const data = {
+                    title: formData.get("title") as string,
+                    content: formData.get("content") as string,
+                    tags: ["journal", "daily", "reflection"]
+                  };
+                  createMutation.mutate(data);
+                }} className="space-y-4">
+                  <Input
+                    name="title"
+                    placeholder="What's on your heart today?"
+                    required
+                    className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                  />
+                  <Textarea
+                    name="content"
+                    placeholder="Write about what God is showing you, a prayer, or a moment that impacted you..."
+                    required
+                    rows={8}
+                    className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                  />
+                  <Button 
+                    type="submit" 
+                    className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                    disabled={createMutation.isPending}
+                  >
+                    Save Reflection
+                  </Button>
                 </form>
               </DialogContent>
             </Dialog>
+          </CardContent>
+        </Card>
+
+        {/* Journal Entries */}
+        {renderNotesSection(journalNotes, "Journal Entries", "Start recording your daily walk with God")}
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <div className="bg-[var(--scholar-dark)] border-b border-gray-800 px-4 md:px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-lg md:text-xl font-semibold text-white">Notes</h2>
+              <PageHelp 
+                pageName="Notes"
+                helpContent={{
+                  title: "Notes & Sermon Workspace Help",
+                  description: "Your comprehensive workspace for biblical study notes, daily journaling, and sermon preparation with AI enhancement tools.",
+                  features: [
+                    {
+                      title: "Study Notes",
+                      description: "Create and organize your biblical study notes with scripture references and tags",
+                      tips: [
+                        "Use scripture references to link notes to specific Bible passages",
+                        "Add tags like 'prayer', 'leadership', or 'theology' to organize your notes",
+                        "Search across all your notes using the search bar",
+                        "Notes from Bible study tools are automatically saved here"
+                      ]
+                    },
+                    {
+                      title: "Daily Journal",
+                      description: "Record your personal reflections, prayers, and spiritual insights",
+                      tips: [
+                        "Use tags like 'journal', 'reflection', or 'prayer' for easy filtering",
+                        "Write about your daily walk with God and spiritual growth",
+                        "Reference scripture that speaks to you each day"
+                      ]
+                    },
+                    {
+                      title: "Sermon Workspace",
+                      description: "Professional sermon preparation with AI enhancement and multiple writing modes",
+                      tips: [
+                        "Choose between Outline, Full Manuscript, or Bullet Points mode",
+                        "Select a preaching style: Prophetic, Teaching, Evangelistic, Youth, or Devotional",
+                        "Highlight text and use AI tools: Expand Point, Rewrite Clearly, Add Verse, Add Illustration",
+                        "Use the Preaching Outline Builder for structured sermon development",
+                        "Copy individual sections or download complete sermon documents"
+                      ]
+                    }
+                  ]
+                }}
+              />
+            </div>
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-[var(--scholar-darker)] border-gray-700 text-white pl-10 w-32 sm:w-48 md:w-64 focus:border-[var(--scholar-gold)]"
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              </div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500 font-medium px-3 md:px-4"
+                    onClick={() => setEditingNote(null)}
+                  >
+                    <Plus className="h-4 w-4 md:mr-2" />
+                    <span className="hidden md:inline">New Note</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-[var(--scholar-dark)] border-gray-700 text-white max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>{editingNote ? "Edit Note" : "Create New Note"}</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <Input
+                      name="title"
+                      placeholder="Note title"
+                      required
+                      defaultValue={editingNote?.title || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                    <Input
+                      name="scripture"
+                      placeholder="Scripture reference (optional)"
+                      defaultValue={editingNote?.scripture || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                    <Input
+                      name="tags"
+                      placeholder="Tags (comma separated)"
+                      defaultValue={editingNote?.tags?.join(", ") || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                    <Textarea
+                      name="content"
+                      placeholder="Your notes..."
+                      required
+                      rows={8}
+                      defaultValue={editingNote?.content || ""}
+                      className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                    />
+                    <Button 
+                      type="submit" 
+                      className="bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
+                      {editingNote ? "Update Note" : "Create Note"}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content with Library-style Layout */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
-        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
-          
-          {/* Study Notes Section */}
-          {activeTab === 'notes' && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white">Study Notes</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {filteredNotes.length === 0 ? (
-                  <div className="col-span-full text-center py-12">
-                    <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <FileText className="w-8 h-8 text-blue-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">No notes yet</h3>
-                    <p className="text-gray-400 mb-6">Start capturing your biblical insights and study notes</p>
-                    <Button 
-                      onClick={() => setIsDialogOpen(true)}
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create Your First Note
-                    </Button>
-                  </div>
-                ) : (
-                  filteredNotes.map((note) => (
-                    <Card key={note.id} className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 border-blue-700/50 hover:border-blue-500/70 transition-all duration-300 hover:scale-105">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold text-white text-lg">{note.title}</h3>
+        <div className="flex-1 overflow-y-auto scroll-smooth p-4 md:p-6 pb-20 md:pb-6">
+          <Tabs value={activeTab} onValueChange={(value) => {
+            setActiveTab(value);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-[var(--scholar-darker)] h-12 md:h-10">
+              <TabsTrigger value="notes" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black flex-col md:flex-row px-2 md:px-4 text-xs md:text-sm">
+                <FileText className="h-4 w-4 md:mr-2" />
+                <span className="mt-1 md:mt-0">Study Notes</span>
+              </TabsTrigger>
+              <TabsTrigger value="journal" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black flex-col md:flex-row px-2 md:px-4 text-xs md:text-sm">
+                <PenTool className="h-4 w-4 md:mr-2" />
+                <span className="mt-1 md:mt-0">Daily Journal</span>
+              </TabsTrigger>
+              <TabsTrigger value="sermon" className="data-[state=active]:bg-[var(--scholar-gold)] data-[state=active]:text-black flex-col md:flex-row px-2 md:px-4 text-xs md:text-sm relative bg-gradient-to-r from-[var(--scholar-gold)]/10 to-[var(--scholar-gold)]/5 border border-[var(--scholar-gold)]/20 shadow-lg">
+                <MessageSquareText className="h-4 w-4 md:mr-2" />
+                <span className="mt-1 md:mt-0 text-center font-semibold">Sermon Workspace</span>
+                <div className="absolute -top-1 -right-1 bg-[var(--scholar-gold)] text-black text-xs px-1.5 py-0.5 rounded-full font-bold">NEW</div>
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Study Notes Tab */}
+            <TabsContent value="notes" className="mt-6">
+              {renderNotesSection(manualNotes, "Personal Study Notes", "Create notes for your biblical studies")}
+            </TabsContent>
+
+            {/* Daily Journal Tab */}
+            <TabsContent value="journal" className="mt-6">
+              {renderJournalSection()}
+            </TabsContent>
+
+            {/* Sermon Workspace Tab */}
+            <TabsContent value="sermon" className="mt-6">
+              <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6">
+                {/* Main Sermon Editor */}
+                <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+                  {/* Sermon Header */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-[var(--scholar-gold)] flex items-center">
+                        <MessageSquareText className="h-5 w-5 mr-2" />
+                        Sermon Workspace
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Sermon Title */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Sermon Title
+                        </label>
+                        <Input
+                          value={sermonTitle}
+                          onChange={(e) => setSermonTitle(e.target.value)}
+                          placeholder="Enter your sermon title..."
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white text-lg font-semibold"
+                        />
+                      </div>
+
+                      {/* Main Scripture */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Main Scripture(s)
+                        </label>
+                        <Input
+                          value={sermonScripture}
+                          onChange={(e) => setSermonScripture(e.target.value)}
+                          placeholder="e.g., Romans 8:28-30, John 3:16"
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                        />
+                      </div>
+
+                      {/* Theme / Big Idea */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Theme / Big Idea
+                        </label>
+                        <Input
+                          value={sermonTheme}
+                          onChange={(e) => setSermonTheme(e.target.value)}
+                          placeholder="What's the central message God wants to communicate?"
+                          className="bg-[var(--scholar-darker)] border-gray-600 text-white"
+                        />
+                      </div>
+
+
+                    </CardContent>
+                  </Card>
+
+                  {/* Sermon Body Editor */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <CardTitle className="text-white">Sermon Body</CardTitle>
+                        <div className="flex flex-wrap gap-2">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                                <MoreHorizontal className="h-4 w-4" />
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-[var(--scholar-gold)] hover:bg-gray-700 flex-shrink-0"
+                              >
+                                <NotebookPen className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Insert Note</span>
+                                <span className="sm:hidden">Note</span>
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700">
-                              <DropdownMenuItem 
-                                onClick={() => { setEditingNote(note); setIsDialogOpen(true); }}
-                                className="text-gray-300 hover:text-white"
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => deleteNoteMutation.mutate(note.id)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
+                            <DropdownMenuContent className="w-80 max-h-64 overflow-y-auto bg-[var(--scholar-dark)] border-gray-600">
+                              {manualNotes && manualNotes.length > 0 ? (
+                                manualNotes.map((note) => (
+                                  <DropdownMenuItem
+                                    key={note.id}
+                                    onClick={() => {
+                                      const noteContent = `\n\n--- ${note.title} ---\n${note.content}${note.scripture ? `\n(${note.scripture})` : ''}\n`;
+                                      setSermonBody(prev => prev + noteContent);
+                                    }}
+                                    className="text-white hover:bg-gray-700 p-3 cursor-pointer border-b border-gray-600 last:border-b-0"
+                                  >
+                                    <div className="w-full">
+                                      <div className="font-medium text-[var(--scholar-gold)] mb-1">{note.title}</div>
+                                      {note.scripture && (
+                                        <div className="text-xs text-gray-400 mb-1">{note.scripture}</div>
+                                      )}
+                                      <div className="text-sm text-gray-300 line-clamp-2">
+                                        {note.content.substring(0, 100)}...
+                                      </div>
+                                    </div>
+                                  </DropdownMenuItem>
+                                ))
+                              ) : (
+                                <DropdownMenuItem disabled className="text-gray-400 p-3">
+                                  No notes available. Create notes in the Study Notes tab first.
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
+                          {sermonBody && (
+                            <>
+                              <Button
+                                onClick={() => copyToClipboard(sermonBody)}
+                                size="sm"
+                                variant="ghost"
+                                className="text-[var(--scholar-gold)] hover:bg-gray-700 flex-shrink-0"
+                              >
+                                <Copy className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Copy Body</span>
+                                <span className="sm:hidden">Copy</span>
+                              </Button>
+                              <Button
+                                onClick={() => downloadAsDocument(sermonBody, `${sermonTitle || 'sermon-body'}-${new Date().toISOString().split('T')[0]}.txt`)}
+                                size="sm"
+                                variant="ghost"
+                                className="text-[var(--scholar-gold)] hover:bg-gray-700 flex-shrink-0"
+                              >
+                                <Download className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Download</span>
+                                <span className="sm:hidden">Save</span>
+                              </Button>
+                              {previousSermonBody && (
+                                <Button
+                                  onClick={handleUndo}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-red-400 hover:bg-red-900/20 flex-shrink-0"
+                                >
+                                  <RotateCcw className="h-3 w-3 mr-1" />
+                                  <span className="hidden sm:inline">Undo Enhancement</span>
+                                  <span className="sm:hidden">Undo</span>
+                                </Button>
+                              )}
+                            </>
+                          )}
                         </div>
-                        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{note.content}</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-wrap gap-1">
-                            {note.tags?.slice(0, 2).map((tag, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs bg-blue-500/20 text-blue-300">
-                                {tag}
-                              </Badge>
-                            ))}
-                            {note.tags && note.tags.length > 2 && (
-                              <Badge variant="secondary" className="text-xs bg-gray-500/20 text-gray-400">
-                                +{note.tags.length - 2}
-                              </Badge>
-                            )}
+                      </div>
+                      
+                      {/* Writing Mode Selector */}
+                      <div className="mb-4">
+                        <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          Transform to Writing Mode
+                        </label>
+                        <div className="grid grid-cols-3 gap-2 mb-4">
+                          {[
+                            { value: "outline", label: "Outline", icon: FileText },
+                            { value: "manuscript", label: "Full Manuscript", icon: BookOpen },
+                            { value: "bullets", label: "Bullets", icon: Quote }
+                          ].map(({ value, label, icon: Icon }) => (
+                            <div
+                              key={value}
+                              onClick={() => handleFormatTransform(value as any)}
+                              className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                                loadingButton === `format_${value}`
+                                  ? "border-gray-600 text-gray-500 cursor-not-allowed"
+                                  : sermonMode === value 
+                                    ? "border-[var(--scholar-gold)] bg-[var(--scholar-gold)]/10 text-[var(--scholar-gold)]" 
+                                    : "border-gray-600 text-gray-300 hover:border-gray-500 hover:bg-gray-700/50"
+                              }`}
+                            >
+                              {loadingButton === `format_${value}` ? (
+                                <div className="animate-spin h-4 w-4 mx-auto mb-1 border-2 border-gray-500 border-t-yellow-400 rounded-full"></div>
+                              ) : (
+                                <Icon className="h-4 w-4 mx-auto mb-1" />
+                              )}
+                              <div className="text-xs font-medium">
+                                {loadingButton === `format_${value}` ? "Transforming..." : label}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* AI Enhancement Tools */}
+                      <div className="grid grid-cols-2 gap-2 mb-4">
+                        <div
+                          onClick={() => loadingButton !== "expand" && handleAIEnhancement("expand")}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            loadingButton === "expand" 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-blue-500/50 bg-blue-500/10 text-blue-400 hover:border-blue-400 hover:bg-blue-500/20"
+                          }`}
+                        >
+                          {loadingButton === "expand" ? (
+                            <div className="animate-spin h-4 w-4 mx-auto mb-1 border-2 border-gray-500 border-t-blue-400 rounded-full"></div>
+                          ) : (
+                            <Lightbulb className="h-4 w-4 mx-auto mb-1" />
+                          )}
+                          <div className="text-xs font-medium">
+                            {loadingButton === "expand" ? "Expanding..." : "Expand Point"}
                           </div>
-                          <span className="text-xs text-gray-500">
-                            {new Date(note.createdAt).toLocaleDateString()}
-                          </span>
+                          {selectedText && loadingButton !== "expand" && <div className="text-xs text-blue-300 mt-1">({selectedText.length} chars)</div>}
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </div>
-            </section>
-          )}
+                        
+                        <div
+                          onClick={() => loadingButton !== "rewrite" && handleAIEnhancement("rewrite")}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            loadingButton === "rewrite" 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-green-500/50 bg-green-500/10 text-green-400 hover:border-green-400 hover:bg-green-500/20"
+                          }`}
+                        >
+                          {loadingButton === "rewrite" ? (
+                            <div className="animate-spin h-4 w-4 mx-auto mb-1 border-2 border-gray-500 border-t-green-400 rounded-full"></div>
+                          ) : (
+                            <RotateCcw className="h-4 w-4 mx-auto mb-1" />
+                          )}
+                          <div className="text-xs font-medium">
+                            {loadingButton === "rewrite" ? "Rewriting..." : "Rewrite Clearly"}
+                          </div>
+                          {selectedText && loadingButton !== "rewrite" && <div className="text-xs text-green-300 mt-1">({selectedText.length} chars)</div>}
+                        </div>
+                        
+                        <div
+                          onClick={() => loadingButton !== "add_verse" && handleAIEnhancement("add_verse")}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            loadingButton === "add_verse" 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-purple-500/50 bg-purple-500/10 text-purple-400 hover:border-purple-400 hover:bg-purple-500/20"
+                          }`}
+                        >
+                          {loadingButton === "add_verse" ? (
+                            <div className="animate-spin h-4 w-4 mx-auto mb-1 border-2 border-gray-500 border-t-purple-400 rounded-full"></div>
+                          ) : (
+                            <BookOpen className="h-4 w-4 mx-auto mb-1" />
+                          )}
+                          <div className="text-xs font-medium">
+                            {loadingButton === "add_verse" ? "Finding Verse..." : "Add Verse"}
+                          </div>
+                          {selectedText && loadingButton !== "add_verse" && <div className="text-xs text-purple-300 mt-1">({selectedText.length} chars)</div>}
+                        </div>
+                        
+                        <div
+                          onClick={() => loadingButton !== "add_illustration" && handleAIEnhancement("add_illustration")}
+                          className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                            loadingButton === "add_illustration" 
+                              ? "border-gray-600 text-gray-500 cursor-not-allowed" 
+                              : "border-orange-500/50 bg-orange-500/10 text-orange-400 hover:border-orange-400 hover:bg-orange-500/20"
+                          }`}
+                        >
+                          {loadingButton === "add_illustration" ? (
+                            <div className="animate-spin h-4 w-4 mx-auto mb-1 border-2 border-gray-500 border-t-orange-400 rounded-full"></div>
+                          ) : (
+                            <Quote className="h-4 w-4 mx-auto mb-1" />
+                          )}
+                          <div className="text-xs font-medium">
+                            {loadingButton === "add_illustration" ? "Creating Story..." : "Add Illustration"}
+                          </div>
+                          {selectedText && loadingButton !== "add_illustration" && <div className="text-xs text-orange-300 mt-1">({selectedText.length} chars)</div>}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Textarea
+                        ref={textareaRef}
+                        value={sermonBody}
+                        onChange={(e) => setSermonBody(e.target.value)}
+                        onSelect={handleTextSelection}
+                        onMouseUp={handleTextSelection}
+                        onKeyUp={handleTextSelection}
+                        placeholder={`Write your sermon content here...
 
-          {/* Journal Section */}
-          {activeTab === 'journal' && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white">Daily Journal</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {filteredNotes.length === 0 ? (
-                  <div className="col-span-full text-center py-12">
-                    <div className="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <PenTool className="w-8 h-8 text-green-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">No journal entries yet</h3>
-                    <p className="text-gray-400 mb-6">Begin your spiritual journey with daily reflections</p>
-                    <Button 
-                      onClick={() => setIsDialogOpen(true)}
-                      className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Start Journaling
-                    </Button>
-                  </div>
-                ) : (
-                  filteredNotes.map((note) => (
-                    <Card key={note.id} className="bg-gradient-to-br from-green-900/30 to-teal-900/30 border-green-700/50 hover:border-green-500/70 transition-all duration-300 hover:scale-105">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold text-white text-lg">{note.title}</h3>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-[var(--scholar-dark)] border-gray-700">
-                              <DropdownMenuItem 
-                                onClick={() => { setEditingNote(note); setIsDialogOpen(true); }}
-                                className="text-gray-300 hover:text-white"
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => deleteNoteMutation.mutate(note.id)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{note.content}</p>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-300">
-                            Journal Entry
-                          </Badge>
-                          <span className="text-xs text-gray-500">
-                            {new Date(note.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </div>
-            </section>
-          )}
+${sermonMode === 'outline' ? 'Use headers and bullet points for key ideas' : 
+  sermonMode === 'manuscript' ? 'Write out your full sermon text' : 
+  'Use bullet points for quick reference notes'}`}
+                        rows={20}
+                        className="bg-[var(--scholar-darker)] border-gray-600 text-white font-mono text-sm leading-relaxed"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
 
-          {/* Sermon Workspace */}
-          {activeTab === 'sermon' && <SermonWorkspace />}
+                {/* Mobile-First Sidebar */}
+                <div className="space-y-6 order-1 lg:order-2">
+                  {/* Voice & Style Selector */}
+                  <Card className="bg-[var(--scholar-dark)] border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-[var(--scholar-gold)] flex items-center">
+                        <Volume2 className="h-5 w-5 mr-2" />
+                        Voice & Style
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {[
+                        { value: "prophetic", label: "Prophetic", desc: "Bold, Spirit-led, empowering, identity-focused" },
+                        { value: "teaching", label: "Teaching", desc: "Deep theological exposition and exegesis" },
+                        { value: "evangelistic", label: "Evangelistic", desc: "Focused on salvation and outreach" },
+                        { value: "youth", label: "Youth/Modern", desc: "Contemporary, relatable language" },
+                        { value: "devotional", label: "Devotional", desc: "Personal, intimate, reflective" }
+                      ].map(({ value, label, desc }) => (
+                        <div
+                          key={value}
+                          className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                            voiceStyle === value 
+                              ? "border-[var(--scholar-gold)] bg-[var(--scholar-gold)]/10" 
+                              : "border-gray-600 hover:border-gray-500"
+                          }`}
+                          onClick={() => setVoiceStyle(value as any)}
+                        >
+                          <div className="font-medium text-white">{label}</div>
+                          <div className="text-sm text-gray-400">{desc}</div>
+                        </div>
+                      ))}
+                      <Button
+                        onClick={() => aiEnhanceMutation.mutate({ 
+                          action: "style_rewrite", 
+                          text: sermonBody, 
+                          style: voiceStyle 
+                        })}
+                        disabled={aiEnhanceMutation.isPending || !sermonBody}
+                        className="w-full bg-[var(--scholar-gold)] text-black hover:bg-yellow-500"
+                      >
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Rewrite in {voiceStyle.charAt(0).toUpperCase() + voiceStyle.slice(1)} Style
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
+
     </div>
   );
 }

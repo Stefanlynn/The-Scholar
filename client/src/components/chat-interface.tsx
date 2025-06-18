@@ -376,12 +376,9 @@ export default function ChatInterface() {
       setIsThinking(true);
       
       // Send to API
-      const response = await apiRequest("/api/chat/messages", { 
-        method: "POST",
-        body: {
-          message: messageText,
-          mode: scholarMode 
-        }
+      const response = await apiRequest("POST", "/api/chat/messages", { 
+        message: messageText,
+        mode: scholarMode 
       });
       return response.json();
     },
@@ -448,10 +445,7 @@ export default function ChatInterface() {
 
   const saveToNotesMutation = useMutation({
     mutationFn: async (noteData: { title: string; content: string }) => {
-      const response = await apiRequest("/api/notes", {
-        method: "POST",
-        body: noteData
-      });
+      const response = await apiRequest("POST", "/api/notes", noteData);
       return response.json();
     },
     onSuccess: () => {

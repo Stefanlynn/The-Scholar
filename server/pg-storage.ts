@@ -24,22 +24,29 @@ import type { IStorage } from "./storage";
 
 export class PostgreSQLStorage implements IStorage {
   async initialize(): Promise<void> {
-    // No initialization needed for authenticated app
+    try {
+      // Create a demo user if it doesn't exist
+      const existingUser = await this.getUser(1);
+      if (!existingUser) {
+        await this.createUser({
+          username: "demo",
+          password: "demo",
+          hasCompletedOnboarding: false
+        });
+      }
+    } catch (error) {
+      console.log("Error initializing PostgreSQL storage:", error);
+    }
   }
 
   // Users
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.fullName, username));
-    return result[0];
-  }
-
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.email, email));
+    const result = await db.select().from(users).where(eq(users.username, username));
     return result[0];
   }
 
@@ -48,18 +55,13 @@ export class PostgreSQLStorage implements IStorage {
     return result[0];
   }
 
-  async updateUser(id: string, updateData: Partial<InsertUser>): Promise<User | undefined> {
+  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
     const result = await db.update(users).set(updateData).where(eq(users.id, id)).returning();
     return result[0];
   }
 
-  async deleteUser(id: string): Promise<boolean> {
-    const result = await db.delete(users).where(eq(users.id, id)).returning();
-    return result.length > 0;
-  }
-
   // Chat Messages
-  async getChatMessages(userId: string): Promise<ChatMessage[]> {
+  async getChatMessages(userId: number): Promise<ChatMessage[]> {
     return await db.select().from(chatMessages).where(eq(chatMessages.userId, userId));
   }
 
@@ -69,7 +71,7 @@ export class PostgreSQLStorage implements IStorage {
   }
 
   // Notes
-  async getNotes(userId: string): Promise<Note[]> {
+  async getNotes(userId: number): Promise<Note[]> {
     return await db.select().from(notes).where(eq(notes.userId, userId));
   }
 
