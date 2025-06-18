@@ -437,6 +437,11 @@ Changelog:
   * Desktop now shows persistent sidebar with navigation links while mobile uses bottom tab bar
   * Chat interface adapts layout: fixed positioning on mobile, relative on desktop
   * Enhanced button container with flex layout preventing overlap and improving visual hierarchy
+- June 18, 2025: Improved Sermon Workspace layout and removed Expert Voice Adaptation from help documentation
+  * Reordered Sermon Workspace sections: Sermon Workspace first, then Voice & Style, then Sermon Body
+  * Moved Voice & Style selector from sidebar into main content flow for better workflow
+  * Removed Expert Voice Adaptation section from chat help documentation for cleaner interface
+  * Enhanced sermon preparation workflow with more logical section ordering
 ```
 
 ## User Preferences
