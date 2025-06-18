@@ -152,7 +152,11 @@ export default function ChatInterface() {
 
   // Handle speaking response with voice synthesis
   const speakResponse = (text: string) => {
-    if (!synthRef.current) return;
+    console.log("speakResponse called with:", text);
+    if (!synthRef.current) {
+      console.log("No speech synthesis reference");
+      return;
+    }
     
     // Cancel any ongoing speech
     synthRef.current.cancel();
@@ -187,10 +191,20 @@ export default function ChatInterface() {
       utterance.voice = preferredVoice;
     }
     
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onstart = () => {
+      console.log("Speech started");
+      setIsSpeaking(true);
+    };
+    utterance.onend = () => {
+      console.log("Speech ended");
+      setIsSpeaking(false);
+    };
+    utterance.onerror = (error) => {
+      console.log("Speech error:", error);
+      setIsSpeaking(false);
+    };
     
+    console.log("Starting speech synthesis");
     synthRef.current.speak(utterance);
   };
 
@@ -278,8 +292,10 @@ export default function ChatInterface() {
   // Send recorded message
   const sendRecording = () => {
     if (recordedTranscript.trim()) {
+      console.log("Sending voice message:", recordedTranscript);
       setMessage(recordedTranscript);
       setIsVoiceMessage(true); // Mark this as a voice message
+      console.log("Voice message flag set to true");
       sendMessageMutation.mutate(recordedTranscript);
       setShowRecordingControls(false);
       setRecordedTranscript("");
@@ -344,8 +360,11 @@ export default function ChatInterface() {
       
       // Always speak the response when it comes from voice input
       if (data.response && isVoiceMessage) {
+        console.log("Speaking response:", data.response);
         speakResponse(data.response);
         setIsVoiceMessage(false); // Reset voice message flag
+      } else if (isVoiceMessage) {
+        console.log("Voice message flag set but no response data");
       }
       
       // Update profile stats for chat activity
