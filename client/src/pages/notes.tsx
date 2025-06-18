@@ -168,19 +168,19 @@ function SermonWorkspace() {
                 placeholder="Sermon Title"
                 value={currentSermon.title}
                 onChange={(e) => setCurrentSermon(prev => ({ ...prev, title: e.target.value }))}
-                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white text-lg font-semibold placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white text-lg font-semibold placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
               />
               <Input
                 placeholder="Scripture Reference (e.g., John 3:16-21)"
                 value={currentSermon.scripture}
                 onChange={(e) => setCurrentSermon(prev => ({ ...prev, scripture: e.target.value }))}
-                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
               />
               <Input
                 placeholder="Main Theme or Focus"
                 value={currentSermon.theme}
                 onChange={(e) => setCurrentSermon(prev => ({ ...prev, theme: e.target.value }))}
-                className="bg-gray-900/50 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
+                className="bg-black/70 border-[var(--scholar-gold)]/30 text-white placeholder-gray-400 focus:border-[var(--scholar-gold)]/70"
               />
             </CardContent>
           </Card>
@@ -276,7 +276,7 @@ function SermonWorkspace() {
                 onChange={(e) => setCurrentSermon(prev => ({ ...prev, body: e.target.value }))}
                 onMouseUp={handleTextSelection}
                 onKeyUp={handleTextSelection}
-                className="bg-gray-900/60 border-slate-600/50 text-white min-h-[400px] resize-none font-mono text-sm leading-relaxed placeholder-gray-400 focus:border-slate-400/70 focus:ring-1 focus:ring-slate-400/30"
+                className="bg-black/80 border-gray-600/50 text-white min-h-[400px] resize-none text-sm leading-relaxed placeholder-gray-500 focus:border-gray-400/70 focus:ring-1 focus:ring-gray-400/30"
               />
             </CardContent>
           </Card>
