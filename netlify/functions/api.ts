@@ -38,6 +38,9 @@ const serverlessHandler = serverless(app);
 // Export the Netlify handler
 export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
   try {
+    // Set NETLIFY environment variable for serverless detection
+    process.env.NETLIFY = 'true';
+    
     // Initialize routes on first request
     await initializeRoutes();
     
