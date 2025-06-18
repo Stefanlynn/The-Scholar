@@ -444,7 +444,6 @@ Changelog:
   * Improved automatic voice playback after voice input while maintaining mobile browser compliance
   * Removed expert voice adaptation section from help documentation while keeping backend functionality intact
   * Updated voice conversation help to clarify users must click "Listen" before sending to enable Scholar's audible response
-  * Converted Bible study tool dialogs to floating popups with enhanced visual styling and removed X close buttons while preserving "Back to Tools" navigation
 ```
 
 ## User Preferences
