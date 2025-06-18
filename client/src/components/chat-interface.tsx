@@ -526,6 +526,7 @@ export default function ChatInterface() {
           "Speak clearly and close to your device for best accuracy",
           "Recording stops automatically when you finish speaking, or click 'Stop Recording'",
           "Preview your transcript, then Listen, Send, or Delete your recording",
+          "Important: Click 'Listen' in the preview before sending to enable The Scholar's audible response",
           "The Scholar responds with both text and voice for full conversation experience",
           "Use pause (⏸) and stop (×) controls during Scholar's voice responses"
         ]

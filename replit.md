@@ -443,6 +443,7 @@ Changelog:
   * Enhanced voice response system with mobile autoplay compatibility and fallback mechanisms
   * Improved automatic voice playback after voice input while maintaining mobile browser compliance
   * Removed expert voice adaptation section from help documentation while keeping backend functionality intact
+  * Updated voice conversation help to clarify users must click "Listen" before sending to enable Scholar's audible response
 ```
 
 ## User Preferences
