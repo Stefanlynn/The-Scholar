@@ -65,27 +65,13 @@ const highlightColors = [
   { value: "purple", label: "Purple", color: "bg-purple-200 text-purple-900" }
 ];
 
-const bibleTranslations = [
-  { value: "KJV", label: "KJV" },
-  { value: "KJV1611", label: "KJV 1611" },
-  { value: "ASV", label: "ASV" },
-  { value: "BBE", label: "BBE" },
-  { value: "DBY", label: "Darby" },
-  { value: "WBT", label: "Webster" },
-  { value: "WEB", label: "WEB" },
-  { value: "YLT", label: "YLT" },
-  { value: "RV1909", label: "Reina-Valera 1909" },
-  { value: "SVD", label: "Smith-Van Dyke" },
-  { value: "NIV", label: "NIV" },
-  { value: "ESV", label: "ESV" },
-  { value: "NASB", label: "NASB" }
-];
+
 
 export default function Bible() {
   const { preferences } = useUserPreferences();
   const [selectedBook, setSelectedBook] = useState("Matthew");
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const [selectedTranslation, setSelectedTranslation] = useState(preferences.defaultBibleTranslation);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVerse, setSelectedVerse] = useState<any>(null);
   const [verseNote, setVerseNote] = useState("");
@@ -223,17 +209,8 @@ export default function Bible() {
   };
 
   const { data: chapterData, isLoading } = useQuery({
-    queryKey: ["/api/bible", selectedBook, selectedChapter, selectedTranslation],
-    queryFn: async () => {
-      // Use existing KJV endpoint for KJV, IQ Bible API for others
-      if (selectedTranslation === "KJV") {
-        return getBibleChapter(selectedBook, selectedChapter, selectedTranslation);
-      } else {
-        const response = await fetch(`/api/bible/text?book=${encodeURIComponent(selectedBook)}&chapter=${selectedChapter}&translation=${selectedTranslation}`);
-        if (!response.ok) throw new Error('Failed to fetch Bible text');
-        return response.json();
-      }
-    },
+    queryKey: ["/api/bible", selectedBook, selectedChapter],
+    queryFn: () => getBibleChapter(selectedBook, selectedChapter, "KJV"),
     enabled: !!selectedBook && !!selectedChapter,
   });
 
@@ -628,18 +605,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
                   <h2 className="text-lg font-semibold text-white">Bible Study</h2>
                   <PageHelp pageName="Bible Study" helpContent={bibleHelpContent} />
                 </div>
-                <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
-                  <SelectTrigger className="w-20 bg-[var(--scholar-darker)] border-gray-600 text-white text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                    {bibleTranslations.map((translation) => (
-                      <SelectItem key={translation.value} value={translation.value} className="text-white hover:bg-gray-700">
-                        {translation.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="text-xs text-[var(--scholar-gold)] font-medium">KJV</div>
               </div>
               <div className="relative">
                 <Input
@@ -660,18 +626,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
                 <PageHelp pageName="Bible Study" helpContent={bibleHelpContent} />
               </div>
               <div className="flex items-center space-x-4">
-                <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
-                  <SelectTrigger className="w-44 bg-[var(--scholar-darker)] border-gray-600 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[var(--scholar-darker)] border-gray-600">
-                    {bibleTranslations.map((translation) => (
-                      <SelectItem key={translation.value} value={translation.value} className="text-white hover:bg-gray-700">
-                        {translation.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="text-sm text-[var(--scholar-gold)] font-medium">KJV Translation</div>
                 <div className="relative">
                   <Input
                     type="text"
@@ -823,7 +778,7 @@ Please provide a direct, conversational answer to the user's question. Do not us
               <CardContent>
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-[var(--scholar-gold)]">
-                    {selectedBook} {selectedChapter} ({selectedTranslation.toUpperCase()})
+                    {selectedBook} {selectedChapter} (KJV)
                   </h3>
                   
                   {isLoading ? (
