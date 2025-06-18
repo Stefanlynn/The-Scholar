@@ -936,6 +936,59 @@ Convert this into bullet format with:
     }
   });
 
+  // Get Bible text by book, chapter, and translation using IQ Bible API
+  app.get("/api/bible/text", async (req, res) => {
+    try {
+      const { book, chapter, translation = "KJV" } = req.query;
+      
+      if (!book || !chapter) {
+        return res.status(400).json({ error: "Book and chapter are required" });
+      }
+
+      const IQ_BIBLE_API_KEY = process.env.IQ_BIBLE_API_KEY;
+      
+      // Map translation abbreviations to IQ Bible API table names
+      const translationMap: { [key: string]: string } = {
+        'ASV': 't_asv',
+        'BBE': 't_bbe', 
+        'DBY': 't_dby',
+        'KJV': 't_kjv',
+        'KJV1611': 't_kjv1611',
+        'RV1909': 't_srv',
+        'SVD': 't_svd',
+        'WBT': 't_wbt',
+        'WEB': 't_web',
+        'YLT': 't_ylt'
+      };
+      
+      const tableName = translationMap[translation as string] || 't_kjv';
+
+      const response = await fetch(`https://iq-bible.p.rapidapi.com/GetVerses?book=${book}&chapter=${chapter}&table=${tableName}`, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': IQ_BIBLE_API_KEY!,
+          'X-RapidAPI-Host': 'iq-bible.p.rapidapi.com'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const verses = await response.json();
+      
+      res.json({
+        book: book as string,
+        chapter: parseInt(chapter as string),
+        translation: translation as string,
+        verses: verses
+      });
+    } catch (error) {
+      console.error('Bible text fetch error:', error);
+      res.status(500).json({ error: "Failed to fetch Bible text" });
+    }
+  });
+
   // Get semantic relations for biblical words using IQ Bible API
   app.get("/api/bible/semantic-relations", async (req, res) => {
     try {

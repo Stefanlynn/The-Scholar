@@ -293,6 +293,15 @@ export default function Profile() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="KJV">KJV</SelectItem>
+                  <SelectItem value="KJV1611">KJV 1611</SelectItem>
+                  <SelectItem value="ASV">ASV</SelectItem>
+                  <SelectItem value="BBE">BBE</SelectItem>
+                  <SelectItem value="DBY">Darby</SelectItem>
+                  <SelectItem value="WBT">Webster</SelectItem>
+                  <SelectItem value="WEB">WEB</SelectItem>
+                  <SelectItem value="YLT">YLT</SelectItem>
+                  <SelectItem value="RV1909">Reina-Valera 1909</SelectItem>
+                  <SelectItem value="SVD">Smith-Van Dyke</SelectItem>
                   <SelectItem value="NIV">NIV</SelectItem>
                   <SelectItem value="ESV">ESV</SelectItem>
                   <SelectItem value="NASB">NASB</SelectItem>
