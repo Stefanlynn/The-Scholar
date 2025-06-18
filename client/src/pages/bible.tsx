@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Sidebar from "@/components/sidebar";
-import MobileTabBar from "@/components/mobile-tab-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -608,7 +606,6 @@ Please provide a direct, conversational answer to the user's question. Do not us
   return (
     <TooltipProvider>
       <div className="flex h-screen overflow-hidden">
-        <Sidebar />
         
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile-First Top Bar */}
@@ -1441,7 +1438,6 @@ Please provide a direct, conversational answer to the user's question. Do not us
           </DialogContent>
         </Dialog>
 
-        <MobileTabBar />
       </div>
     </TooltipProvider>
   );

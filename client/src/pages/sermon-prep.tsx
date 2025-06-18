@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/sidebar";
-import MobileTabBar from "@/components/mobile-tab-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -94,7 +92,6 @@ export default function SermonPrep() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
@@ -268,7 +265,6 @@ export default function SermonPrep() {
         </div>
       </div>
 
-      <MobileTabBar />
     </div>
   );
 }

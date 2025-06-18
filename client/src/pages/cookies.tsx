@@ -1,13 +1,11 @@
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Sidebar from "@/components/sidebar";
 import { ChevronLeft, Cookie } from "lucide-react";
 
 export default function Cookies() {
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--scholar-black)]">
-      <Sidebar />
       
       <div className="flex-1 p-4 md:p-6 pb-6 overflow-y-auto">
         <div className="max-w-3xl mx-auto space-y-6">

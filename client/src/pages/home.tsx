@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Sidebar from "@/components/sidebar";
 import ChatInterface from "@/components/chat-interface";
 import MobileNavMenu from "@/components/mobile-nav-menu";
 import WeeklyDonationPopup from "@/components/weekly-donation-popup";
@@ -28,7 +27,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen max-h-screen overflow-hidden bg-[var(--scholar-black)]">
-      <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 max-h-screen">
         {/* Top Bar */}

@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Sidebar from "@/components/sidebar";
-import MobileTabBar from "@/components/mobile-tab-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -329,7 +327,6 @@ export default function Bible() {
   return (
     <TooltipProvider>
       <div className="flex min-h-screen bg-[var(--scholar-darker)]">
-        <Sidebar />
         
         <div className="flex-1 md:ml-64">
           <div className="p-6">
@@ -905,7 +902,6 @@ export default function Bible() {
           </DialogContent>
         </Dialog>
 
-        <MobileTabBar />
       </div>
     </TooltipProvider>
   );
