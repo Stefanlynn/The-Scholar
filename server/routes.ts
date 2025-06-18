@@ -1,4 +1,4 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
 import path from "path";
@@ -151,6 +151,9 @@ async function searchByKeywords(query: string) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve uploaded files statically
+  app.use('/uploads', express.static(uploadDir));
+  
   // Users
   app.get("/api/users/current", authenticateUser, async (req, res) => {
     try {

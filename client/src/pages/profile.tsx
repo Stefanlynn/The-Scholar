@@ -83,7 +83,36 @@ export default function Profile() {
     updateProfileMutation.mutate(data);
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+
+    try {
+      const response = await fetch('/api/profile/upload-picture', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user?.access_token || ''}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({ title: "Profile picture updated successfully!" });
+        // Invalidate profile query to refresh the image
+        queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      toast({ title: "Failed to upload profile picture", variant: "destructive" });
+    }
+  };
+
+  const triggerFileUpload = () => {
     fileInputRef.current?.click();
   };
 
@@ -154,7 +183,7 @@ export default function Profile() {
                   <div>
                     <Button
                       type="button"
-                      onClick={handleFileUpload}
+                      onClick={triggerFileUpload}
                       variant="outline"
                       className="border-gray-600 text-white hover:bg-gray-700"
                     >
@@ -165,6 +194,7 @@ export default function Profile() {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      onChange={handleFileUpload}
                       className="hidden"
                     />
                   </div>
