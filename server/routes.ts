@@ -11,11 +11,6 @@ import {
   updateUserProfileSchema
 } from "@shared/schema";
 import { createClient } from '@supabase/supabase-js';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 // Extend Express Request type to include authenticated user
 declare global {
@@ -37,37 +32,6 @@ declare global {
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(process.cwd(), 'client', 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, uploadsDir);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const extension = path.extname(file.originalname);
-      cb(null, `profile-${uniqueSuffix}${extension}`);
-    }
-  }),
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only images are allowed.'));
-    }
-  }
-});
 
 // Middleware to verify user authentication
 async function authenticateUser(req: Request, res: Response, next: NextFunction) {
@@ -234,35 +198,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Failed to update profile" });
-    }
-  });
-
-  // Profile picture upload route
-  app.post("/api/profile/upload", authenticateUser, upload.single('profilePicture'), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
-      // Create the URL path for the uploaded file
-      const profilePictureUrl = `/uploads/${req.file.filename}`;
-
-      // Update user's profile picture in database
-      const updatedUser = await storage.updateUser(req.user!.id, {
-        profilePicture: profilePictureUrl
-      });
-
-      if (!updatedUser) {
-        return res.status(404).json({ error: "Failed to update user profile" });
-      }
-
-      res.json({ 
-        profilePicture: profilePictureUrl,
-        message: "Profile picture uploaded successfully" 
-      });
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      res.status(500).json({ error: "Failed to upload profile picture" });
     }
   });
 
