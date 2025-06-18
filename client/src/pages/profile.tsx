@@ -87,6 +87,32 @@ export default function Profile() {
     fileInputRef.current?.click();
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageData = e.target?.result as string;
+        uploadImageMutation.mutate(imageData);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImageMutation = useMutation({
+    mutationFn: async (imageData: string) => {
+      const response = await apiRequest("POST", "/api/profile/upload-image", { imageData });
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Profile picture updated successfully!" });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to update profile picture", variant: "destructive" });
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -165,6 +191,7 @@ export default function Profile() {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      onChange={handleImageChange}
                       className="hidden"
                     />
                   </div>

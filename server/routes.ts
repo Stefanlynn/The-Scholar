@@ -1,6 +1,8 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { PostgreSQLStorage } from "./pg-storage";
+
+const storage = new PostgreSQLStorage();
 import { 
   insertChatMessageSchema, 
   insertNoteSchema, 
@@ -145,9 +147,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile routes
+  app.get("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.user!.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Failed to fetch profile" });
+    }
+  });
+
+  app.patch("/api/profile", authenticateUser, async (req, res) => {
+    try {
+      const updatedUser = await storage.updateUser(req.user!.id, req.body);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  app.post("/api/profile/upload-image", authenticateUser, async (req, res) => {
+    try {
+      const { imageData } = req.body;
+      
+      if (!imageData) {
+        return res.status(400).json({ error: "No image data provided" });
+      }
+
+      // For now, we'll store the base64 image data directly
+      // In production, you'd upload to a cloud storage service
+      const updatedUser = await storage.updateUser(req.user!.id, { 
+        profilePicture: imageData 
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      res.json({ profilePicture: updatedUser.profilePicture });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ error: "Failed to upload image" });
+    }
+  });
+
   app.post("/api/users/complete-onboarding", authenticateUser, async (req, res) => {
     try {
-      const updatedUser = await storage.updateUser(req.user.id, { hasCompletedOnboarding: true });
+      const updatedUser = await storage.updateUser(req.user!.id, { hasCompletedOnboarding: true });
       if (!updatedUser) {
         return res.status(404).json({ error: "User not found" });
       }
